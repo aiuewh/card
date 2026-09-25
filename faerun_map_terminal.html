@@ -217,17 +217,80 @@ const ATLAS=[
 const MINIMAPS=[
   {id:"nwn",    zh:"无冬城", en:["Neverwinter"], view:"nwn", grp:"city", note:"交互视图 · Guide to Neverwinter 图例"},
   {id:"wdmap",  zh:"深水城", en:["Waterdeep"],   view:"wdmap", grp:"city", note:"交互视图 · WDH 官方全城图"},
-  {id:"baldurs_gate", zh:"博德之门", en:["Baldur's Gate"], img:"费伦地图/baldurs_gate.jpg", grp:"city", note:"官方 · Schley《Descent into Avernus》(2019)"},
-  {id:"elturel",      zh:"埃尔托瑞尔", en:["Elturel"], img:"费伦地图/elturel.jpg", grp:"city", note:"官方 · 坠入阿弗纳斯 城市图"},
+  {id:"baldurs_gate", zh:"博德之门", en:["Baldur's Gate"], img:"费伦地图/baldurs_gate.jpg", grp:"city", note:"官方 · Schley《Descent into Avernus》(2019)", pins:[
+    {name:"外城", en:"Outer City", x:17, y:10.5, t:"ward", d:"城墙外的棚户与作坊带，流民、佣兵和走私客的聚居地。城里人管这里叫「三城之耻」，但全城的粮食有一半从这里进来。"},
+    {name:"上城", en:"Upper City", x:25, y:28, t:"ward", d:"帕特里亚贵族的自留地，公爵议事厅与高门宅邸都在此。没有通行证的外乡人进门楼就会被卫兵盯上——去下城办事，别穿锦袍。"},
+    {name:"范萨普庄园", en:"Vanthampur Villa", x:24, y:37.5, t:"landmark", d:"公爵遗孀萨克茜·范萨普的宅邸，地狱之喉骑士的暗中据点——BGDIA 开局的阴谋旋涡中心。花园底下藏着通向地狱的车库。"},
+    {name:"浴场", en:"The Bathhouse", x:49, y:19, t:"landmark", d:"下城公共浴场。死亡三神的信徒在蒸汽后头交易情报与祭品名单。"},
+    {name:"精灵之歌酒馆", en:"Elfsong Tavern", x:60, y:37, t:"tavern", d:"招牌是一颗哀唱的精灵头颅，歌声在深夜格外瘆人。剑湾情报贩子的老据点——半身人塔丽娜在这里兜售邪教聚会点的消息。"},
+    {name:"蛇怪之门", en:"Basilisk Gate", x:69, y:33, t:"landmark", d:"上城东门的路闸，城防最严的一处。进城货物在此抽检，流民在此被劝返。"},
+    {name:"下城", en:"Lower City", x:66, y:50, t:"ward", d:"港口与市井的心脏，人口最稠的街区。精灵之歌、低灯号都在这一片——情报与麻烦同价。"},
+    {name:"低灯号", en:"Low Lantern", x:59.5, y:57, t:"tavern", d:"永泊码头的三层酒馆船，每层甲板各做各的生意。想找不见光的消息，来这条船；想找麻烦，也是。"},
+  ]},
+  {id:"elturel",      zh:"埃尔托瑞尔", en:["Elturel"], img:"费伦地图/elturel.jpg", grp:"city", note:"官方 · 坠入阿弗纳斯 城市图", pins:[
+    {name:"高殿", en:"High Hall", x:41, y:61.5, t:"landmark", d:"埃尔托瑞尔信仰与秩序的核心圣殿。城市坠入阿弗纳斯后，它成了地狱天空下唯一的灯塔——殿下墓穴里另有乾坤。"},
+    {name:"大墓园", en:"Grand Cemetery", x:12.5, y:55, t:"ward", d:"城西的巨大墓园。城市坠落后亡者不再安分，夜巡要有备而来。"},
+    {name:"玩家抵达点", en:"Characters Arrive Here", x:80, y:52, t:"landmark", d:"第二幕开场：全城被地狱锁链拖入阿弗纳斯的瞬间，你们在这里醒来。"},
+    {name:"托姆之滨", en:"Torm's Reach", x:68.5, y:20, t:"landmark", d:"忠诚骑士团的最后防线，托姆的圣旗仍在塔顶燃烧——旗帜不倒，街区不散。"},
+    {name:"莎儿市集", en:"Sharran Market", x:67.5, y:61, t:"danger", d:"黑影神信徒趁乱开起的市集，货真价实，价码用灵魂记账。"},
+    {name:"尸潮", en:"Zombie Horde", x:38, y:19, t:"danger", d:"游荡的不死者潮。声音会引来它们——以及更坏的东西。"},
+    {name:"食尸鬼群", en:"Ghoul Pack", x:24.5, y:30, t:"danger", d:"成群的食尸鬼在裂谷间觅食，饿得连地狱火都敢扑。"},
+    {name:"饕餮秽宴", en:"Ghastly Meal", x:49, y:35, t:"danger", d:"尸鬼们围着新鲜的「食材」开席。打断饭局，或者等上桌——二选一。"},
+    {name:"呼救声", en:"Cry for Help", x:70.5, y:32.5, t:"danger", d:"断墙下传来呼救。十有八九是真的，剩下的十有八九是圈套。"},
+    {name:"暴力哲学", en:"Violent Philosophy", x:78, y:40, t:"danger", d:"一群地狱狂欢者在废墟里辩论地狱的秩序，输的一方喂炼魔。"},
+    {name:"断刃区", en:"Torn's Blade", x:61, y:41, t:"danger", d:"城体被撕开的裂谷边缘，地狱火的缝隙把街道切成孤岛。"},
+    {name:"怨怒巡逻", en:"Hateful Patrol", x:63.5, y:72, t:"danger", d:"堕落卫兵组成的巡逻队，如今执法的依据只有心情。"},
+    {name:"坍塌建筑", en:"Collapsed Building", x:44.5, y:50, t:"danger", d:"坍塌的街区内架着地狱火驱动的攻城器械——操作它们的不是活人。"},
+  ]},
   {id:"luskan",       zh:"路斯坎", en:["Luskan"], img:"费伦地图/luskan.jpg", grp:"city", note:"民间 · 千帆之城精品图"},
   {id:"silverymoon",  zh:"银月城", en:["Silverymoon"], img:"费伦地图/silverymoon.jpg", grp:"city", note:"民间 · 插画风格全城图"},
-  {id:"phandalin",    zh:"凡达林", en:["Phandalin"], img:"费伦地图/phandalin.jpg", grp:"city", note:"官方 · Schley《失落矿坑》(2014)"},
+  {id:"phandalin",    zh:"凡达林", en:["Phandalin"], img:"费伦地图/phandalin.jpg", grp:"city", note:"官方 · Schley《失落矿坑》(2014)", pins:[
+    {name:"巴森杂货铺", en:"Barthen's Provisions", x:52, y:17.5, t:"landmark", d:"镇上唯一的杂货铺，艾尔玛·巴森夫妇经营——冈德伦托运的补给正是发往这里。LMoP 开局的第一站。"},
+    {name:"镇长官邸", en:"Townmaster's Hall", x:51, y:22, t:"landmark", d:"软镇长哈宾·韦斯特的官邸，悬赏单在这里签字盖章——遇事他只会这一个动作。"},
+    {name:"石丘客栈", en:"Stonehill Inn", x:45, y:32, t:"tavern", d:"镇上住宿与传闻的集散地，老板托布伦热情又胆小。他被红腕勒索的委托，是新手冒险者的第一份人情。"},
+    {name:"狮盾商栈", en:"Lionshield Coster", x:35.5, y:26.5, t:"landmark", d:"挂狮盾招牌的连锁商栈，永冬城发货——货架最近被红腕抢得七零八落，掌柜悬赏讨货。"},
+    {name:"幸运神龛", en:"Shrine of Luck", x:37, y:31.5, t:"landmark", d:"提尔与坦达丝共奉的小神殿，加拉埃尔修女驻此。去康尼贝里问女妖取法术书的委托从这里接。"},
+    {name:"沉睡巨人酒馆", en:"Sleeping Giant", x:61, y:35, t:"tavern", d:"红腕歹徒的据点酒馆，紫袍蒙面人在这里喝酒吹牛——全镇敢怒不敢言。"},
+    {name:"矿业交易所", en:"Miner's Exchange", x:30, y:48.5, t:"landmark", d:"矿权登记与矿石估价的中立机构，代理人哈莉娅·桑顿的账本比矿图值钱——她的真实立场，是一整条支线。"},
+    {name:"埃德马斯果园", en:"Edermath Orchard", x:24, y:19.5, t:"landmark", d:"老战士达伦·埃德马斯的果园，苹果酒与剑术经验一样管够——他年轻时在深水城见过世面。"},
+    {name:"特雷森达庄园", en:"Tresendar Manor", x:85.5, y:31.5, t:"danger", d:"镇北悬崖上的气派废宅——红腕歹徒的老巢就在其下。正门强攻、排水暗渠、屋顶空降，三条路通向同一个地窖。"},
+    {name:"红腕歹徒巢穴", en:"Redbrand Hideout", x:88, y:44.5, t:"secret", d:"庄园地下的完整巢穴：地窖牢房、停尸间、内罗斯祭坛一应俱全。「玻璃法杖」·格拉斯塔夫就藏在这里。"},
+    {name:"奥德利夫农场", en:"Alderleaf Farm", x:64.5, y:61.5, t:"landmark", d:"半身人奎琳·奥德利夫的农场——她儿子卡普知道一条溜进庄园后院的排水暗渠。"},
+  ]},
   {id:"port_nyanzaru",zh:"纳德港", en:["Port Nyanzaru"], img:"费伦地图/port_nyanzaru.jpg", grp:"city", note:"官方风格 · 商业亲王之城分区图"},
   {id:"targos",       zh:"塔尔戈斯", en:["Targos"], img:"费伦地图/targos.jpg", grp:"city", note:"官方 ·《Rime of the Frostmaiden》城镇图"},
   {id:"nightstone",   zh:"夜石村", en:["Nightstone"], img:"费伦地图/nightstone.jpg", grp:"city", note:"官方 ·《风暴君王之雷霆》开篇村庄"},
   {id:"gauntlgrym",   zh:"冈特格里姆", en:["Gauntlgrym"], img:"费伦地图/gauntlgrym.jpg", grp:"city", note:"民间 · 矮人古都上层城区"},
-  {id:"icewind_dale", zh:"冰风谷 · 十镇", en:["Icewind Dale","Ten-Towns","Ten Towns"], img:"费伦地图/icewind_dale.jpg", grp:"region", note:"官方 ·《Rime of the Frostmaiden》区域图"},
-  {id:"chult",        zh:"楚尔特", en:["Chult"], img:"费伦地图/chult.jpg", grp:"region", note:"官方 ·《湮灭之墓》区域图"},
+  {id:"icewind_dale", zh:"冰风谷 · 十镇", en:["Icewind Dale","Ten-Towns","Ten Towns"], img:"费伦地图/icewind_dale.jpg", grp:"region", note:"官方 ·《Rime of the Frostmaiden》区域图", pins:[
+    {name:"布林·珊德", en:"Bryn Shander", x:34, y:54.5, t:"city", d:"十镇最大的城镇，围墙环抱的贸易枢纽。所有大事——包括麻烦——都从这里的市集广场传开。"},
+    {name:"塔尔戈斯", en:"Targos", x:30, y:53.5, t:"city", d:"玛尔·达尔登湖畔的渔业重镇，木墙、码头与佣兵一样不少。"},
+    {name:"伊斯特港", en:"Easthaven", x:45.5, y:55.5, t:"city", d:"十镇最东的港镇，红发镇长随和、镇民排外。陆路进出冰风谷都打这过。"},
+    {name:"凯尔-迪纳维尔", en:"Caer-Dineval", x:43, y:51.5, t:"city", d:"黑鱼湖畔的旧堡小镇，塔楼里住着难相处的领主——他最近谁都不见。"},
+    {name:"凯尔-柯尼希", en:"Caer-Konig", x:48.5, y:48.5, t:"city", d:"雷吉德冰川脚下的边陲，丢失的货物与失踪的巡逻队是酒馆常谈。"},
+    {name:"特马莱恩", en:"Termalaine", x:38, y:50, t:"city", d:"湖畔的宝石切割镇，矿坑里挖出的不只是石头——最近挖出的东西让人不敢声张。"},
+    {name:"孤独林", en:"Lonelywood", x:40, y:47.5, t:"city", d:"十镇唯一的木材镇，伐木人在森林边缘与白鹿的传说比邻而居。"},
+    {name:"布雷门", en:"Bremen", x:28.5, y:51, t:"city", d:"十镇最小最懒的镇子，渔获不多但酒馆故事最多——有人说湖底住着会说话的鱼。"},
+    {name:"道根之穴", en:"Dougan's Hole", x:35, y:60.5, t:"city", d:"二十来人的小镇，镇外立着一座石环——没人知道是谁立的，也没人敢拆。"},
+    {name:"好蜜村", en:"Good Mead", x:37.5, y:57.5, t:"city", d:"蜂蜜酒酿造镇，全村的财富都酿在地窖里，也因此总被惦记。"},
+    {name:"红水湖", en:"Redwaters", x:39.5, y:61, t:"landmark", d:"冒热气的温泉湖，湖畔小镇以温泉与私酿闻名——湖底传来的震动不是温泉的错。"},
+    {name:"凯尔文之冢", en:"Kelvin's Cairn", x:46, y:46, t:"landmark", d:"十镇以北的孤峰，登山者的圣地。山顶的风能把没经验的冒险者直接送回诸神面前。"},
+    {name:"世界之脊", en:"Spine of the World", x:56, y:71, t:"landmark", d:"横亘南境的巨大山脉，翻过去的路一年通不了一个月——冰风谷因此是流放地的完美同义词。"},
+  ]},
+  {id:"chult",        zh:"楚尔特", en:["Chult"], img:"费伦地图/chult.jpg", grp:"region", note:"官方 ·《湮灭之墓》区域图", pins:[
+    {name:"纳德港", en:"Port Nyanzaru", x:38.5, y:13, t:"city", d:"恐龙背上的商业亲王之城，丛林远征唯一的安全起点。采买恐龙、雇佣向导、接悬赏都在港区市集——七位亲王把生意和治安都管得明明白白。"},
+    {name:"复仇营地", en:"Camp Vengeance", x:12.5, y:49.5, t:"landmark", d:"秩序之手骑士团的警戒营地，痢疾与绝望比丛林先击垮了驻军。指挥官悬赏一切丛林情报。"},
+    {name:"正义营地", en:"Camp Righteous", x:23, y:48, t:"danger", d:"白手套骑士团的前哨，如今被机关傀儡与哥布林袭扰成了死亡陷阱——营地里那具傀儡与尸体相连的机关，是道经典谜题。"},
+    {name:"火指", en:"Firefinger", x:40, y:47.5, t:"danger", d:"翼猴人盘踞的三座信号塔，掳走信使、偷走白鹭蛋。攀塔攻坚的入门硬仗。"},
+    {name:"梅佐", en:"Mezro", x:52, y:47, t:"landmark", d:"传说是乌布陶亲造的圣城，官方记录它已在法术瘟疫中毁灭——但雨林深处的路标指向另一种说法。"},
+    {name:"阿塔兹·穆哈加", en:"Ataaz Muhajah", x:49, y:54.5, t:"danger", d:"「弑者谷」：科博尔德在崖壁间设伏的峡谷，商队坟场。"},
+    {name:"独角鲸沉船", en:"Wreck of the Narwhal", x:59.5, y:66.5, t:"danger", d:"搁浅在丛林深处的捕鲸船残骸——离海百里，船身完好，船员不见踪影。"},
+    {name:"针之骨", en:"Needle's Bones", x:53.5, y:77, t:"danger", d:"巨兽肋骨如林般刺出沼泽，翼龙在骨间筑巢。飞越此地等于闯进飞行禁飞区。"},
+    {name:"基尔·萨巴尔", en:"Kir Sabal", x:50, y:80.5, t:"landmark", d:"悬崖上的鹰人修道院，朝圣者在此学习飞空之仪。仅能乘翼龙或攀崖抵达——修道院悬勇者取回被偷的圣物。"},
+    {name:"南加洛", en:"Nangalore", x:42, y:94, t:"danger", d:"精灵女王的花之宫殿废墟，花瓣里封着幻梦。嗅一朵，留一生。"},
+    {name:"咚咚隆", en:"Dungdunglung", x:35, y:64.5, t:"city", d:"蛙人格鲁格部落的王庭，全楚尔特最大的「金蛙」崇拜地——王座垫着宝石，王的脾气垫着更多。"},
+    {name:"姆巴拉", en:"Mbala", x:11, y:63.5, t:"danger", d:"孤崖上的旧遗址，住着老妪娜娜·普普。她什么都肯交易，就是不告诉你代价是什么。"},
+    {name:"乌布陶之心", en:"Heart of Ubtao", x:27.5, y:84, t:"landmark", d:"隆起如心脏的圣山，传说是造物主遗落此地的初造之地。"},
+  ]},
   {id:"north_region", zh:"北地 · 蛮荒边疆", en:["The North","Savage Frontier","Luruar"], img:"费伦地图/north_region.jpg", grp:"region", note:"官方 · SCAG / 拉瑞尔银手探索者套装"},
   {id:"sword_coast",  zh:"剑海岸", en:["Sword Coast"], img:"费伦地图/sword_coast.jpg", grp:"region", note:"官方 ·《剑湾冒险指南》总图"},
   {id:"skullport",    zh:"骷髅港", en:["Skullport"], img:"费伦地图/skullport.jpg", grp:"dungeon", note:"民间 · DotMM 第三层超清重制"},
@@ -555,12 +618,24 @@ function buildIMG(m){
   $("#mapwrap").innerHTML=`
     <div class="mapview" id="mv"><div class="pan" id="pan">
       <img src="${U(m.img)}" draggable="false">
+      <div class="pins" id="pins"></div>
     </div></div>
     <div class="zoombar"><button id="zo">＋</button><button id="zo2">－</button><button id="zr">⌂</button></div>
-    <div class="hint">${m.zh} · ${m.note||""} · 滚轮/双击缩放 · 拖拽移动</div>`;
+    <div class="hint">${m.zh} · ${m.note||""} · 滚轮/双击缩放 · 拖拽移动${m.pins&&m.pins.length?" · 点击标点查看详情":""}</div>`;
   addBackBar("MAP:// "+m.zh);
   TAB="img"; SEL=null;
   document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  if(m.pins&&m.pins.length){
+    const pins=$("#pins");
+    m.pins.forEach(l=>{
+      const el=document.createElement("div");
+      el.className="pin"+(l.t==="tavern"?" tavern":l.t==="danger"||l.t==="secret"?" secret":"");
+      el.style.left=l.x+"%"; el.style.top=l.y+"%";
+      el.title=l.name;
+      el.addEventListener("click",e=>{e.stopPropagation(); selectCity(l, el);});
+      pins.appendChild(el);
+    });
+  }
   const im=$("#pan img");
   const onImg=()=>{
     const wrap=$("#mapwrap").getBoundingClientRect();
@@ -592,7 +667,7 @@ function findWiki(name, en){
 }
 function openModal(o){
   const mask=$("#modal-mask"), modal=$("#modal");
-  const tagMap={landmark:"地标",tavern:"酒馆/据点",danger:"危险区",secret:"机密",ward:"区域"};
+  const tagMap={landmark:"地标",tavern:"酒馆/据点",danger:"危险区",secret:"机密",ward:"区域",city:"城镇/聚落"};
   const mini=findMini(o.name,o.en), wiki=findWiki(o.name,o.en);
   let h=`<div class="m-head"><div><h2>${o.name}</h2><div class="sub">${o.en||""}</div></div><button class="m-close" id="m-close">✕</button></div>`;
   h+=`<div class="m-tags"><span class="tag">${tagMap[o.t]||"地点"}</span></div>`;
