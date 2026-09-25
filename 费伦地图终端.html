@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>费伦地图终端 // FAERÛN MAP TERMINAL</title>
+<style>
+:root{
+  --bg:#0B0F14; --panel:#11161D; --panel2:#0E1319; --line:#24303D;
+  --amber:#F0B450; --teal:#4CC3A2; --red:#E5484D; --blue:#6E93B8; --dim:#8FA3C8;
+  --text:#C9D4E0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:ui-monospace,'Cascadia Mono','Sarasa Mono SC','Noto Sans SC','PingFang SC',monospace;
+  font-size:14px; overflow:hidden;
+}
+body::after{ /* 扫描线氛围 */
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:99;
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px);
+}
+#app{display:flex; flex-direction:column; height:100vh}
+/* ── 顶栏 ── */
+header{
+  display:flex; align-items:center; gap:14px; padding:8px 14px;
+  border-bottom:1px solid var(--line); background:var(--panel2); flex-wrap:wrap;
+}
+header .logo{color:var(--amber); font-weight:bold; letter-spacing:1px; white-space:nowrap}
+header .logo small{color:var(--dim); font-weight:normal}
+nav{display:flex; gap:6px; margin-left:4px}
+nav button{
+  background:transparent; border:1px solid var(--line); color:var(--dim);
+  font:inherit; padding:4px 14px; cursor:pointer; letter-spacing:1px;
+}
+nav button.active{border-color:var(--amber); color:var(--amber)}
+nav button:hover{color:var(--text)}
+header .spacer{flex:1}
+/* 搜索 */
+.search{position:relative}
+.search input{
+  width:200px; background:var(--bg); border:1px solid var(--line); color:var(--text);
+  font:inherit; padding:5px 8px; outline:none;
+}
+.search input:focus{border-color:var(--amber)}
+.sugs{
+  display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:60;
+  background:var(--panel); border:1px solid var(--line); max-height:320px; overflow-y:auto;
+}
+.sugs .item{padding:5px 9px; cursor:pointer; line-height:1.4}
+.sugs .item:hover{background:#161E27; color:var(--amber)}
+.sugs .item .en{color:var(--dim); font-size:11px; margin-left:6px}
+header .clock{color:var(--dim); font-size:12px; white-space:nowrap}
+/* ── 主体 ── */
+main{flex:1; display:flex; min-height:0}
+.mapwrap{flex:1; position:relative; background:#070A0E; min-width:0}
+.mapview{position:absolute; inset:0; overflow:hidden; cursor:grab}
+.mapview.drag{cursor:grabbing}
+.pan{position:absolute; left:0; top:0; transform-origin:0 0}
+.pan img{display:block; max-width:none; user-select:none; -webkit-user-drag:none}
+.pins{position:absolute; left:0; top:0; width:100%; height:100%}
+.pin{
+  position:absolute; transform:translate(-50%,-50%) scale(var(--inv,1)); cursor:pointer;
+  width:22px; height:22px; border-radius:50%;
+  background:rgba(11,15,20,.85); border:1.5px solid var(--amber); color:var(--amber);
+  font-size:11px; display:flex; align-items:center; justify-content:center;
+  transition:box-shadow .15s, background .15s;
+  pointer-events:auto;
+}
+.pin:hover{background:var(--amber); color:#000}
+.pin.sel{background:var(--amber); color:#000; box-shadow:0 0 0 4px rgba(240,180,80,.3), 0 0 18px rgba(240,180,80,.7)}
+.pin.tavern{border-color:var(--teal); color:var(--teal)}
+.pin.tavern:hover,.pin.tavern.sel{background:var(--teal); color:#000}
+.pin.secret{border-color:var(--red); color:var(--red); border-style:dashed}
+.pin.secret:hover,.pin.secret.sel{background:var(--red); color:#000}
+.pin.star{
+  width:22px; height:22px; font-size:14px; border-width:2px;
+  background:rgba(240,180,80,.18);
+}
+.pin.star:hover,.pin.star.sel{background:var(--amber); color:#000}
+.plabel{
+  position:absolute; transform:translate(-50%,8px) scale(var(--inv,1));
+  pointer-events:none; color:var(--amber); font-size:11px;
+  text-shadow:0 0 4px #000, 0 1px 2px #000; white-space:nowrap; letter-spacing:1px;
+}
+.dlabel{
+  position:absolute; transform:translate(-50%,-50%) scale(var(--inv,1)); pointer-events:none;
+  color:rgba(240,180,80,.85); font-size:12px; letter-spacing:3px;
+  text-shadow:0 0 6px rgba(0,0,0,.9), 0 0 2px #000; white-space:nowrap;
+}
+.dlabel small{display:block; text-align:center; font-size:10px; color:var(--dim); letter-spacing:1px}
+.zoombar{
+  position:absolute; right:12px; bottom:12px; display:flex; gap:6px; z-index:5;
+}
+.zoombar button{
+  background:var(--panel); border:1px solid var(--line); color:var(--text);
+  font:inherit; width:32px; height:28px; cursor:pointer;
+}
+.zoombar button:hover{border-color:var(--amber); color:var(--amber)}
+.hint{
+  position:absolute; left:12px; bottom:12px; color:var(--dim); font-size:11px; z-index:5;
+  background:rgba(11,15,20,.7); padding:4px 8px; border:1px solid var(--line);
+}
+/* 小地图视图：返回按钮 */
+.backbar{position:absolute; right:12px; top:12px; z-index:6; display:flex; gap:8px}
+.backbar button{
+  background:rgba(17,22,29,.92); border:1px solid var(--amber); color:var(--amber);
+  font:inherit; font-size:12px; letter-spacing:1px; padding:5px 12px; cursor:pointer;
+}
+.backbar button:hover{background:var(--amber); color:#000}
+.viewname{
+  position:absolute; left:12px; top:12px; z-index:5; color:var(--amber);
+  font-size:12px; letter-spacing:2px; background:rgba(11,15,20,.7);
+  padding:5px 10px; border:1px solid var(--line);
+}
+/* ── 弹窗 ── */
+.modal-mask{
+  position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.55);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-mask.open{display:flex}
+.modal{
+  background:var(--panel); border:1px solid var(--amber); border-radius:10px;
+  width:min(600px,94%); max-height:82vh; overflow-y:auto; padding:16px 18px;
+  box-shadow:0 12px 48px rgba(0,0,0,.6);
+}
+.modal .m-head{display:flex; align-items:flex-start; gap:10px}
+.modal .m-head>div{flex:1}
+.modal h2{color:var(--amber); font-size:18px; letter-spacing:1px}
+.modal .sub{color:var(--dim); font-size:12px; letter-spacing:1px; margin-top:2px}
+.modal .m-close{
+  background:transparent; border:1px solid var(--line); color:var(--dim);
+  font:inherit; width:28px; height:28px; cursor:pointer; flex:none;
+}
+.modal .m-close:hover{border-color:var(--amber); color:var(--amber)}
+.modal .m-tags{margin:8px 0 0}
+.modal .tag{
+  display:inline-block; border:1px solid var(--line); color:var(--teal);
+  font-size:11px; padding:1px 8px; margin:0 6px 6px 0;
+}
+.modal .desc{line-height:1.8; white-space:pre-wrap; margin-top:6px}
+.modal hr{border:none; border-top:1px solid var(--line); margin:12px 0}
+.modal .m-acts{margin-top:12px}
+.modal .m-btn{
+  display:inline-flex; align-items:center; gap:7px;
+  background:linear-gradient(180deg,#1a2432,#11161d); border:1px solid var(--amber);
+  color:var(--amber); font:inherit; font-size:13px; letter-spacing:1px;
+  padding:8px 16px; cursor:pointer;
+}
+.modal .m-btn:hover{background:var(--amber); color:#000}
+.modal .m-links{font-size:12px; line-height:2}
+.modal .m-links .lk-label{color:var(--dim)}
+.modal .m-links a{color:var(--teal); text-decoration:none; border-bottom:1px dotted rgba(76,195,162,.5)}
+.modal .m-links a:hover{color:var(--amber); border-color:var(--amber)}
+.modal .m-sec{color:var(--amber); font-size:12px; letter-spacing:2px; margin:12px 0 6px}
+.modal .m-item{
+  display:flex; align-items:center; gap:10px; padding:6px 8px; border:1px solid transparent;
+}
+.modal .m-item:hover{border-color:var(--line); background:#161E27}
+.modal .m-item .mi-name{flex:1}
+.modal .m-item .mi-name small{color:var(--dim); margin-left:6px}
+.modal .m-item button{
+  background:transparent; border:1px solid var(--line); color:var(--dim);
+  font:inherit; font-size:11px; padding:3px 12px; cursor:pointer;
+}
+.modal .m-item button:hover{border-color:var(--amber); color:var(--amber)}
+/* 底栏 */
+footer{
+  display:flex; gap:18px; padding:5px 14px; border-top:1px solid var(--line);
+  background:var(--panel2); color:var(--dim); font-size:11px; letter-spacing:1px; flex-wrap:wrap;
+}
+footer .ok{color:var(--teal)}
+::-webkit-scrollbar{width:8px} ::-webkit-scrollbar-thumb{background:#263240} ::-webkit-scrollbar-track{background:transparent}
+@media (max-width:760px){ .search input{width:130px} header .clock{display:none} }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <span class="logo">费伦地图终端 <small>// FAERÛN MAP TERMINAL v2.0</small></span>
+    <nav>
+      <button data-tab="fr" class="active">费伦全域</button>
+      <button id="atlas-btn">图集</button>
+    </nav>
+    <span class="spacer"></span>
+    <div class="search"><input id="q" placeholder="搜索地点…" autocomplete="off"><div class="sugs" id="sugs"></div></div>
+    <span class="clock" id="clock"></span>
+  </header>
+  <main>
+    <div class="mapwrap" id="mapwrap"></div>
+  </main>
+  <footer>
+    <span class="ok">● LINK</span><span id="ftab">FR:// Faerûn · Sword Coast</span>
+    <span>底图 Mike Schley · 地点数据 aidedd.org · 点击地点弹窗查看详情与小地图</span>
+  </footer>
+</div>
+<div class="modal-mask" id="modal-mask"><div class="modal" id="modal"></div></div>
+<script src="https://cdn.jsdelivr.net/gh/aiuewh/card@main/_dataF.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aiuewh/card@main/name_zh.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aiuewh/card@main/faerun_zh.js"></script>
+
+<script>
+/* ══════════════ 资源与数据源 ══════════════ */
+const ASSET="https://cdn.jsdelivr.net/gh/aiuewh/card@main/";
+const U=p=>ASSET+p.split("/").map(encodeURIComponent).join("/");
+const WIKI="https://forgottenrealms.fandom.com/wiki/";
+const WIKIFP="https://forgottenrealms.fandom.com/wiki/Special:FilePath/";
+const ATLAS=[
+  ["AideDD 交互图集（费伦全域 · Schley 底图）","https://www.aidedd.org/atlas/index.php?map=F&l=0"],
+  ["Kassoon 社区剑湾交互地图","https://www.kassoon.com/dnd/map/"],
+  ["Mike Schley 官方绘师作品集","https://mikeschley.com/z-wizards.html"],
+  ["遗忘国度 Wiki（英文社区百科）","https://forgottenrealms.fandom.com/"],
+];
+
+/* 小地图注册表：view=内置交互视图；img=本地图集图片（费伦地图/ 目录） */
+const MINIMAPS=[
+  {id:"nwn",    zh:"无冬城", en:["Neverwinter"], view:"nwn", grp:"city", note:"交互视图 · Guide to Neverwinter 图例"},
+  {id:"wdmap",  zh:"深水城", en:["Waterdeep"],   view:"wdmap", grp:"city", note:"交互视图 · WDH 官方全城图"},
+  {id:"baldurs_gate", zh:"博德之门", en:["Baldur's Gate"], img:"费伦地图/baldurs_gate.jpg", grp:"city", note:"官方 · Schley《Descent into Avernus》(2019)"},
+  {id:"elturel",      zh:"埃尔托瑞尔", en:["Elturel"], img:"费伦地图/elturel.jpg", grp:"city", note:"官方 · 坠入阿弗纳斯 城市图"},
+  {id:"luskan",       zh:"路斯坎", en:["Luskan"], img:"费伦地图/luskan.jpg", grp:"city", note:"民间 · 千帆之城精品图"},
+  {id:"silverymoon",  zh:"银月城", en:["Silverymoon"], img:"费伦地图/silverymoon.jpg", grp:"city", note:"民间 · 插画风格全城图"},
+  {id:"phandalin",    zh:"凡达林", en:["Phandalin"], img:"费伦地图/phandalin.jpg", grp:"city", note:"官方 · Schley《失落矿坑》(2014)"},
+  {id:"port_nyanzaru",zh:"纳德港", en:["Port Nyanzaru"], img:"费伦地图/port_nyanzaru.jpg", grp:"city", note:"官方风格 · 商业亲王之城分区图"},
+  {id:"targos",       zh:"塔尔戈斯", en:["Targos"], img:"费伦地图/targos.jpg", grp:"city", note:"官方 ·《Rime of the Frostmaiden》城镇图"},
+  {id:"nightstone",   zh:"夜石村", en:["Nightstone"], img:"费伦地图/nightstone.jpg", grp:"city", note:"官方 ·《风暴君王之雷霆》开篇村庄"},
+  {id:"gauntlgrym",   zh:"冈特格里姆", en:["Gauntlgrym"], img:"费伦地图/gauntlgrym.jpg", grp:"city", note:"民间 · 矮人古都上层城区"},
+  {id:"icewind_dale", zh:"冰风谷 · 十镇", en:["Icewind Dale","Ten-Towns","Ten Towns"], img:"费伦地图/icewind_dale.jpg", grp:"region", note:"官方 ·《Rime of the Frostmaiden》区域图"},
+  {id:"chult",        zh:"楚尔特", en:["Chult"], img:"费伦地图/chult.jpg", grp:"region", note:"官方 ·《湮灭之墓》区域图"},
+  {id:"north_region", zh:"北地 · 蛮荒边疆", en:["The North","Savage Frontier","Luruar"], img:"费伦地图/north_region.jpg", grp:"region", note:"官方 · SCAG / 拉瑞尔银手探索者套装"},
+  {id:"sword_coast",  zh:"剑海岸", en:["Sword Coast"], img:"费伦地图/sword_coast.jpg", grp:"region", note:"官方 ·《剑湾冒险指南》总图"},
+  {id:"skullport",    zh:"骷髅港", en:["Skullport"], img:"费伦地图/skullport.jpg", grp:"dungeon", note:"民间 · DotMM 第三层超清重制"},
+  {id:"undermountain3", zh:"地下山脉 · 第三层", en:["Undermountain","Dungeon of the Mad Mage"], img:"费伦地图/undermountain3.jpg", grp:"dungeon", note:"官方 ·《疯法师的地城》Sargauth 层"},
+  {id:"sword_coast_north_fan", zh:"无冬城周边（民间）", en:["Sword Coast North","Neverwinter Region"], img:"费伦地图/sword_coast_north_fan.jpg", grp:"region", note:"民间 · 失落矿坑全地点六边形大图"},
+  {id:"faerun_official", zh:"费伦全域（官方海报）", en:[], img:"费伦地图/faerun_official.jpg", grp:"world", note:"官方 ·《风暴君王之雷霆》海报图"},
+  {id:"faerun_west",     zh:"费伦西部（民间超清）", en:[], img:"费伦地图/faerun_west.jpg", grp:"world", note:"民间 · u/DubiousTactics 精绘"},
+  {id:"faerun_fan",      zh:"费伦大陆（民间风格化）", en:[], img:"费伦地图/faerun_fan.jpg", grp:"world", note:"民间 · Djeksnyek 风格再创作"},
+];
+
+/* Wiki 专题地图（文件名直链遗忘国度 Wiki，中文名对齐 name_zh.js 词典） */
+const WIKI_MAPS={
+  waterdeep:{z:"深水城",w:"Waterdeep",f:["Waterdeep_map-5e.jpg","EOTB-map-of-waterdeep.jpg","Map_of_Waterdeep_-_Lords_of_Waterdeep.jpg"]},
+  neverwinter:{z:"无冬城",w:"Neverwinter",f:["Cold_Steel_and_Secrets_map.png"]},
+  baldurs_gate:{z:"博德之门",w:"Baldur's Gate",f:["Baldur's_gate_map-5e.jpg","Baldur's-Gate-city-map.png"]},
+  candlekeep:{z:"烛堡",w:"Candlekeep",f:["CandlekeepMap1489.png","CandlekeepMap.jpg","Candlekeep_map_-_Candlekeep_Mysteries.jpg"]},
+  luskan:{z:"路斯坎",w:"Luskan",f:["Luskan_map.jpg"]},
+  silverymoon:{z:"银月城",w:"Silverymoon",f:["Silverymoon_the_Legacy_map.png","Silverymoon_map.jpg","Silverymoon_Map_-_Forgotten_Realms_Atlas.png"]},
+  elturel:{z:"埃尔托瑞尔",w:"Elturel",f:["Elturel_map_DiA.jpg"]},
+  citadel_adbar:{z:"阿德巴堡垒",w:"Citadel Adbar",f:["ColdVale-MMwe-map.jpg"]},
+  gauntlgrym:{z:"冈特格里姆",w:"Gauntlgrym",f:["Gauntlygrym_map.jpg"]},
+  evereska:{z:"艾佛瑞斯卡",w:"Evereska",f:["Evereska_Map_In_1479.jpg"]},
+  everlund:{z:"埃弗伦德",w:"Everlund",f:["Everlund_map.jpg"]},
+  sundabar:{z:"桑德巴",w:"Sundabar",f:["Sundabar map.jpg"]},
+  port_llast:{z:"末港",w:"Port Llast",f:["PortMap.png"]},
+  daggerford:{z:"匕首滩",w:"Daggerford",f:["Daggerford map.png"]},
+  greenest:{z:"格林内斯特",w:"Greenest",f:["Greenest-map-5e.png"]},
+  athkatla:{z:"阿斯卡特拉",w:"Athkatla",f:["Amn map.jpg","Athkatla Volo's Map.png","Athkatla image map.png"]},
+  calimport:{z:"卡林港",w:"Calimport",f:["Calimport-AtlasMap.jpg","Servant of the Shard calimport map.png"]},
+  zazesspur:{z:"扎泽斯珀",w:"Zazesspur",f:["Zazesspur map.png"]},
+  saerloon:{z:"塞尔隆",w:"Saerloon",f:["Sembia map.jpg"]},
+  selgaunt:{z:"塞尔岗特",w:"Selgaunt",f:["Selgaunt City Map.png","Sembia map.jpg"]},
+  westgate:{z:"西门城",w:"Westgate",f:["Dragonmere map 3e.jpg","Dragonmere map 4e.jpg","Westgate map nwn.png"]},
+  zhentil_keep:{z:"珍提尔堡",w:"Zhentil Keep",f:["Map of Zhentil Keep - Robert Lazzaretti.jpg"]},
+  phlan:{z:"弗兰城",w:"Phlan",f:["Phlan map-2e.jpg"]},
+  hillsfar:{z:"希尔斯法",w:"Hillsfar",f:["Hillsfar-Map.JPG"]},
+  melvaunt:{z:"梅尔旺特",w:"Melvaunt",f:["Melvaunt Map.jpg"]},
+  myth_drannor:{z:"秘龙城",w:"Myth Drannor",f:["Mythdrannormap.jpg"]},
+  menzoberranzan:{z:"魔索布莱城",w:"Menzoberranzan",f:["Menzoberranzan map.JPG","Menzoberranzan map - City of Intrigue.png"]},
+  arabel:{z:"阿拉贝尔",w:"Arabel",f:["Arabel map.jpg","Bospir map.jpg"]},
+  icewind_dale:{z:"冰风谷",w:"Icewind Dale",f:["IWD HoW WMap.jpg","Icewind Dale RotF map.png","Icewind Dale map.png"]},
+  ten_towns:{z:"十镇",w:"Ten Towns",f:["Ten Towns map IWDT.jpg","Ten towns map-5e.jpg"]},
+  port_nyanzaru:{z:"纳德港",w:"Port Nyanzaru",f:["Port Nyanzaru Map.jpg"]},
+  chult:{z:"楚尔特",w:"Chult",f:["The Fanged Crown map chult.png"]},
+  mezro:{z:"梅佐",w:"Mezro",f:["Mezro map.png"]},
+};
+
+/* ══════════════ 无冬城数据（Guide to Neverwinter 图例） ══════════════ */
+const NWN = {
+  img: U("无冬城地图/guide_map_2.jpg"),
+  districts: [
+    {name:"保护者飞地", en:"Protector's Enclave", x:40, y:67, d:"城南核心区。聂弗梅尔政府的所在地：城堡Never、正义大厅、城中广场都在此。行政、法庭、官方委托的集散地。"},
+    {name:"黑湖区", en:"Blacklake District", x:36.5, y:23, d:"城西贵族区。蓝湖（Bluelake）倒映着新旧豪宅，旧王朝遗老与重建新贵在这里攀比。宅斗、假画、政治献金的故事都从这出。"},
+    {name:"塔楼区", en:"Tower District", x:67, y:27, d:"城东北旧王朝塔楼群。灾变后最惨的区，如今是半兽人佣兵与移民聚居地。斗篷塔废墟被帮派当山寨，塔下封着没人说得清的东西。"},
+    {name:"码头区", en:"Docks", x:10.5, y:48.5, d:"城南港湾区。渔船、商船与走私船挤在同一片泊位，搁浅巨兽酒馆是水手与线人的交易大厅。去剑湾各地的船班在此搭乘。"},
+    {name:"裂隙区", en:"Chasm District", x:69, y:61, d:"法术瘟疫撕开的空间裂谷，深不见底，边缘空间扭曲。疫变者聚居谷边，传闻深处有夺心魔主权会活动。聂弗梅尔悬赏填谷——勘测队接连失踪。"},
+  ],
+  locs: [
+    {id:1,  x:26.6, y:45.3, t:"landmark", name:"城堡Never", en:"Castle Never", d:"始建千年的古城主堡，火山灾变后废弃，内堡封闭。夜里流传前朝亡魂巡逻的传闻。地宫藏着旧王朝宝藏与「Never之剑」的传说——DM钩子：闹鬼夜巡委托。"},
+    {id:2,  x:22.4, y:57.1, t:"landmark", name:"正义大厅", en:"Hall of Justice", d:"政府中枢+法庭+提尔圣所三合一。聂弗梅尔在此办公，悬赏单钉在门廊。想见护国公，先过三道门房。"},
+    {id:3,  x:43.5, y:46.5, t:"landmark", name:"知识殿堂", en:"House of Knowledge", d:"欧格玛大神殿，火山喷发中倒塌的旧日奇观。学者与竖琴会在废墟里偷偷重建——遗迹深处仍有圣火余烬未灭。"},
+    {id:4,  x:12.5, y:54.5, t:"tavern",   name:"月石面具", en:"Moonstone Mask", d:"悬浮于城外海岸崖顶的奢侈酒馆，戴面具入场。剑湾权贵的密谈与猎艳场，高端社交场景的现成舞台。"},
+    {id:5,  x:7.5,  y:84.9, t:"tavern",   name:"渔夫浮馆", en:"Fisher's Float", d:"码头外的渔家酒馆，便宜、吵闹、消息灵。想打听船班与海况，先请一轮酒。"},
+    {id:6,  x:5.9,  y:15.3, t:"landmark", name:"海盗天堡", en:"Pirates' Skyhold", d:"近海岩岛上的海盗要塞，剑湾航线的梦魇。官方嘴上谴责、私下默许——直到有人劫了不该劫的船。DM钩子：出海战役的开局舞台。"},
+    {id:7,  x:13.7, y:45.5, t:"tavern",   name:"搁浅巨兽", en:"Beached Leviathan", d:"招牌是一条巨鲸骨架的码头大酒馆。水手、佣兵、线人的交易大厅——「在无冬城想知道海上的一切，先问巨兽」。"},
+    {id:8,  x:16.3, y:43.5, t:"tavern",   name:"浮木酒馆", en:"Driftwood Tavern", d:"码头区干净体面的小酒馆，冒险者常用的落脚点。房钱公道，老板娘对付费问题一律装聋。"},
+    {id:9,  x:17.6, y:57.9, t:"landmark", name:"塔玛伦商馆", en:"Tarmalune Trade House", d:"跨海商号塔玛伦的深水代理行，奇货与外汇的集散点。想出手异域赃物或买稀缺补给，从这里开始。"},
+    {id:10, x:47.7, y:18.3, t:"landmark", name:"月之碎片", en:"Shard of the Moon", d:"塞露涅信仰的圣所：一块散发柔光的月石碎片立于庭中。月圆之夜的祈祷会在湖面映出异象——神术施法者的庇护所。"},
+    {id:11, x:76.6, y:28.3, t:"landmark", name:"斗篷塔", en:"Cloak Tower", d:"旧日法师塔的残骸，如今被半兽人帮派当山寨用。塔下封着什么没人说得清——夜半塔区偶有紫火目击。"},
+    {id:12, x:60.3, y:21.7, t:"tavern",   name:"堕塔酒馆", en:"Fallen Tower", d:"倒塌法师塔改成的酒馆，半兽人佣兵的地盘。外乡人进去先买一轮，规矩简单直接。"},
+    {id:13, x:65.9, y:39.5, t:"landmark", name:"无冬河", en:"Neverwinter River", d:"受热诺火山余温加持，冬不结冰的河。河上渔火与贸易船昼夜不停——城市因它得名。"},
+    {id:14, x:74.9, y:56.7, t:"danger",   name:"封印裂隙", en:"Sealed Chasm", d:"官方最近用符文桩封了裂隙边缘——「封印」二字写得心虚。靠近会恶心迷路，谷底有光。"},
+    {id:15, x:31.6, y:28.3, t:"landmark", name:"蓝湖", en:"Bluelake", d:"黑湖区的心脏湖泊。清晨有天鹅，深夜有浮尸——取决于你问的是导游还是守备队。"},
+    {id:16, x:35.3, y:34.8, t:"landmark", name:"千面之屋", en:"House of a Thousand Faces", d:"戏班与易容师聚集的奇妙场馆。演员、间谍、逃犯在这里买同一张新脸。DM钩子：身份替换类剧情的天然枢纽。"},
+    {id:17, x:50.7, y:73.2, t:"danger",   name:"永亡墓地", en:"Neverdeath Graveyard", d:"全城最大的公共墓地，大灾变的万人冢所在。名字里写着这座城的死亡史——亡灵类剧情的首选舞台。"},
+  ],
+};
+
+/* ══════════════ 深水城数据（WDH Schley 全城图，坐标经网格校准） ══════════════ */
+const WDMAP = {
+  img: U("深水城地图/深水城官方地图_Schley.jpg"),
+  nw: 4643, nh: 6953,
+  districts: [
+    {name:"旷野区", en:"Field Ward", x:47.8, y:17.1, d:"城墙外的法外之地：贫民、难民与付不起城税的人。帮派征兵、瘟疫与道德题的发生地。"},
+    {name:"海区", en:"Sea Ward", x:32.2, y:32.3, d:"富人临海区，大神殿聚集地：月宫（塞露涅）、晨曦尖塔（拉山德）、贡德工坊神殿。治疗与复活服务的最高规格供给地。卡萨兰泰庄园在此。"},
+    {name:"北区", en:"North Ward", x:50.6, y:32.4, d:"旧贵族宅邸区：安静、绿荫、私兵巡逻。巨魔骸骨庄园与格拉洪德庄园都在此。假面舞会请柬从这寄出。"},
+    {name:"城堡区", en:"Castle Ward", x:45.6, y:48.6, d:"政治与魔法的心脏：深水城宫殿、黑杖塔、疲惫之门客栈（地下山脉入口）、守备队总部。官方委托从这里发出。"},
+    {name:"城中之城", en:"City of the Dead", x:61.7, y:51.2, d:"巨大的墓园公园：白天是散步绿地，夜里是亡灵剧情专业舞台。守墓人比你想的多。"},
+    {name:"贸易区", en:"Trades Ward", x:58.9, y:59.4, d:"商业动脉：全城最大露天市集「宽市」从早挤到晚。商会总部林立，扒手也最多——城市生存第一课。"},
+    {name:"码头区", en:"Dock Ward", x:50.0, y:69.7, d:"全城最乱也最有活力的区：酒馆、赌场、脚夫、走私客。珊娜萨帮与黑网的地盘犬牙交错。"},
+    {name:"南区", en:"Southern Ward", x:62.2, y:75.7, d:"中产与车马行：陆路贸易的终点站。驿站、货栈、工匠铺——租车马、雇商队、升级装备都来这。"},
+  ],
+  locs: [
+    {t:"tavern",   x:40.6, y:37.6, name:"擒神者", en:"The God Catcher", d:"一座被巨链缚住的石手雕塑，紧攥着一枚闪光宝珠——如今是有名的旅店。传说这只手曾在风暴中擒住神明。"},
+    {t:"tavern",   x:58.7, y:35.0, name:"剑舞少女", en:"The Swordmaiden", d:"北区边缘的旅店，招牌是一柄出鞘之剑。麦酒与传闻一样出名。"},
+    {t:"landmark", x:23.5, y:38.2, name:"被折辱的沙华鱼人", en:"The Sahuagin Humbled", d:"海堡悬崖上的巨型雕像：一位跪地被缚的沙华鱼人，纪念击退深海袭击者的古代之战。"},
+    {t:"tavern",   x:45.3, y:44.0, name:"大醉鬼", en:"The Great Drunkard", d:"城堡区的老牌酒馆，招牌是个东倒西歪的酒鬼。麦酒烈得能放倒半兽人。"},
+    {t:"landmark", x:29.8, y:45.5, name:"织梦女士", en:"The Lady Dreaming", d:"海崖边的沉思雕像：一位侧首入梦的女士。渔夫们出海前都来摸她的脚踝求平安。"},
+    {t:"landmark", x:44.0, y:53.6, name:"鹰人", en:"The Hawk Man", d:"城堡区南缘的鹰首战士雕像，目光锐利地扫过南下的商路。"},
+    {t:"landmark", x:30.5, y:57.2, name:"狮鹫", en:"The Griffon", d:"港区边缘展翅的狮鹫雕像，是水手们辨识港口的地标。"},
+    {t:"tavern",   x:53.9, y:64.0, name:"可敬骑士", en:"The Honorable Knight", d:"贸易区的佣兵最爱：盔甲招牌、烈酒与情报。墙上挂满历任老板猎杀的怪物头颅。"},
+    {t:"landmark", x:63.6, y:64.2, name:"商队庭院", en:"Caravan Court", d:"贸易区东缘的商队营地：货车、驮兽与各地商人云集，进城前的最后一站。"},
+    {t:"landmark", x:37.6, y:19.3, name:"英雄花园", en:"Heroes' Garden", d:"北区边缘的纪念花园：纪念保卫深水城的英雄们。安静的散步地，也是打听旧事的好地方。"},
+    {t:"landmark", x:42.7, y:41.2, name:"大市场", en:"The Market", d:"城堡区与北区之间的大集市广场：日用百货、生鲜食品与街头表演。比宽市更接地气。"},
+    {t:"landmark", x:61.6, y:58.4, name:"白牛庭院", en:"Court of the White Bull", d:"贸易区东缘的斗兽庭院：白牛在此角斗，赌客与看客云集。"},
+    {t:"landmark", x:53.7, y:59.2, name:"圣女广场", en:"Virgin's Square", d:"贸易区的小广场：喷泉、闲话与约会的去处。"},
+    {t:"landmark", x:59.2, y:40.1, name:"山冈庭院", en:"Hillock Court", d:"北区东缘的高地庭院，俯瞰城中之城与李克门。"},
+  ],
+};
+
+/* ══════════════ 框架 ══════════════ */
+const $=s=>document.querySelector(s);
+let TAB="fr", SEL=null, VIEW={x:0,y:0,s:1};
+let CUR_FIT={nw:7990,nh:5635,max:1.15,min:0.05};
+function clampS(s){return Math.min(CUR_FIT.max, Math.max(CUR_FIT.min, s))}
+function fitView(){
+  const wrap=$("#mapwrap").getBoundingClientRect();
+  const s=wrap.width/CUR_FIT.nw;
+  VIEW={x:(wrap.width-CUR_FIT.nw*s)/2, y:(wrap.height-CUR_FIT.nh*s)/2, s};
+  CUR_FIT.min=s*0.5;
+  applyView();
+}
+function focusOn(pfx, pfy){
+  const wrap=$("#mapwrap").getBoundingClientRect();
+  const s=Math.min(CUR_FIT.max, CUR_FIT.focusS || CUR_FIT.max*0.6);
+  VIEW.x=wrap.width/2 - pfx*CUR_FIT.nw*s;
+  VIEW.y=wrap.height/2 - pfy*CUR_FIT.nh*s;
+  VIEW.s=s; applyView();
+}
+function applyView(){
+  const p=$("#pan");
+  if(p) p.style.transform=`translate(${VIEW.x}px,${VIEW.y}px) scale(${VIEW.s})`;
+  const pins=$("#pins");
+  if(pins) pins.style.setProperty("--inv", (1/VIEW.s).toFixed(4));
+}
+let drag=null, wdDrag=null, JUST_PANNED=false, VB={x:0,y:0,w:1000,h:700};
+function applyVB(){const s=$("#svg"); if(s) s.setAttribute("viewBox",`${VB.x} ${VB.y} ${VB.w} ${VB.h}`)}
+function zhName(n){if(n==null)return n; const d=window.NAME_ZH||{}; const z=window.ZONE_ZH||{}; return d[n]||d[n.replace(/'/g,"’")]||d[n.replace(/’/g,"'")]||z[n]||n}
+window.addEventListener("mousemove",e=>{
+  if(drag){const mv=document.querySelector(".mapview"); if(mv){VIEW.x=e.clientX-drag.x;VIEW.y=e.clientY-drag.y;applyView()}}
+  if(wdDrag){
+    wdDrag.moved=true;
+    const svg=$("#svg"); if(svg){
+      const r=svg.getBoundingClientRect();
+      VB.x=wdDrag.vx-(e.clientX-wdDrag.x)*VB.w/r.width;
+      VB.y=wdDrag.vy-(e.clientY-wdDrag.y)*VB.h/r.height;
+      applyVB();
+    }
+  }
+});
+window.addEventListener("mouseup",()=>{
+  drag=null; const mv=document.querySelector(".mapview"); if(mv)mv.classList.remove("drag");
+  if(wdDrag){const svg=$("#svg"); if(svg)svg.classList.remove("panning");
+    if(wdDrag.moved){JUST_PANNED=true; setTimeout(()=>JUST_PANNED=false,60)}
+    wdDrag=null}
+});
+function bindMapEvents(){
+  const mv=$("#mv");
+  mv.addEventListener("mousedown",e=>{drag={x:e.clientX-VIEW.x,y:e.clientY-VIEW.y};mv.classList.add("drag")});
+  mv.addEventListener("wheel",e=>{
+    e.preventDefault();
+    const r=mv.getBoundingClientRect();
+    zoomAt(e.clientX-r.left, e.clientY-r.top, e.deltaY<0?1.25:1/1.25);
+  },{passive:false});
+  mv.addEventListener("dblclick",e=>{
+    e.preventDefault();
+    const r=mv.getBoundingClientRect();
+    zoomAt(e.clientX-r.left, e.clientY-r.top, 1.7);
+  });
+  $("#zo").onclick=()=>{const r=$("#mapwrap").getBoundingClientRect(); zoomAt(r.width/2,r.height/2,1.35)};
+  $("#zo2").onclick=()=>{const r=$("#mapwrap").getBoundingClientRect(); zoomAt(r.width/2,r.height/2,1/1.35)};
+  $("#zr").onclick=fitView;
+}
+function zoomAt(mx,my,f){
+  const ns=clampS(VIEW.s*f);
+  VIEW.x=mx-(mx-VIEW.x)*(ns/VIEW.s); VIEW.y=my-(my-VIEW.y)*(ns/VIEW.s); VIEW.s=ns; applyView();
+}
+function stripHtml(s){return String(s||"").replace(/<%>/g,"【剧透】").replace(/<\/?>/g,"").replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/\s+/g," ").trim()}
+
+/* ── 返回钮 + 视图名（小地图视图通用） ── */
+function addBackBar(name){
+  const wrap=$("#mapwrap");
+  const bar=document.createElement("div"); bar.className="backbar";
+  const b=document.createElement("button"); b.textContent="← 返回全域";
+  b.addEventListener("click",()=>switchTab("fr"));
+  bar.appendChild(b); wrap.appendChild(bar);
+  const vn=document.createElement("div"); vn.className="viewname"; vn.textContent=name;
+  wrap.appendChild(vn);
+}
+
+/* ══════════════ 费伦全域（枢纽视图） ══════════════ */
+let FRINDEX=[]; // 搜索索引
+function buildFR(){
+  $("#mapwrap").innerHTML=`
+    <div class="mapview" id="mv"><div class="pan" id="pan">
+      <img src="${U("费伦交互地图底图_7990x5635.jpg")}" draggable="false">
+      <div class="pins" id="pins"></div>
+    </div></div>
+    <div class="zoombar"><button id="zo">＋</button><button id="zo2">－</button><button id="zr">⌂</button></div>
+    <div class="hint">滚轮/双击缩放 · 拖拽移动 · 点击地点弹窗查看详情，弹窗内可进入小地图</div>`;
+  const pins=$("#pins");
+  const W=7990, H=5635;
+  const STARS=new Set(["深水城","无冬城","博德之门","路斯坎","银月城","卡林港","阿斯卡特拉","扎泽斯珀","埃尔托瑞尔","烛堡","伊利亚博","西门城","普罗坎珀","鸦崖城","坦特拉斯","希尔斯法","弗兰城","珍提尔堡","穆尔马斯特","梅尔旺特","因纳里丝","明塔尔","奥姆佩塔","阿拉巴","穆兰","梅姆农","贝赞特","莱拉巴","卢斯切克","西姆巴","阿姆鲁萨","皮亚拉多斯","苏尔提姆","贝达斯克","米拉特马","纳德港","魔索布莱城","艾佛瑞斯卡","埃斯梅尔塔兰"]);
+  FRINDEX=[];
+  (window.groupe||[]).forEach((g,i)=>{
+    if(g.name==="GROUP"||g.x==null) return;
+    const en=stripHtml(g.name);
+    const zh=zhName(en);
+    const big=STARS.has(zh);
+    const el=document.createElement("div");
+    el.className="pin fr"+(big?" star":"");
+    el.style.left=(g.x/W*100)+"%"; el.style.top=(g.y/H*100)+"%";
+    el.style.borderColor=g.color||"#F0B450"; el.style.color=g.color||"#F0B450";
+    if(big){ el.textContent="★"; }
+    else { el.style.width="10px"; el.style.height="10px"; el.style.borderWidth="1px"; }
+    el.title=zh+(en!==zh?" · "+en:"");
+    el.dataset.n=zh; el.dataset.i=i;
+    el.addEventListener("click",e=>{e.stopPropagation(); selectFR(g, i, el);});
+    pins.appendChild(el);
+    if(big){
+      const lb=document.createElement("div");
+      lb.className="plabel"; lb.textContent=zh;
+      lb.style.left=(g.x/W*100)+"%"; lb.style.top=(g.y/H*100)+"%";
+      pins.appendChild(lb);
+    }
+    FRINDEX.push({name:zh, en, x:g.x/W*100, y:g.y/H*100, g, i});
+  });
+  CUR_FIT={nw:7990,nh:5635,max:1.15,min:0.05,focusS:0.7};
+  const im=$("#pan img");
+  const onImg=()=>fitView();
+  if(im.complete&&im.naturalWidth) onImg(); else im.addEventListener("load",onImg);
+  bindMapEvents();
+  (window.zones||[]).forEach((z,zi)=>{
+    const n=stripHtml(z.name);
+    FRINDEX.unshift({name:zhName(n)||n, en:n, zone:zi});
+  });
+}
+function selectFR(g, i, el){
+  const zh=window.FAERUN_ZH&&window.FAERUN_ZH[i];
+  const dispName=zhName(stripHtml(g.name));
+  if(SEL && SEL.name===dispName){ closeModal(); SEL=null; return }
+  SEL={name:dispName, en:stripHtml(g.name), t:"landmark", d:(zh||stripHtml(g.txt).slice(0,1500))||"（无描述）"};
+  document.querySelectorAll("#pins .pin").forEach(p=>p.classList.remove("sel"));
+  if(el)el.classList.add("sel");
+  openModal(SEL);
+}
+
+/* ══════════════ 无冬城视图 ══════════════ */
+function buildNWN(){
+  $("#mapwrap").innerHTML=`
+    <div class="mapview" id="mv"><div class="pan" id="pan">
+      <img src="${NWN.img}" draggable="false">
+      <div class="pins" id="pins"></div>
+    </div></div>
+    <div class="zoombar"><button id="zo">＋</button><button id="zo2">－</button><button id="zr">⌂</button></div>
+    <div class="hint">滚轮/双击缩放 · 拖拽移动 · 编号为 Guide to Neverwinter 官方图例</div>`;
+  const pins=$("#pins");
+  NWN.districts.forEach(dt=>{
+    const el=document.createElement("div"); el.className="dlabel";
+    el.style.left=dt.x+"%"; el.style.top=dt.y+"%";
+    el.innerHTML=`${dt.name}<small>${dt.en}</small>`;
+    pins.appendChild(el);
+  });
+  NWN.locs.forEach(l=>{
+    const el=document.createElement("div");
+    el.className="pin"+(l.t==="tavern"?" tavern":l.t==="danger"||l.t==="secret"?" secret":"");
+    el.style.left=l.x+"%"; el.style.top=l.y+"%"; el.textContent=l.id;
+    el.dataset.id=l.id;
+    el.addEventListener("click",e=>{e.stopPropagation(); selectCity(l, el);});
+    pins.appendChild(el);
+  });
+  CUR_FIT={nw:3882,nh:3000,max:1.6,min:0.1,focusS:1.0};
+  const im=$("#pan img");
+  const onImg=()=>fitView();
+  if(im.complete&&im.naturalWidth) onImg(); else im.addEventListener("load",onImg);
+  bindMapEvents();
+  addBackBar("NWN:// 无冬城");
+}
+/* ══════════════ 深水城视图 ══════════════ */
+function buildWDMAP(){
+  $("#mapwrap").innerHTML=`
+    <div class="mapview" id="mv"><div class="pan" id="pan">
+      <img src="${WDMAP.img}" draggable="false">
+      <div class="pins" id="pins"></div>
+    </div></div>
+    <div class="zoombar"><button id="zo">＋</button><button id="zo2">－</button><button id="zr">⌂</button></div>
+    <div class="hint">滚轮/双击缩放 · 拖拽移动 · 底图为《龙裔之乱》官方全城图（Mike Schley 绘制）</div>`;
+  const pins=$("#pins");
+  const W=WDMAP.nw, H=WDMAP.nh;
+  WDMAP.districts.forEach(dt=>{
+    const el=document.createElement("div"); el.className="dlabel";
+    el.style.left=dt.x+"%"; el.style.top=dt.y+"%";
+    el.innerHTML=`${dt.name}<small>${dt.en}</small>`;
+    pins.appendChild(el);
+  });
+  WDMAP.locs.forEach(l=>{
+    const el=document.createElement("div");
+    el.className="pin"+(l.t==="tavern"?" tavern":l.t==="danger"||l.t==="secret"?" secret":"");
+    el.style.left=l.x+"%"; el.style.top=l.y+"%";
+    el.title=l.name;
+    el.addEventListener("click",e=>{e.stopPropagation(); selectCity(l, el);});
+    pins.appendChild(el);
+    const lb=document.createElement("div");
+    lb.className="plabel"; lb.textContent=l.name;
+    lb.style.left=l.x+"%"; lb.style.top=l.y+"%";
+    pins.appendChild(lb);
+  });
+  CUR_FIT={nw:W,nh:H,max:1.6,min:0.1,focusS:1.1};
+  const im=$("#pan img");
+  const onImg=()=>fitView();
+  if(im.complete&&im.naturalWidth) onImg(); else im.addEventListener("load",onImg);
+  bindMapEvents();
+  addBackBar("WD:// 深水城");
+}
+function selectCity(l, el){
+  if(SEL && SEL.name===l.name){ closeModal(); SEL=null; return }
+  SEL=l;
+  document.querySelectorAll("#pins .pin").forEach(p=>p.classList.remove("sel"));
+  if(el)el.classList.add("sel");
+  openModal(l);
+}
+
+/* ══════════════ 通用图片视图（本地小地图/全域图） ══════════════ */
+function buildIMG(m){
+  $("#mapwrap").innerHTML=`
+    <div class="mapview" id="mv"><div class="pan" id="pan">
+      <img src="${U(m.img)}" draggable="false">
+    </div></div>
+    <div class="zoombar"><button id="zo">＋</button><button id="zo2">－</button><button id="zr">⌂</button></div>
+    <div class="hint">${m.zh} · ${m.note||""} · 滚轮/双击缩放 · 拖拽移动</div>`;
+  addBackBar("MAP:// "+m.zh);
+  TAB="img"; SEL=null;
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  const im=$("#pan img");
+  const onImg=()=>{
+    const wrap=$("#mapwrap").getBoundingClientRect();
+    const s0=Math.min(wrap.width/im.naturalWidth, wrap.height/im.naturalHeight);
+    CUR_FIT={nw:im.naturalWidth, nh:im.naturalHeight, max:s0*4, min:s0*0.4, focusS:s0};
+    fitView();
+  };
+  im.addEventListener("error",()=>{
+    const hint=$("#mapwrap .hint");
+    if(hint) hint.innerHTML=`${m.zh} · 图片资源未能加载——可能尚未上传到图库，或 CDN 缓存未刷新（约12小时）。可先用「通用图集」外部链接。`;
+  });
+  if(im.complete&&im.naturalWidth) onImg(); else im.addEventListener("load",onImg);
+  bindMapEvents();
+  $("#ftab").textContent="MAP:// "+m.zh;
+}
+
+/* ══════════════ 弹窗 ══════════════ */
+function norm(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
+function findMini(name, en){
+  const keys=[norm(en), norm(name)].filter(Boolean);
+  if(!keys.length) return null;
+  return MINIMAPS.find(m=>m.en.some(e=>keys.includes(norm(e))) || keys.includes(norm(m.zh))) || null;
+}
+function findWiki(name, en){
+  const k=norm(en);
+  if(k && WIKI_MAPS[k]) return WIKI_MAPS[k];
+  for(const kk in WIKI_MAPS){ if(WIKI_MAPS[kk].z===name) return WIKI_MAPS[kk] }
+  return null;
+}
+function openModal(o){
+  const mask=$("#modal-mask"), modal=$("#modal");
+  const tagMap={landmark:"地标",tavern:"酒馆/据点",danger:"危险区",secret:"机密",ward:"区域"};
+  const mini=findMini(o.name,o.en), wiki=findWiki(o.name,o.en);
+  let h=`<div class="m-head"><div><h2>${o.name}</h2><div class="sub">${o.en||""}</div></div><button class="m-close" id="m-close">✕</button></div>`;
+  h+=`<div class="m-tags"><span class="tag">${tagMap[o.t]||"地点"}</span></div>`;
+  h+=`<div class="desc">${o.d||"（暂无描述）"}</div>`;
+  if(mini) h+=`<div class="m-acts"><button class="m-btn" id="m-enter">⬈ 进入小地图 · ${mini.zh}</button></div>`;
+  h+=`<hr><div class="m-links">`;
+  if(wiki){
+    h+=`<div><span class="lk-label">Wiki 词条：</span><a href="${WIKI+encodeURIComponent(wiki.w.replace(/ /g,"_"))}" target="_blank" rel="noopener">${wiki.z}</a></div>`;
+    if(wiki.f&&wiki.f.length) h+=`<div><span class="lk-label">Wiki 专题地图：</span>${wiki.f.map(f=>`<a href="${WIKIFP+encodeURIComponent(f)}" target="_blank" rel="noopener">${f}</a>`).join(" · ")}</div>`;
+  }else if(o.en){
+    h+=`<div><span class="lk-label">外部资源：</span><a href="${WIKI+encodeURIComponent(String(o.en).replace(/ /g,"_"))}" target="_blank" rel="noopener">在遗忘国度 Wiki 搜索此地点</a></div>`;
+  }
+  h+=`<div><span class="lk-label">通用图集：</span><a href="${ATLAS[0][1]}" target="_blank" rel="noopener">AideDD</a> · <a href="${ATLAS[1][1]}" target="_blank" rel="noopener">Kassoon</a> · <a href="#" id="m-atlas">本地图集</a></div>`;
+  h+=`</div>`;
+  modal.innerHTML=h;
+  mask.classList.add("open");
+  $("#m-close").addEventListener("click",closeModal);
+  const at=$("#m-atlas"); if(at)at.addEventListener("click",e=>{e.preventDefault(); openAtlas()});
+  const en=$("#m-enter"); if(en)en.addEventListener("click",()=>{closeModal(); enterMini(mini)});
+}
+function closeModal(){ $("#modal-mask").classList.remove("open") }
+$("#modal-mask").addEventListener("click",e=>{ if(e.target===$("#modal-mask")) closeModal() });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); closeAtlas() } });
+function enterMini(m){
+  SEL=null;
+  document.querySelectorAll("#pins .pin").forEach(p=>p.classList.remove("sel"));
+  if(m.view){ switchTab(m.view); return }
+  buildIMG(m);
+}
+
+/* ══════════════ 图集 ══════════════ */
+function openAtlas(){
+  const mask=$("#modal-mask"), modal=$("#modal");
+  const GRP={city:"城市小地图",region:"区域地图",dungeon:"地下城",world:"费伦全域"};
+  let h=`<div class="m-head"><div><h2>🗺 地图图集</h2><div class="sub">ATLAS · 本地图集与外部资源</div></div><button class="m-close" id="m-close">✕</button></div>`;
+  h+=`<div class="m-sec">交互视图</div>`;
+  MINIMAPS.filter(m=>m.view).forEach(m=>{
+    h+=`<div class="m-item"><span class="mi-name">${m.zh}<small>${m.note||""}</small></span><button data-view="${m.view}">进入</button></div>`;
+  });
+  ["region","city","dungeon","world"].forEach(g=>{
+    const list=MINIMAPS.filter(m=>m.grp===g&&m.img);
+    if(!list.length) return;
+    h+=`<div class="m-sec">${GRP[g]}</div>`;
+    list.forEach(m=>{
+      h+=`<div class="m-item"><span class="mi-name">${m.zh}<small>${m.note||""}</small></span><button data-img="${m.id}">查看</button></div>`;
+    });
+  });
+  h+=`<div class="m-sec">外部图集</div>`;
+  h+=`<div class="m-links">`+ATLAS.map(a=>`<div>▸ <a href="${a[1]}" target="_blank" rel="noopener">${a[0]}</a></div>`).join("")+`</div>`;
+  modal.innerHTML=h;
+  mask.classList.add("open");
+  $("#m-close").addEventListener("click",closeModal);
+  modal.querySelectorAll("button[data-view]").forEach(b=>b.addEventListener("click",()=>{closeModal(); switchTab(b.dataset.view)}));
+  modal.querySelectorAll("button[data-img]").forEach(b=>b.addEventListener("click",()=>{
+    const m=MINIMAPS.find(x=>x.id===b.dataset.img); if(!m) return;
+    closeModal(); enterMini(m);
+  }));
+}
+function closeAtlas(){ closeModal() }
+$("#atlas-btn").addEventListener("click",openAtlas);
+
+/* ══════════════ 搜索 ══════════════ */
+const q=$("#q"), sugs=$("#sugs");
+q.addEventListener("input",()=>{
+  const v=(q.value||"").trim().toLowerCase();
+  if(!v||TAB!=="fr"){ sugs.style.display="none"; if(TAB!=="fr"&&v) switchTab("fr"); }
+  if(!v){ return }
+  const hits=FRINDEX.filter(l=>l.name.toLowerCase().includes(v)||(l.en||"").toLowerCase().includes(v)).slice(0,10);
+  if(!hits.length){ sugs.innerHTML=`<div class="item">无匹配</div>`; sugs.style.display="block"; return }
+  sugs.innerHTML=hits.map((h,i)=>`<div class="item" data-i="${FRINDEX.indexOf(h)}">${h.name}<span class="en">${h.en||""}</span></div>`).join("");
+  sugs.style.display="block";
+  sugs.querySelectorAll(".item").forEach(it=>it.addEventListener("click",()=>{
+    const o=FRINDEX[+it.dataset.i];
+    sugs.style.display="none"; q.value="";
+    if(o.zone!=null){
+      const z=(window.zones||[])[o.zone];
+      SEL={name:o.name, en:o.en, t:"ward", d:(window.FAERUN_ZH&&window.FAERUN_ZH["z"+o.zone]||stripHtml(z.txt).slice(0,800))||"（无描述）"};
+      openModal(SEL); return;
+    }
+    focusOn(o.x/100, o.y/100);
+    const pin=[...document.querySelectorAll("#pins .pin")].find(p=>p.dataset.i==o.i);
+    document.querySelectorAll("#pins .pin").forEach(p=>p.classList.remove("sel"));
+    if(pin){ pin.classList.add("sel"); }
+    SEL={name:o.name, en:o.en, t:"landmark", d:(window.FAERUN_ZH&&window.FAERUN_ZH[o.i]||stripHtml(o.g.txt).slice(0,1500))||"（无描述）"};
+    openModal(SEL);
+  }));
+});
+document.addEventListener("click",e=>{ if(!e.target.closest(".search")) sugs.style.display="none" });
+
+/* ══════════════ 标签页 ══════════════ */
+function switchTab(t){
+  TAB=t; SEL=null; closeModal();
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  if(t==="nwn"){ buildNWN(); $("#ftab").textContent="NWN:// Neverwinter · Guide to Neverwinter" }
+  else if(t==="wdmap"){ buildWDMAP(); $("#ftab").textContent="WD:// Waterdeep · WDH Official Map" }
+  else { buildFR(); $("#ftab").textContent="FR:// Faerûn · Sword Coast" }
+}
+document.querySelectorAll("nav button[data-tab]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+
+/* 时钟氛围 */
+setInterval(()=>{
+  const d=new Date();
+  $("#clock").textContent=`FR 1493 DR · ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
+},1000);
+
+switchTab("fr");
+</script>
+</body>
+</html>
