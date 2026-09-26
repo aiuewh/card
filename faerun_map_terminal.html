@@ -55,7 +55,7 @@ header .clock{color:var(--dim); font-size:12px; white-space:nowrap}
 /* ── 主体 ── */
 main{flex:1; display:flex; min-height:0}
 .mapwrap{flex:1; position:relative; background:#070A0E; min-width:0}
-.mapview{position:absolute; inset:0; overflow:hidden; cursor:grab}
+.mapview{position:absolute; inset:0; overflow:hidden; cursor:grab; touch-action:none}
 .mapview.drag{cursor:grabbing}
 .pan{position:absolute; left:0; top:0; transform-origin:0 0}
 .pan img{display:block; max-width:none; user-select:none; -webkit-user-drag:none}
@@ -196,14 +196,99 @@ footer .ok{color:var(--teal)}
   </footer>
 </div>
 <div class="modal-mask" id="modal-mask"><div class="modal" id="modal"></div></div>
-<script src="https://cdn.jsdelivr.net/gh/aiuewh/card@main/_dataF.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/aiuewh/card@main/name_zh.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/aiuewh/card@main/faerun_zh.js"></script>
+<script>
+/* ══════════ 数据文件多镜像动态加载 ══════════
+   主域名时常不可达（尤其大陆网络），三个 jsDelivr 镜像按序回退；
+   文件加载成功但内容异常（坏更新/截断）也会切下一个镜像。 */
+(function(){
+  const DATA_REF="main";   /* 数据文件引用：main=跟随仓库最新；填 commit SHA 可锁版本 */
+  const MIRRORS=["https://cdn.jsdelivr.net/gh/aiuewh/card@"+DATA_REF+"/","https://testingcf.jsdelivr.net/gh/aiuewh/card@"+DATA_REF+"/","https://fastly.jsdelivr.net/gh/aiuewh/card@"+DATA_REF+"/"];
+  window.MIRRORS=MIRRORS;
+  const FILES=[
+    {file:"_dataF.js",   check:()=>Array.isArray(window.groupe)},
+    {file:"name_zh.js",  check:()=>window.NAME_ZH&&window.TERM_ZH},
+    {file:"faerun_zh.js",check:()=>window.ZONE_ZH&&window.FAERUN_ZH},
+  ];
+  const failed=[];
+  function showFail(){
+    let b=document.getElementById("data-fail-banner");
+    if(!b){
+      b=document.createElement("div"); b.id="data-fail-banner";
+      b.style.cssText="position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:99999;background:#3a1c1c;color:#ffd9d9;border:1px solid #a2455a;border-radius:8px;padding:10px 14px;font:13px/1.6 system-ui,sans-serif;max-width:92vw;box-shadow:0 4px 18px rgba(0,0,0,.5)";
+      b.innerHTML='<span id="dfb-text"></span><button style="margin-left:10px;cursor:pointer">重试</button>';
+      b.querySelector("button").onclick=()=>location.reload();
+      document.body.appendChild(b);
+    }
+    b.querySelector("#dfb-text").textContent="地图数据加载失败（所有镜像均不可达或内容异常）："+failed.join("、");
+  }
+  window.__DATA_READY=new Promise(resolve=>{
+    let pending=FILES.length;
+    FILES.forEach(spec=>{
+      let i=0;
+      (function tryNext(){
+        if(i>=MIRRORS.length){
+          failed.push(spec.file); showFail();
+          pending--; if(pending===0) resolve();
+          return;
+        }
+        const s=document.createElement("script");
+        s.src=MIRRORS[i]+spec.file;
+        const done=ok=>{
+          s.onload=s.onerror=null;
+          if(ok&&spec.check()){ pending--; if(pending===0) resolve(); }
+          else { i++; tryNext(); }
+        };
+        s.onload=()=>done(true);
+        s.onerror=()=>done(false);
+        document.head.appendChild(s);
+      })();
+    });
+  });
+})();
+</script>
 
 <script>
 /* ══════════════ 资源与数据源 ══════════════ */
-const ASSET="https://cdn.jsdelivr.net/gh/aiuewh/card@main/";
+/* 大体积图片（底图/城市图/图集）锁定 commit：不随 main 的坏更新变砖。
+   ⚠ 更换或新增图片文件后，需把 ASSET_REF 改成新 commit SHA 并推送。 */
+const ASSET_REF="8395e1cb133c50b3b2a05c7dcc9d4ce4f41236d4";
+const ASSET="https://cdn.jsdelivr.net/gh/aiuewh/card@"+ASSET_REF+"/";
 const U=p=>ASSET+p.split("/").map(encodeURIComponent).join("/");
+/* 图片镜像回退：只轮换 jsDelivr 域名、保持原 commit ref 不变；全部失败时给出醒目提示 */
+document.addEventListener("error",e=>{
+  const img=e.target;
+  if(!(img&&img.tagName==="IMG"))return;
+  if(!img.dataset.origHost){
+    const src=img.getAttribute("src")||"";
+    const m=/^https:\/\/(cdn|testingcf|fastly)\.jsdelivr\.net\/gh\/aiuewh\/card@([^/]+)\/(.*)$/.exec(src);
+    if(!m)return;
+    img.dataset.origHost=m[1]; img.dataset.origRef=m[2]; img.dataset.origRel=m[3];
+  }
+  const hosts=["cdn.jsdelivr.net","testingcf.jsdelivr.net","fastly.jsdelivr.net"];
+  let idx=hosts.indexOf(img.dataset.origHost)+1;
+  idx+= +(img.dataset.mirrorStep||0);
+  img.dataset.mirrorStep=+(img.dataset.mirrorStep||0)+1;
+  if(idx<hosts.length){
+    img.src="https://"+hosts[idx]+"/gh/aiuewh/card@"+img.dataset.origRef+"/"+img.dataset.origRel.split("/").map(encodeURIComponent).join("/");
+  }else if(!img.dataset.failShown){
+    img.dataset.failShown=1;
+    if(img.closest("#mv")){
+      const mv=img.closest(".mapview");
+      if(mv&&!mv.querySelector(".img-fail-tip")){
+        const tip=document.createElement("div");
+        tip.className="img-fail-tip";
+        tip.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:50;background:#3a1c1c;color:#ffd9d9;border:1px solid #a2455a;border-radius:8px;padding:12px 16px;font:14px/1.6 system-ui,sans-serif;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.5)";
+        tip.innerHTML="地图图片加载失败（所有镜像均不可达）<br><button style='margin-top:8px;cursor:pointer'>重新加载</button>";
+        tip.querySelector("button").onclick=()=>location.reload();
+        mv.appendChild(tip);
+      }
+    }else{
+      img.title="图片加载失败：所有镜像均不可达";
+      img.style.outline="2px dashed #a2455a";
+      img.style.minHeight="60px";
+    }
+  }
+},true);
 const WIKI="https://forgottenrealms.fandom.com/wiki/";
 const WIKIFP="https://forgottenrealms.fandom.com/wiki/Special:FilePath/";
 const ATLAS=[
@@ -616,10 +701,11 @@ function applyView(){
   if(pins) pins.style.setProperty("--inv", (1/VIEW.s).toFixed(4));
 }
 let drag=null, wdDrag=null, JUST_PANNED=false, VB={x:0,y:0,w:1000,h:700};
+/* 地图指针状态（顶层注册，视图重建不重复挂监听） */
+const PTRS=new Map(); let pinch=null, panningMoved=false;
 function applyVB(){const s=$("#svg"); if(s) s.setAttribute("viewBox",`${VB.x} ${VB.y} ${VB.w} ${VB.h}`)}
 function zhName(n){if(n==null)return n; const d=window.NAME_ZH||{}; const z=window.ZONE_ZH||{}; return d[n]||d[n.replace(/'/g,"’")]||d[n.replace(/’/g,"'")]||z[n]||n}
 window.addEventListener("mousemove",e=>{
-  if(drag){const mv=document.querySelector(".mapview"); if(mv){VIEW.x=e.clientX-drag.x;VIEW.y=e.clientY-drag.y;applyView()}}
   if(wdDrag){
     wdDrag.moved=true;
     const svg=$("#svg"); if(svg){
@@ -636,9 +722,55 @@ window.addEventListener("mouseup",()=>{
     if(wdDrag.moved){JUST_PANNED=true; setTimeout(()=>JUST_PANNED=false,60)}
     wdDrag=null}
 });
+/* 指针事件统一处理鼠标/触屏：单指拖拽平移，双指捏合缩放。
+   不用 setPointerCapture（它会把 click 重定向到容器，弄坏图钉点击），
+   改在 window 上跟踪 move/up，与原有 mousemove/mouseup 模式同构。 */
+window.addEventListener("pointermove",e=>{
+  if(!PTRS.has(e.pointerId))return;
+  PTRS.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const mv=document.querySelector(".mapview"); if(!mv)return;
+  if(PTRS.size===2&&pinch){
+    const [a,b]=[...PTRS.values()];
+    const r=mv.getBoundingClientRect();
+    const cx=(a.x+b.x)/2-r.left, cy=(a.y+b.y)/2-r.top;
+    const ns=clampS(pinch.s*(Math.hypot(a.x-b.x,a.y-b.y)||1)/pinch.d);
+    VIEW.s=ns;
+    VIEW.x=cx-(pinch.cx-r.left-pinch.vx)*(ns/pinch.s);
+    VIEW.y=cy-(pinch.cy-r.top-pinch.vy)*(ns/pinch.s);
+    panningMoved=true; applyView();
+  }else if(PTRS.size===1&&drag){
+    const nx=e.clientX-drag.x, ny=e.clientY-drag.y;
+    if(Math.abs(nx-VIEW.x)>3||Math.abs(ny-VIEW.y)>3){ drag.moved=true; panningMoved=true; }
+    VIEW.x=nx; VIEW.y=ny; applyView();
+  }
+});
+function endPtr(e){
+  if(!PTRS.has(e.pointerId))return;
+  PTRS.delete(e.pointerId);
+  if(PTRS.size<2) pinch=null;
+  if(PTRS.size===0){
+    if(panningMoved){ JUST_PANNED=true; setTimeout(()=>JUST_PANNED=false,80); panningMoved=false; }
+    drag=null; const mv=document.querySelector(".mapview"); if(mv)mv.classList.remove("drag");
+  }else if(PTRS.size===1){
+    const [p]=[...PTRS.values()];
+    drag={x:p.x-VIEW.x,y:p.y-VIEW.y,moved:true};
+  }
+}
+window.addEventListener("pointerup",endPtr);
+window.addEventListener("pointercancel",endPtr);
 function bindMapEvents(){
   const mv=$("#mv");
-  mv.addEventListener("mousedown",e=>{drag={x:e.clientX-VIEW.x,y:e.clientY-VIEW.y};mv.classList.add("drag")});
+  PTRS.clear(); pinch=null; panningMoved=false;
+  mv.addEventListener("pointerdown",e=>{
+    if(e.pointerType==="mouse"&&e.button!==0)return;
+    PTRS.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(PTRS.size===1){ drag={x:e.clientX-VIEW.x,y:e.clientY-VIEW.y,moved:false}; panningMoved=false; mv.classList.add("drag"); }
+    else if(PTRS.size===2){
+      drag=null;
+      const [a,b]=[...PTRS.values()];
+      pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1, cx:(a.x+b.x)/2, cy:(a.y+b.y)/2, s:VIEW.s, vx:VIEW.x, vy:VIEW.y};
+    }
+  });
   mv.addEventListener("wheel",e=>{
     e.preventDefault();
     const r=mv.getBoundingClientRect();
@@ -697,7 +829,7 @@ function buildFR(){
     else { el.style.width="10px"; el.style.height="10px"; el.style.borderWidth="1px"; }
     el.title=zh+(en!==zh?" · "+en:"");
     el.dataset.n=zh; el.dataset.i=i;
-    el.addEventListener("click",e=>{e.stopPropagation(); selectFR(g, i, el);});
+    el.addEventListener("click",e=>{e.stopPropagation(); if(JUST_PANNED)return; selectFR(g, i, el);});
     pins.appendChild(el);
     if(big){
       const lb=document.createElement("div");
@@ -748,7 +880,7 @@ function buildNWN(){
     el.className="pin"+(l.t==="tavern"?" tavern":l.t==="danger"||l.t==="secret"?" secret":"");
     el.style.left=l.x+"%"; el.style.top=l.y+"%"; el.textContent=l.id;
     el.dataset.id=l.id;
-    el.addEventListener("click",e=>{e.stopPropagation(); selectCity(l, el);});
+    el.addEventListener("click",e=>{e.stopPropagation(); if(JUST_PANNED)return; selectCity(l, el);});
     pins.appendChild(el);
   });
   CUR_FIT={nw:3882,nh:3000,max:1.6,min:0.1,focusS:1.0};
@@ -780,7 +912,7 @@ function buildWDMAP(){
     el.className="pin"+(l.t==="tavern"?" tavern":l.t==="danger"||l.t==="secret"?" secret":"");
     el.style.left=l.x+"%"; el.style.top=l.y+"%";
     el.title=l.name;
-    el.addEventListener("click",e=>{e.stopPropagation(); selectCity(l, el);});
+    el.addEventListener("click",e=>{e.stopPropagation(); if(JUST_PANNED)return; selectCity(l, el);});
     pins.appendChild(el);
     const lb=document.createElement("div");
     lb.className="plabel"; lb.textContent=l.name;
@@ -821,7 +953,7 @@ function buildIMG(m){
       el.className="pin"+(l.t==="tavern"?" tavern":l.t==="danger"||l.t==="secret"?" secret":"");
       el.style.left=l.x+"%"; el.style.top=l.y+"%";
       el.title=l.name;
-      el.addEventListener("click",e=>{e.stopPropagation(); selectCity(l, el);});
+      el.addEventListener("click",e=>{e.stopPropagation(); if(JUST_PANNED)return; selectCity(l, el);});
       pins.appendChild(el);
     });
   }
@@ -947,7 +1079,8 @@ q.addEventListener("input",()=>{
 document.addEventListener("click",e=>{ if(!e.target.closest(".search")) sugs.style.display="none" });
 
 /* ══════════════ 标签页 ══════════════ */
-function switchTab(t){
+async function switchTab(t){
+  await window.__DATA_READY;   /* 数据多镜像加载完成后再构建视图；失败时已有横幅提示 */
   TAB=t; SEL=null; closeModal();
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
   if(t==="nwn"){ buildNWN(); $("#ftab").textContent="NWN:// Neverwinter · Guide to Neverwinter" }
