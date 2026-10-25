@@ -1,0 +1,126 @@
+START desert_v02 colour=Dry paletteIndex=0
+  CreateMeshStrategy 13ms
+  PerturbStrategy 1667ms
+  ToolStrategy 1474ms
+  ToolStrategy 18428ms
+  CloudStrategy 17717ms
+  RenderStrategy 1852ms
+  RenderStrategy 430ms
+  RenderStrategy 1501ms
+DONE desert_v02 44348ms
+START tundra_v01 colour=Tundral paletteIndex=0
+  CreateMeshStrategy 0ms
+  PerturbStrategy 1083ms
+  CloudStrategy 14269ms
+  RenderStrategy 1465ms
+  RenderStrategy 466ms
+  RenderStrategy 1520ms
+DONE tundra_v01 19917ms
+START tundra_v02 colour=Alpine paletteIndex=0
+  CreateMeshStrategy 5ms
+  PerturbStrategy 1707ms
+  CloudStrategy 17027ms
+  RenderStrategy 1628ms
+  RenderStrategy 495ms
+  RenderStrategy 1473ms
+DONE tundra_v02 23412ms
+START tropical_v01 colour=Tropical paletteIndex=0
+  CreateMeshStrategy 5ms
+  PerturbStrategy 1036ms
+  CloudStrategy 13718ms
+  RenderStrategy 1652ms
+  RenderStrategy 425ms
+  RenderStrategy 1574ms
+DONE tropical_v01 19539ms
+START tropical_v02 colour=Wetlands paletteIndex=0
+  CreateMeshStrategy 1ms
+  PerturbStrategy 1795ms
+  CloudStrategy 13109ms
+  RenderStrategy 1533ms
+  RenderStrategy 449ms
+  RenderStrategy 1599ms
+DONE tropical_v02 19893ms
+START molten_v01 colour=Volcanic paletteIndex=0
+  CreateMeshStrategy 0ms
+  PerturbStrategy 1017ms
+  ToolStrategy 11352ms
+  ToolStrategy 12377ms
+  RenderStrategy 1474ms
+DONE molten_v01 26663ms
+START molten_v02 colour=Volcanic paletteIndex=0
+  CreateMeshStrategy 0ms
+  PerturbStrategy 1965ms
+  ToolStrategy 7573ms
+  ToolStrategy 13872ms
+  RenderStrategy 1479ms
+DONE molten_v02 25322ms
+START toxic_v01 colour=Venusian paletteIndex=0
+  CreateMeshStrategy 0ms
+  CloudStrategy 12834ms
+  RenderStrategy 569ms
+DONE toxic_v01 13737ms
+START toxic_v02 colour=Venusian paletteIndex=4
+  CreateMeshStrategy 1ms
+  CloudStrategy 12706ms
+  RenderStrategy 510ms
+DONE toxic_v02 13536ms
+START barren_v01 colour=Martian paletteIndex=0
+  CreateMeshStrategy 1ms
+  PerturbStrategy 1001ms
+  ToolStrategy 9551ms
+  RenderStrategy 1464ms
+DONE barren_v01 12389ms
+START barren_v02 colour=Rock paletteIndex=0
+  CreateMeshStrategy 1ms
+  PerturbStrategy 1638ms
+  ToolStrategy 20993ms
+  RenderStrategy 1536ms
+DONE barren_v02 24510ms
+START gas_giant_v01 colour=Gas Giant paletteIndex=0
+  CreateMeshStrategy 4ms
+  CloudStrategy 19338ms
+  RenderStrategy 453ms
+DONE gas_giant_v01 20047ms
+START gas_giant_v02 colour=Gas Giant paletteIndex=4
+  CreateMeshStrategy 3ms
+  CloudStrategy 28177ms
+  RenderStrategy 510ms
+DONE gas_giant_v02 28956ms
+START ice_giant_v01 colour=Gas Giant paletteIndex=5
+  CreateMeshStrategy 3ms
+  CloudStrategy 19697ms
+  RenderStrategy 512ms
+DONE ice_giant_v01 20470ms
+START ice_giant_v02 colour=Gas Giant paletteIndex=8
+  CreateMeshStrategy 3ms
+  CloudStrategy 27661ms
+  RenderStrategy 442ms
+DONE ice_giant_v02 28384ms
+START frozen_v01 colour=Ice paletteIndex=0
+  CreateMeshStrategy 3ms
+  PerturbStrategy 1121ms
+  ToolStrategy 816ms
+  ToolStrategy 16186ms
+  RenderStrategy 1463ms
+DONE frozen_v01 19971ms
+START frozen_v02 colour=Ice paletteIndex=0
+  CreateMeshStrategy 1ms
+  PerturbStrategy 1976ms
+  ToolStrategy 676ms
+  ToolStrategy 5181ms
+  RenderStrategy 1550ms
+DONE frozen_v02 9743ms
+START frozen_dwarf_v01 colour=Ice paletteIndex=0
+  CreateMeshStrategy 4ms
+  PerturbStrategy 771ms
+  ToolStrategy 6889ms
+  RenderStrategy 1465ms
+DONE frozen_dwarf_v01 9500ms
+START frozen_dwarf_v02 colour=Ice paletteIndex=0
+  CreateMeshStrategy 1ms
+  PerturbStrategy 1374ms
+  ToolStrategy 1379ms
+  ToolStrategy 29011ms
+  RenderStrategy 1550ms
+DONE frozen_dwarf_v02 33738ms
+BATCH COMPLETE

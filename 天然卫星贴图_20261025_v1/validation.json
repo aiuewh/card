@@ -1,0 +1,93 @@
+{
+  "imageChecks": [
+    {
+      "id": "moon_silver_crater",
+      "size": [
+        2048,
+        1024
+      ],
+      "opaque": true,
+      "standardDeviation": 23.069,
+      "seamMean": 0.617,
+      "adjacentMean": 0.617,
+      "seamRatio": 1.0
+    },
+    {
+      "id": "moon_basalt_maria",
+      "size": [
+        2048,
+        1024
+      ],
+      "opaque": true,
+      "standardDeviation": 26.121,
+      "seamMean": 0.308,
+      "adjacentMean": 0.32,
+      "seamRatio": 0.962
+    },
+    {
+      "id": "moon_rust_rock",
+      "size": [
+        2048,
+        1024
+      ],
+      "opaque": true,
+      "standardDeviation": 43.999,
+      "seamMean": 0.392,
+      "adjacentMean": 0.406,
+      "seamRatio": 0.966
+    },
+    {
+      "id": "moon_fractured_ice",
+      "size": [
+        2048,
+        1024
+      ],
+      "opaque": true,
+      "standardDeviation": 32.959,
+      "seamMean": 0.406,
+      "adjacentMean": 0.437,
+      "seamRatio": 0.929
+    },
+    {
+      "id": "moon_ancient_dirtyice",
+      "size": [
+        2048,
+        1024
+      ],
+      "opaque": true,
+      "standardDeviation": 24.563,
+      "seamMean": 0.393,
+      "adjacentMean": 0.425,
+      "seamRatio": 0.925
+    },
+    {
+      "id": "moon_sulfur_volcanic",
+      "size": [
+        2048,
+        1024
+      ],
+      "opaque": true,
+      "standardDeviation": 38.456,
+      "seamMean": 0.43,
+      "adjacentMean": 0.435,
+      "seamRatio": 0.989
+    }
+  ],
+  "uniqueTextures": 6,
+  "sourcesUnchanged": 63,
+  "canonicalUnchanged": true,
+  "nativeProjectReadback": "6/6; native deserialization after save",
+  "browserInteraction": "not_run; static gallery, local-file browser policy blocked in previous task",
+  "visualReview": "6/6: flat maps and shaded spherical previews reviewed",
+  "status": "pass",
+  "nativeProjectValidation": {
+    "nativeProjectReadback": 6,
+    "paletteResolution": "pass",
+    "noClouds": true,
+    "dimensions": "pass"
+  },
+  "galleryLinks": {
+    "checked": 39,
+    "missing": 0
+  }
+}

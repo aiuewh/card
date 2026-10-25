@@ -1,0 +1,40 @@
+START moon_silver_crater
+  CreateMeshStrategy 29ms
+  PerturbStrategy 2623ms
+  ToolStrategy 12086ms
+  RenderStrategy 2759ms
+DONE moon_silver_crater 18267ms; project readback pass
+START moon_basalt_maria
+  CreateMeshStrategy 12ms
+  PerturbStrategy 1423ms
+  ToolStrategy 2449ms
+  RenderStrategy 2245ms
+DONE moon_basalt_maria 6687ms; project readback pass
+START moon_rust_rock
+  CreateMeshStrategy 6ms
+  PerturbStrategy 3111ms
+  ToolStrategy 5339ms
+  RenderStrategy 2142ms
+DONE moon_rust_rock 11268ms; project readback pass
+START moon_fractured_ice
+  CreateMeshStrategy 7ms
+  PerturbStrategy 2018ms
+  ToolStrategy 2166ms
+  ToolStrategy 6867ms
+  RenderStrategy 2158ms
+DONE moon_fractured_ice 13874ms; project readback pass
+START moon_ancient_dirtyice
+  CreateMeshStrategy 0ms
+  PerturbStrategy 3350ms
+  ToolStrategy 9078ms
+  ToolStrategy 1051ms
+  RenderStrategy 2159ms
+DONE moon_ancient_dirtyice 16327ms; project readback pass
+START moon_sulfur_volcanic
+  CreateMeshStrategy 4ms
+  PerturbStrategy 1553ms
+  ToolStrategy 3657ms
+  ToolStrategy 2475ms
+  RenderStrategy 2070ms
+DONE moon_sulfur_volcanic 10357ms; project readback pass
+SIX MOONS COMPLETE

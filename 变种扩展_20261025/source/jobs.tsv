@@ -1,0 +1,24 @@
+continental_v01	terrestrialclouds	Terrestrial	2026102501	2200	0.2	true	1
+continental_v02	terrestrialclouds	Alpine	2026102502	3100	0.65	true	2
+ocean_v01	terrestrialclouds	Oceanic	2026102511	1600	0.2	true	1
+ocean_v02	terrestrialclouds	Oceanic	2026102512	3200	0.7	true	2
+desert_v01	plain	Oasis	2026102521	1700	0.2	true	1
+desert_v02	crackedandcratered	Dry	2026102522	2700	0.7	true	2
+tundra_v01	terrestrialclouds	Tundral	2026102531	1800	0.2	true	1
+tundra_v02	terrestrialclouds	Alpine	2026102532	2800	0.7	true	2
+tropical_v01	terrestrialclouds	Tropical	2026102541	1800	0.2	true	1
+tropical_v02	terrestrialclouds	Wetlands	2026102542	3000	0.7	true	2
+molten_v01	violent	Volcanic	2026102551	1800	0.2	false	1
+molten_v02	violent	Volcanic	2026102552	3200	0.7	false	2
+toxic_v01	venusianclouds	Venusian	2026102561	2000	0.05	false	1
+toxic_v02	venusianclouds	Venusian	2026102562	2000	0.45	false	2
+barren_v01	cratered	Martian	2026102571	1800	0.2	false	1
+barren_v02	cratered	Rock	2026102572	2600	0.7	false	2
+gas_giant_v01	gasgiant	Gas Giant	2026102581	2000	0.05	false	1
+gas_giant_v02	gasgiant	Gas Giant	2026102582	2000	0.4	false	2
+ice_giant_v01	gasgiant	Gas Giant	2026102591	2000	0.5	false	1
+ice_giant_v02	gasgiant	Gas Giant	2026102592	2000	0.78	false	2
+frozen_v01	crackedandcratered	Ice	2026102601	2000	0.2	false	1
+frozen_v02	crackedandcratered	Ice	2026102602	3300	0.7	false	2
+frozen_dwarf_v01	cratered	Ice	2026102611	1400	0.2	false	1
+frozen_dwarf_v02	crackedandcratered	Ice	2026102612	2400	0.7	false	2

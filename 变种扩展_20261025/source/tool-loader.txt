@@ -1,0 +1,415 @@
+Compiled from "ToolLoader.java"
+public final class com.texturesforplanets.tool.ToolLoader {
+  private static java.util.Map<java.lang.String, com.texturesforplanets.tool.Tool> allTools;
+
+  private static java.lang.Iterable<com.texturesforplanets.tool.Tool> allToolsOrdered;
+
+  private com.texturesforplanets.tool.ToolLoader();
+    Code:
+       0: aload_0
+       1: invokespecial #15                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static com.texturesforplanets.tool.Tool getTool(java.lang.String);
+    Code:
+       0: getstatic     #23                 // Field allTools:Ljava/util/Map;
+       3: ifnonnull     9
+       6: invokestatic  #25                 // Method loadAllTools:()V
+       9: getstatic     #23                 // Field allTools:Ljava/util/Map;
+      12: aload_0
+      13: invokeinterface #28,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      18: checkcast     #34                 // class com/texturesforplanets/tool/Tool
+      21: areturn
+
+  public static java.lang.Iterable<com.texturesforplanets.tool.Tool> allTools();
+    Code:
+       0: getstatic     #23                 // Field allTools:Ljava/util/Map;
+       3: ifnonnull     9
+       6: invokestatic  #25                 // Method loadAllTools:()V
+       9: getstatic     #41                 // Field allToolsOrdered:Ljava/lang/Iterable;
+      12: areturn
+
+  private static void loadAllTools();
+    Code:
+       0: new           #43                 // class java/io/File
+       3: dup
+       4: new           #45                 // class java/lang/StringBuilder
+       7: dup
+       8: getstatic     #47                 // Field com/texturesforplanets/ui/util/PreferencesUtil$EPreference.HOME_FOLDER:Lcom/texturesforplanets/ui/util/PreferencesUtil$EPreference;
+      11: invokestatic  #53                 // Method com/texturesforplanets/ui/util/PreferencesUtil.getPreferenceString:(Lcom/texturesforplanets/ui/util/PreferencesUtil$EPreference;)Ljava/lang/String;
+      14: invokestatic  #59                 // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+      17: invokespecial #65                 // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+      20: getstatic     #68                 // Field java/io/File.separator:Ljava/lang/String;
+      23: invokevirtual #71                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      26: ldc           #75                 // String Tools
+      28: invokevirtual #71                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      31: invokevirtual #77                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      34: invokespecial #81                 // Method java/io/File."<init>":(Ljava/lang/String;)V
+      37: astore_0
+      38: new           #82                 // class java/util/ArrayList
+      41: dup
+      42: invokespecial #84                 // Method java/util/ArrayList."<init>":()V
+      45: astore_1
+      46: aload_0
+      47: invokevirtual #85                 // Method java/io/File.listFiles:()[Ljava/io/File;
+      50: dup
+      51: astore        5
+      53: arraylength
+      54: istore        4
+      56: iconst_0
+      57: istore_3
+      58: goto          169
+      61: aload         5
+      63: iload_3
+      64: aaload
+      65: astore_2
+      66: aload_2
+      67: invokevirtual #89                 // Method java/io/File.getName:()Ljava/lang/String;
+      70: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      73: ldc           #95                 // String .tool
+      75: invokevirtual #97                 // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      78: ifne          96
+      81: aload_2
+      82: invokevirtual #89                 // Method java/io/File.getName:()Ljava/lang/String;
+      85: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      88: ldc           #101                // String .zip
+      90: invokevirtual #97                 // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      93: ifeq          166
+      96: new           #103                // class java/util/zip/ZipFile
+      99: dup
+     100: aload_2
+     101: invokespecial #105                // Method java/util/zip/ZipFile."<init>":(Ljava/io/File;)V
+     104: invokestatic  #108                // Method load:(Ljava/util/zip/ZipFile;)Lcom/texturesforplanets/tool/Tool;
+     107: astore        6
+     109: aload         6
+     111: ifnull        166
+     114: aload_1
+     115: aload         6
+     117: invokeinterface #112,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     122: pop
+     123: goto          166
+     126: astore        6
+     128: getstatic     #118                // Field java/lang/System.err:Ljava/io/PrintStream;
+     131: new           #45                 // class java/lang/StringBuilder
+     134: dup
+     135: ldc           #124                // String Error reading
+     137: invokespecial #65                 // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     140: aload_2
+     141: invokevirtual #126                // Method java/io/File.getAbsolutePath:()Ljava/lang/String;
+     144: invokevirtual #71                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     147: ldc           #129                // String
+     149: invokevirtual #71                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     152: aload         6
+     154: invokevirtual #131                // Method java/io/IOException.getMessage:()Ljava/lang/String;
+     157: invokevirtual #71                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     160: invokevirtual #77                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     163: invokevirtual #136                // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+     166: iinc          3, 1
+     169: iload_3
+     170: iload         4
+     172: if_icmplt     61
+     175: aload_1
+     176: new           #141                // class com/texturesforplanets/tool/ToolLoader$1
+     179: dup
+     180: invokespecial #143                // Method com/texturesforplanets/tool/ToolLoader$1."<init>":()V
+     183: invokestatic  #144                // Method java/util/Collections.sort:(Ljava/util/List;Ljava/util/Comparator;)V
+     186: new           #150                // class java/util/Hashtable
+     189: dup
+     190: invokespecial #152                // Method java/util/Hashtable."<init>":()V
+     193: putstatic     #23                 // Field allTools:Ljava/util/Map;
+     196: aload_1
+     197: invokeinterface #153,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     202: astore_3
+     203: goto          230
+     206: aload_3
+     207: invokeinterface #157,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     212: checkcast     #34                 // class com/texturesforplanets/tool/Tool
+     215: astore_2
+     216: getstatic     #23                 // Field allTools:Ljava/util/Map;
+     219: aload_2
+     220: invokevirtual #163                // Method com/texturesforplanets/tool/Tool.getName:()Ljava/lang/String;
+     223: aload_2
+     224: invokeinterface #164,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     229: pop
+     230: aload_3
+     231: invokeinterface #168,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     236: ifne          206
+     239: aload_1
+     240: putstatic     #41                 // Field allToolsOrdered:Ljava/lang/Iterable;
+     243: return
+    Exception table:
+       from    to  target type
+          96   123   126   Class java/io/IOException
+
+  private static com.texturesforplanets.tool.Tool load(java.util.zip.ZipFile) throws java.io.IOException;
+    Code:
+       0: new           #82                 // class java/util/ArrayList
+       3: dup
+       4: invokespecial #84                 // Method java/util/ArrayList."<init>":()V
+       7: astore_1
+       8: aconst_null
+       9: astore_2
+      10: aconst_null
+      11: astore_3
+      12: aconst_null
+      13: astore        4
+      15: iconst_1
+      16: istore        5
+      18: iconst_1
+      19: istore        6
+      21: bipush        10
+      23: istore        7
+      25: bipush        50
+      27: istore        8
+      29: iconst_1
+      30: istore        9
+      32: aload_0
+      33: invokevirtual #187                // Method java/util/zip/ZipFile.entries:()Ljava/util/Enumeration;
+      36: astore        10
+      38: goto          543
+      41: aload         10
+      43: invokeinterface #191,  1          // InterfaceMethod java/util/Enumeration.nextElement:()Ljava/lang/Object;
+      48: checkcast     #196                // class java/util/zip/ZipEntry
+      51: astore        11
+      53: aload         11
+      55: invokevirtual #198                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+      58: ldc           #199                // String tool.txt
+      60: invokevirtual #201                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      63: ifeq          472
+      66: new           #204                // class java/io/BufferedReader
+      69: dup
+      70: new           #206                // class java/io/InputStreamReader
+      73: dup
+      74: aload_0
+      75: aload         11
+      77: invokevirtual #208                // Method java/util/zip/ZipFile.getInputStream:(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
+      80: invokespecial #212                // Method java/io/InputStreamReader."<init>":(Ljava/io/InputStream;)V
+      83: invokespecial #215                // Method java/io/BufferedReader."<init>":(Ljava/io/Reader;)V
+      86: astore        12
+      88: goto          458
+      91: aload         13
+      93: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+      96: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      99: ldc           #221                // String author
+     101: invokevirtual #223                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     104: ifeq          143
+     107: aload         13
+     109: bipush        61
+     111: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     114: iconst_m1
+     115: if_icmpeq     143
+     118: aload         13
+     120: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     123: aload         13
+     125: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     128: bipush        61
+     130: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     133: iconst_1
+     134: iadd
+     135: invokevirtual #230                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     138: astore        4
+     140: goto          458
+     143: aload         13
+     145: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     148: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     151: ldc           #234                // String name
+     153: invokevirtual #223                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     156: ifeq          194
+     159: aload         13
+     161: bipush        61
+     163: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     166: iconst_m1
+     167: if_icmpeq     194
+     170: aload         13
+     172: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     175: aload         13
+     177: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     180: bipush        61
+     182: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     185: iconst_1
+     186: iadd
+     187: invokevirtual #230                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     190: astore_3
+     191: goto          458
+     194: aload         13
+     196: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     199: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     202: ldc           #235                // String defaultsize
+     204: invokevirtual #223                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     207: ifeq          298
+     210: aload         13
+     212: bipush        61
+     214: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     217: iconst_m1
+     218: if_icmpeq     298
+     221: aload         13
+     223: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     226: aload         13
+     228: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     231: bipush        61
+     233: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     236: iconst_1
+     237: iadd
+     238: invokevirtual #230                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     241: astore        14
+     243: aload         14
+     245: bipush        44
+     247: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     250: iconst_m1
+     251: if_icmpeq     284
+     254: aload         14
+     256: ldc           #237                // String ,
+     258: invokevirtual #239                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     261: astore        15
+     263: aload         15
+     265: iconst_0
+     266: aaload
+     267: invokestatic  #243                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     270: istore        7
+     272: aload         15
+     274: iconst_1
+     275: aaload
+     276: invokestatic  #243                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     279: istore        8
+     281: goto          458
+     284: aload         14
+     286: invokestatic  #243                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     289: istore        7
+     291: iload         7
+     293: istore        8
+     295: goto          458
+     298: aload         13
+     300: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     303: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     306: ldc           #249                // String defaultcount
+     308: invokevirtual #223                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     311: ifeq          402
+     314: aload         13
+     316: bipush        61
+     318: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     321: iconst_m1
+     322: if_icmpeq     402
+     325: aload         13
+     327: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     330: aload         13
+     332: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     335: bipush        61
+     337: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     340: iconst_1
+     341: iadd
+     342: invokevirtual #230                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     345: astore        14
+     347: aload         14
+     349: bipush        44
+     351: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     354: iconst_m1
+     355: if_icmpeq     388
+     358: aload         14
+     360: ldc           #237                // String ,
+     362: invokevirtual #239                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+     365: astore        15
+     367: aload         15
+     369: iconst_0
+     370: aaload
+     371: invokestatic  #243                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     374: istore        5
+     376: aload         15
+     378: iconst_1
+     379: aaload
+     380: invokestatic  #243                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     383: istore        6
+     385: goto          458
+     388: aload         14
+     390: invokestatic  #243                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+     393: istore        5
+     395: iload         7
+     397: istore        6
+     399: goto          458
+     402: aload         13
+     404: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     407: invokevirtual #92                 // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     410: ldc           #251                // String randomrotation
+     412: invokevirtual #223                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     415: ifeq          458
+     418: aload         13
+     420: bipush        61
+     422: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     425: iconst_m1
+     426: if_icmpeq     458
+     429: aload         13
+     431: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     434: aload         13
+     436: invokevirtual #218                // Method java/lang/String.trim:()Ljava/lang/String;
+     439: bipush        61
+     441: invokevirtual #226                // Method java/lang/String.indexOf:(I)I
+     444: iconst_1
+     445: iadd
+     446: invokevirtual #230                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     449: astore        14
+     451: aload         14
+     453: invokestatic  #253                // Method java/lang/Boolean.getBoolean:(Ljava/lang/String;)Z
+     456: istore        9
+     458: aload         12
+     460: invokevirtual #258                // Method java/io/BufferedReader.readLine:()Ljava/lang/String;
+     463: dup
+     464: astore        13
+     466: ifnonnull     91
+     469: goto          543
+     472: aload         11
+     474: invokevirtual #198                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+     477: ldc_w         #261                // String sample.png
+     480: invokevirtual #201                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     483: ifeq          499
+     486: aload_0
+     487: aload         11
+     489: invokevirtual #208                // Method java/util/zip/ZipFile.getInputStream:(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
+     492: invokestatic  #263                // Method javax/imageio/ImageIO.read:(Ljava/io/InputStream;)Ljava/awt/image/BufferedImage;
+     495: astore_2
+     496: goto          543
+     499: aload         11
+     501: invokevirtual #198                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+     504: ldc_w         #269                // String heightmap
+     507: invokevirtual #223                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     510: ifeq          543
+     513: aload         11
+     515: invokevirtual #198                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+     518: ldc_w         #271                // String .png
+     521: invokevirtual #97                 // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     524: ifeq          543
+     527: aload_1
+     528: aload_0
+     529: aload         11
+     531: invokevirtual #208                // Method java/util/zip/ZipFile.getInputStream:(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
+     534: invokestatic  #263                // Method javax/imageio/ImageIO.read:(Ljava/io/InputStream;)Ljava/awt/image/BufferedImage;
+     537: invokeinterface #112,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     542: pop
+     543: aload         10
+     545: invokeinterface #273,  1          // InterfaceMethod java/util/Enumeration.hasMoreElements:()Z
+     550: ifne          41
+     553: aload_0
+     554: invokevirtual #276                // Method java/util/zip/ZipFile.close:()V
+     557: aload_3
+     558: ifnull        602
+     561: aload         4
+     563: ifnull        602
+     566: aload_2
+     567: ifnull        602
+     570: aload_1
+     571: invokeinterface #279,  1          // InterfaceMethod java/util/List.size:()I
+     576: ifle          602
+     579: new           #34                 // class com/texturesforplanets/tool/Tool
+     582: dup
+     583: aload_1
+     584: aload_2
+     585: aload_3
+     586: aload         4
+     588: iload         5
+     590: iload         6
+     592: iload         7
+     594: iload         8
+     596: iload         9
+     598: invokespecial #283                // Method com/texturesforplanets/tool/Tool."<init>":(Ljava/util/List;Ljava/awt/Image;Ljava/lang/String;Ljava/lang/String;IIIIZ)V
+     601: areturn
+     602: aconst_null
+     603: areturn
+}

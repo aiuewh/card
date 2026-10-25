@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "version": "moon-textures-v1",
+  "created": "2026-10-25",
+  "generator": "Installed Textures for Planets 2.1 native strategy pipeline",
+  "canonicalFile": "蔚蓝星域的观星者_3.3_统一候选版_v40-c61.json",
+  "canonicalSha256": "2dbd4479ecef82d7f6a3853f94a0d482918bff6306b92ec6da9b3d2745fe6991",
+  "cardModified": false,
+  "count": 6,
+  "projection": "EQUIRECTANGULAR",
+  "resolution": [
+    2048,
+    1024
+  ],
+  "textureKind": "natural-satellite surface colour maps; no baked directional lighting or atmosphere",
+  "customPaletteDirectory": "Colourizers",
+  "customPalettes": [
+    {
+      "file": "Colourizers/basalt.col",
+      "sha256": "4de3c08cd12c4a9b44ef4b2d2caea3fafe3de4c559fec40443f578745d0fa542"
+    },
+    {
+      "file": "Colourizers/dirtyice.col",
+      "sha256": "db9e40130203064f8b6f6d8e35f10b4984085f24680935055d838b490664acfb"
+    },
+    {
+      "file": "Colourizers/silver.col",
+      "sha256": "59dc9471ed7748811527c9adff88f6ec98b25488ca3c3b1f9c03d170b21e94ff"
+    },
+    {
+      "file": "Colourizers/sulfur.col",
+      "sha256": "e597a5efc18ce5e23e9e54bd6e4a6d22671d7c3129fd7381c3a750b96fa7cfdd"
+    }
+  ],
+  "variants": [
+    {
+      "id": "moon_silver_crater",
+      "name": "银灰环坑",
+      "description": "密集撞击坑、明暗相间的灰色岩质高地。",
+      "template": "cratered",
+      "colourizer": "Moon Silver Rock",
+      "seed": 2026102701,
+      "iterations": 2200,
+      "craterCount": [
+        85,
+        115
+      ],
+      "craterSize": [
+        8,
+        35
+      ],
+      "canyonCount": [
+        0,
+        0
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "file": "textures/moon_silver_crater.png",
+      "sha256": "d4af445d605075f34b456b1047afb2bee2ebf8e0118f228874d011dd9e182c5a",
+      "bytes": 1408237,
+      "project": "projects/moon_silver_crater.tfp",
+      "projectSha256": "f87209c6bcd5dad96df0841e035133ef76353e4eb3db40229ef2ec8322a976f0"
+    },
+    {
+      "id": "moon_basalt_maria",
+      "name": "玄武月海",
+      "description": "暗色玄武岩平原与较明亮的古老高地，撞击坑较稀疏。",
+      "template": "cratered",
+      "colourizer": "Moon Dark Basalt",
+      "seed": 2026102702,
+      "iterations": 1300,
+      "craterCount": [
+        18,
+        30
+      ],
+      "craterSize": [
+        15,
+        60
+      ],
+      "canyonCount": [
+        0,
+        0
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "file": "textures/moon_basalt_maria.png",
+      "sha256": "3c46e5454bc62861e4cd362bbe71e74356402e391c3736a1fb8f41f6aff6bb0c",
+      "bytes": 1296160,
+      "project": "projects/moon_basalt_maria.tfp",
+      "projectSha256": "a14f2d693117d4d14e36c290b8b6ed77810c563d7ac0df09e9f484b3a8403df2"
+    },
+    {
+      "id": "moon_rust_rock",
+      "name": "赤褐岩月",
+      "description": "赤褐色矿物岩壳与大小交叠的陨石坑。",
+      "template": "cratered",
+      "colourizer": "Martian",
+      "seed": 2026102703,
+      "iterations": 2600,
+      "craterCount": [
+        45,
+        70
+      ],
+      "craterSize": [
+        10,
+        48
+      ],
+      "canyonCount": [
+        0,
+        0
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "file": "textures/moon_rust_rock.png",
+      "sha256": "bf72b67eed16b42aef48c3248d1eb65a06eaf5cdfd8d4b24c451958e51ef2385",
+      "bytes": 2303983,
+      "project": "projects/moon_rust_rock.tfp",
+      "projectSha256": "e50b41beefcc54819d422bc182f7d051b2331072a117852d1e98fd7f1cc9c1b9"
+    },
+    {
+      "id": "moon_fractured_ice",
+      "name": "裂纹冰卫",
+      "description": "浅色冰壳、长裂谷与少量古老撞击盆地。",
+      "template": "crackedandcratered",
+      "colourizer": "Ice",
+      "seed": 2026102704,
+      "iterations": 1800,
+      "craterCount": [
+        12,
+        22
+      ],
+      "craterSize": [
+        12,
+        38
+      ],
+      "canyonCount": [
+        45,
+        65
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "file": "textures/moon_fractured_ice.png",
+      "sha256": "afdcbe4c25362f1194a4b66bc8e30fa4b75b76603defcb474d944521c724b57b",
+      "bytes": 2208996,
+      "project": "projects/moon_fractured_ice.tfp",
+      "projectSha256": "fab9b795f74b1b5c2d8d624095ff8a8140413c6bbca33a8fbf16d268c32937ce"
+    },
+    {
+      "id": "moon_ancient_dirtyice",
+      "name": "古老脏冰",
+      "description": "被尘埃和岩质沉积染暗的冰层，保留密集古坑与较少裂谷。",
+      "template": "crackedandcratered",
+      "colourizer": "Moon Dirty Ice",
+      "seed": 2026102705,
+      "iterations": 2800,
+      "craterCount": [
+        70,
+        95
+      ],
+      "craterSize": [
+        7,
+        38
+      ],
+      "canyonCount": [
+        8,
+        15
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "file": "textures/moon_ancient_dirtyice.png",
+      "sha256": "bb7d5a9067a59ad31b91c90314518dd46997d202abe0b660ffac2b307247d4dd",
+      "bytes": 2324017,
+      "project": "projects/moon_ancient_dirtyice.tfp",
+      "projectSha256": "009d7611a3099b2a5b7b8bdaf4e60556270724857090a08924aeee05ec892eda"
+    },
+    {
+      "id": "moon_sulfur_volcanic",
+      "name": "硫黄火山",
+      "description": "硫黄色沉积、橙褐喷发区与稀疏火山口，无大气云层。",
+      "template": "violent",
+      "colourizer": "Moon Sulfur",
+      "seed": 2026102706,
+      "iterations": 1400,
+      "craterCount": [
+        0,
+        0
+      ],
+      "canyonCount": [
+        16,
+        25
+      ],
+      "volcanoCount": [
+        25,
+        40
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "craterSize": [
+        10,
+        50
+      ],
+      "file": "textures/moon_sulfur_volcanic.png",
+      "sha256": "7300322c0a8853df2dea1b4761c6a549b7778add8c050ff4913bafd01eec97e5",
+      "bytes": 1737224,
+      "project": "projects/moon_sulfur_volcanic.tfp",
+      "projectSha256": "935c5eb77709a4cb4be66c64a4d37e4aa0573ef9a23530008b8b6f640133015f"
+    }
+  ],
+  "seedProtocol": "java.util.Random(seed), consume nextDouble once, use palette fraction 0.2; same native strategy execution as GUI"
+}

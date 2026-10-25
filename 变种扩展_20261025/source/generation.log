@@ -1,0 +1,65 @@
+START continental_v01 colour=Terrestrial paletteIndex=0
+  CreateMeshStrategy 0ms
+  PerturbStrategy 1363ms
+  CloudStrategy 20679ms
+  RenderStrategy 1709ms
+  RenderStrategy 415ms
+  RenderStrategy 1319ms
+DONE continental_v01 26799ms
+START continental_v02 colour=Alpine paletteIndex=0
+  CreateMeshStrategy 9ms
+  PerturbStrategy 1911ms
+  CloudStrategy 19338ms
+  RenderStrategy 1303ms
+  RenderStrategy 370ms
+  RenderStrategy 1312ms
+DONE continental_v02 25366ms
+START ocean_v01 colour=Oceanic paletteIndex=0
+  CreateMeshStrategy 4ms
+  PerturbStrategy 971ms
+  CloudStrategy 20801ms
+  RenderStrategy 1444ms
+  RenderStrategy 366ms
+  RenderStrategy 1370ms
+DONE ocean_v01 26078ms
+START ocean_v02 colour=Oceanic paletteIndex=0
+  CreateMeshStrategy 0ms
+  PerturbStrategy 1969ms
+  CloudStrategy 15199ms
+  RenderStrategy 1355ms
+  RenderStrategy 376ms
+  RenderStrategy 1342ms
+DONE ocean_v02 21341ms
+START desert_v01 colour=Oasis paletteIndex=0
+  CreateMeshStrategy 0ms
+  PerturbStrategy 1079ms
+  CloudStrategy 26159ms
+  RenderStrategy 1408ms
+  RenderStrategy 393ms
+  RenderStrategy 1333ms
+DONE desert_v01 31455ms
+START desert_v02 colour=Dry paletteIndex=0
+  CreateMeshStrategy 2ms
+  PerturbStrategy 1643ms
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences <init>
+WARNING: Could not open/create prefs root node Software\JavaSoft\Prefs at root 0xffffffff80000001. Windows RegCreateKeyEx(...) returned error code 5.
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences WindowsRegOpenKey1
+WARNING: Trying to recreate Windows registry node Software\JavaSoft\Prefs at root 0xffffffff80000001.
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences openKey
+WARNING: Could not open windows registry node Software\JavaSoft\Prefs at root 0xffffffff80000001. Windows RegOpenKey(...) returned error code 2.
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences WindowsRegOpenKey1
+WARNING: Trying to recreate Windows registry node Software\JavaSoft\Prefs\com at root 0xffffffff80000001.
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences openKey
+WARNING: Could not open windows registry node Software\JavaSoft\Prefs\com at root 0xffffffff80000001. Windows RegOpenKey(...) returned error code 2.
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences WindowsRegOpenKey1
+WARNING: Trying to recreate Windows registry node Software\JavaSoft\Prefs\com\texturesforplanets at root 0xffffffff80000001.
+10�� 25, 2026 3:28:56 ���� java.util.prefs.WindowsPreferences openKey
+WARNING: Could not open windows registry node Software\JavaSoft\Prefs\com\texturesforplanets at root 0xffffffff80000001. Windows RegOpenKey(...) returned error code 2.
+Exception in thread "main" java.lang.NullPointerException: Cannot read the array length because the return value of "java.io.File.listFiles()" is null
+	at com.texturesforplanets.tool.ToolLoader.loadAllTools(ToolLoader.java:63)
+	at com.texturesforplanets.tool.ToolLoader.getTool(ToolLoader.java:41)
+	at com.texturesforplanets.strategies.ToolStrategy.getTool(ToolStrategy.java:86)
+	at com.texturesforplanets.strategies.ToolStrategy$ToolAction.<init>(ToolStrategy.java:417)
+	at com.texturesforplanets.strategies.ToolStrategy.execute(ToolStrategy.java:223)
+	at NativeBatch.run(NativeBatch.java:93)
+	at NativeBatch.main(NativeBatch.java:114)

@@ -1,0 +1,1609 @@
+Compiled from "ModelGenerationThread.java"
+public class com.texturesforplanets.model.ModelGenerationThread implements java.lang.Runnable,com.texturesforplanets.strategies.IStrategyListener {
+  private boolean requestCancel;
+
+  private boolean requestRegenerate;
+
+  private com.texturesforplanets.model.BuildModel model;
+
+  private java.util.List<com.texturesforplanets.strategies.IStrategy> clonedStrategies;
+
+  private java.lang.Thread thread;
+
+  private static com.texturesforplanets.model.ModelGenerationThread singleton;
+
+  private int totalSteps;
+
+  private int stepsToLastStrategy;
+
+  private com.texturesforplanets.model.ModelGenerationThread();
+    Code:
+       0: aload_0
+       1: invokespecial #28                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #30                 // Field requestCancel:Z
+       9: aload_0
+      10: iconst_0
+      11: putfield      #32                 // Field requestRegenerate:Z
+      14: return
+
+  public static synchronized com.texturesforplanets.model.ModelGenerationThread getDefault();
+    Code:
+       0: getstatic     #39                 // Field singleton:Lcom/texturesforplanets/model/ModelGenerationThread;
+       3: ifnonnull     16
+       6: new           #1                  // class com/texturesforplanets/model/ModelGenerationThread
+       9: dup
+      10: invokespecial #41                 // Method "<init>":()V
+      13: putstatic     #39                 // Field singleton:Lcom/texturesforplanets/model/ModelGenerationThread;
+      16: getstatic     #39                 // Field singleton:Lcom/texturesforplanets/model/ModelGenerationThread;
+      19: areturn
+
+  public void generate(com.texturesforplanets.model.BuildModel);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+       5: aload_0
+       6: new           #47                 // class java/util/ArrayList
+       9: dup
+      10: invokespecial #49                 // Method java/util/ArrayList."<init>":()V
+      13: putfield      #50                 // Field clonedStrategies:Ljava/util/List;
+      16: aload_0
+      17: iconst_0
+      18: putfield      #52                 // Field totalSteps:I
+      21: aload_1
+      22: invokevirtual #54                 // Method com/texturesforplanets/model/BuildModel.strategies:()Ljava/lang/Iterable;
+      25: invokeinterface #60,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      30: astore_3
+      31: goto          82
+      34: aload_3
+      35: invokeinterface #66,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      40: checkcast     #72                 // class com/texturesforplanets/strategies/IStrategy
+      43: astore_2
+      44: aload_2
+      45: invokeinterface #74,  1           // InterfaceMethod com/texturesforplanets/strategies/IStrategy.clone:()Lcom/texturesforplanets/strategies/IStrategy;
+      50: astore        4
+      52: aload_0
+      53: getfield      #50                 // Field clonedStrategies:Ljava/util/List;
+      56: aload         4
+      58: invokeinterface #78,  2           // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      63: pop
+      64: aload_0
+      65: dup
+      66: getfield      #52                 // Field totalSteps:I
+      69: aload         4
+      71: aload_1
+      72: iconst_1
+      73: invokeinterface #84,  3           // InterfaceMethod com/texturesforplanets/strategies/IStrategy.getSteps:(Lcom/texturesforplanets/model/BuildModel;Z)I
+      78: iadd
+      79: putfield      #52                 // Field totalSteps:I
+      82: aload_3
+      83: invokeinterface #88,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      88: ifne          34
+      91: aload_0
+      92: getfield      #92                 // Field thread:Ljava/lang/Thread;
+      95: ifnonnull     120
+      98: aload_0
+      99: new           #94                 // class java/lang/Thread
+     102: dup
+     103: aload_0
+     104: invokespecial #96                 // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+     107: putfield      #92                 // Field thread:Ljava/lang/Thread;
+     110: aload_0
+     111: getfield      #92                 // Field thread:Ljava/lang/Thread;
+     114: invokevirtual #99                 // Method java/lang/Thread.start:()V
+     117: goto          125
+     120: aload_0
+     121: iconst_1
+     122: putfield      #32                 // Field requestRegenerate:Z
+     125: return
+
+  public void run();
+    Code:
+       0: new           #106                // class java/util/Random
+       3: dup
+       4: invokespecial #108                // Method java/util/Random."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: invokevirtual #109                // Method java/util/Random.nextDouble:()D
+      12: dstore_2
+      13: aload_0
+      14: iconst_0
+      15: putfield      #113                // Field stepsToLastStrategy:I
+      18: new           #115                // class com/texturesforplanets/model/Output
+      21: dup
+      22: aload_0
+      23: getfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+      26: iconst_1
+      27: invokespecial #117                // Method com/texturesforplanets/model/Output."<init>":(Lcom/texturesforplanets/model/BuildModel;Z)V
+      30: astore        4
+      32: aconst_null
+      33: astore        5
+      35: aload_0
+      36: getfield      #50                 // Field clonedStrategies:Ljava/util/List;
+      39: invokeinterface #120,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      44: astore        7
+      46: goto          105
+      49: aload         7
+      51: invokeinterface #66,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      56: checkcast     #72                 // class com/texturesforplanets/strategies/IStrategy
+      59: astore        6
+      61: aload         6
+      63: aload_1
+      64: aload         5
+      66: aload         4
+      68: aload_0
+      69: dload_2
+      70: iconst_1
+      71: invokeinterface #121,  8          // InterfaceMethod com/texturesforplanets/strategies/IStrategy.execute:(Ljava/util/Random;Lcom/texturesforplanets/model/Icosahedron;Lcom/texturesforplanets/model/Output;Lcom/texturesforplanets/strategies/IStrategyListener;DZ)Lcom/texturesforplanets/model/Icosahedron;
+      76: astore        5
+      78: aload         5
+      80: ifnonnull     84
+      83: return
+      84: aload_0
+      85: dup
+      86: getfield      #113                // Field stepsToLastStrategy:I
+      89: aload         6
+      91: aload_0
+      92: getfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+      95: iconst_1
+      96: invokeinterface #84,  3           // InterfaceMethod com/texturesforplanets/strategies/IStrategy.getSteps:(Lcom/texturesforplanets/model/BuildModel;Z)I
+     101: iadd
+     102: putfield      #113                // Field stepsToLastStrategy:I
+     105: aload         7
+     107: invokeinterface #88,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     112: ifne          49
+     115: invokestatic  #125                // Method com/texturesforplanets/ui/UIState.getDefault:()Lcom/texturesforplanets/ui/UIState;
+     118: aload         4
+     120: invokevirtual #130                // Method com/texturesforplanets/ui/UIState.setOutput:(Lcom/texturesforplanets/model/Output;)V
+     123: aload_0
+     124: getfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+     127: aconst_null
+     128: iconst_m1
+     129: aload_0
+     130: getfield      #52                 // Field totalSteps:I
+     133: iconst_1
+     134: invokevirtual #134                // Method com/texturesforplanets/model/BuildModel.updateGenerationStatus:(Lcom/texturesforplanets/strategies/IStrategy;IIZ)V
+     137: aload_0
+     138: aconst_null
+     139: putfield      #92                 // Field thread:Ljava/lang/Thread;
+     142: aload_0
+     143: iconst_0
+     144: putfield      #32                 // Field requestRegenerate:Z
+     147: aload_0
+     148: iconst_0
+     149: putfield      #30                 // Field requestCancel:Z
+     152: goto          165
+     155: astore_1
+     156: new           #138                // class java/lang/RuntimeException
+     159: dup
+     160: aload_1
+     161: invokespecial #140                // Method java/lang/RuntimeException."<init>":(Ljava/lang/Throwable;)V
+     164: athrow
+     165: return
+    Exception table:
+       from    to  target type
+           0    83   155   Class java/lang/Exception
+          84   152   155   Class java/lang/Exception
+
+  public void setCancel(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #30                 // Field requestCancel:Z
+       5: return
+
+  public boolean update(com.texturesforplanets.strategies.IStrategy, int);
+    Code:
+       0: aload_0
+       1: getfield      #32                 // Field requestRegenerate:Z
+       4: ifeq          59
+       7: aload_0
+       8: iconst_0
+       9: putfield      #32                 // Field requestRegenerate:Z
+      12: aload_0
+      13: iconst_0
+      14: putfield      #30                 // Field requestCancel:Z
+      17: aload_0
+      18: new           #94                 // class java/lang/Thread
+      21: dup
+      22: aload_0
+      23: invokespecial #96                 // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+      26: putfield      #92                 // Field thread:Ljava/lang/Thread;
+      29: aload_0
+      30: getfield      #92                 // Field thread:Ljava/lang/Thread;
+      33: invokevirtual #99                 // Method java/lang/Thread.start:()V
+      36: invokestatic  #125                // Method com/texturesforplanets/ui/UIState.getDefault:()Lcom/texturesforplanets/ui/UIState;
+      39: aconst_null
+      40: invokevirtual #130                // Method com/texturesforplanets/ui/UIState.setOutput:(Lcom/texturesforplanets/model/Output;)V
+      43: aload_0
+      44: getfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+      47: aconst_null
+      48: iconst_m1
+      49: aload_0
+      50: getfield      #52                 // Field totalSteps:I
+      53: iconst_1
+      54: invokevirtual #134                // Method com/texturesforplanets/model/BuildModel.updateGenerationStatus:(Lcom/texturesforplanets/strategies/IStrategy;IIZ)V
+      57: iconst_0
+      58: ireturn
+      59: aload_0
+      60: getfield      #30                 // Field requestCancel:Z
+      63: ifeq          104
+      66: aload_0
+      67: iconst_0
+      68: putfield      #32                 // Field requestRegenerate:Z
+      71: aload_0
+      72: iconst_0
+      73: putfield      #30                 // Field requestCancel:Z
+      76: invokestatic  #125                // Method com/texturesforplanets/ui/UIState.getDefault:()Lcom/texturesforplanets/ui/UIState;
+      79: aconst_null
+      80: invokevirtual #130                // Method com/texturesforplanets/ui/UIState.setOutput:(Lcom/texturesforplanets/model/Output;)V
+      83: aload_0
+      84: getfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+      87: aconst_null
+      88: iconst_m1
+      89: aload_0
+      90: getfield      #52                 // Field totalSteps:I
+      93: iconst_1
+      94: invokevirtual #134                // Method com/texturesforplanets/model/BuildModel.updateGenerationStatus:(Lcom/texturesforplanets/strategies/IStrategy;IIZ)V
+      97: aload_0
+      98: aconst_null
+      99: putfield      #92                 // Field thread:Ljava/lang/Thread;
+     102: iconst_0
+     103: ireturn
+     104: aload_0
+     105: getfield      #45                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+     108: aload_1
+     109: aload_0
+     110: getfield      #113                // Field stepsToLastStrategy:I
+     113: iload_2
+     114: iadd
+     115: aload_0
+     116: getfield      #52                 // Field totalSteps:I
+     119: iconst_0
+     120: invokevirtual #134                // Method com/texturesforplanets/model/BuildModel.updateGenerationStatus:(Lcom/texturesforplanets/strategies/IStrategy;IIZ)V
+     123: ldc2_w        #163                // long 25l
+     126: invokestatic  #165                // Method java/lang/Thread.sleep:(J)V
+     129: goto          133
+     132: astore_3
+     133: iconst_1
+     134: ireturn
+    Exception table:
+       from    to  target type
+         123   129   132   Class java/lang/InterruptedException
+}
+Compiled from "BulkRunThread.java"
+public class com.texturesforplanets.model.BulkRunThread implements java.lang.Runnable,com.texturesforplanets.strategies.IStrategyListener {
+  private boolean requestCancel;
+
+  private com.texturesforplanets.model.BuildModel model;
+
+  private java.util.List<com.texturesforplanets.strategies.IStrategy> clonedStrategies;
+
+  private java.lang.Thread thread;
+
+  private static com.texturesforplanets.model.BulkRunThread singleton;
+
+  private java.util.List<com.texturesforplanets.model.IBulkRunThreadListener> listeners;
+
+  private int currentStep;
+
+  private int count;
+
+  private int stepsPerPlanet;
+
+  private int completedPlanets;
+
+  private int totalSteps;
+
+  private int stepsToLastStrategy;
+
+  private java.io.File folder;
+
+  private com.texturesforplanets.model.BulkRunThread();
+    Code:
+       0: aload_0
+       1: invokespecial #35                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #37                 // Field requestCancel:Z
+       9: aload_0
+      10: new           #39                 // class java/util/ArrayList
+      13: dup
+      14: invokespecial #41                 // Method java/util/ArrayList."<init>":()V
+      17: putfield      #42                 // Field listeners:Ljava/util/List;
+      20: return
+
+  public static synchronized com.texturesforplanets.model.BulkRunThread getDefault();
+    Code:
+       0: getstatic     #49                 // Field singleton:Lcom/texturesforplanets/model/BulkRunThread;
+       3: ifnonnull     16
+       6: new           #1                  // class com/texturesforplanets/model/BulkRunThread
+       9: dup
+      10: invokespecial #51                 // Method "<init>":()V
+      13: putstatic     #49                 // Field singleton:Lcom/texturesforplanets/model/BulkRunThread;
+      16: getstatic     #49                 // Field singleton:Lcom/texturesforplanets/model/BulkRunThread;
+      19: areturn
+
+  public void generate(com.texturesforplanets.model.BuildModel, java.io.File, int);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: putfield      #55                 // Field folder:Ljava/io/File;
+       5: aload_0
+       6: iload_3
+       7: putfield      #57                 // Field count:I
+      10: aload_0
+      11: aload_1
+      12: putfield      #59                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+      15: aload_0
+      16: new           #39                 // class java/util/ArrayList
+      19: dup
+      20: invokespecial #41                 // Method java/util/ArrayList."<init>":()V
+      23: putfield      #61                 // Field clonedStrategies:Ljava/util/List;
+      26: aload_0
+      27: iconst_0
+      28: putfield      #63                 // Field currentStep:I
+      31: aload_0
+      32: iconst_0
+      33: putfield      #65                 // Field stepsPerPlanet:I
+      36: aload_0
+      37: iconst_0
+      38: putfield      #67                 // Field completedPlanets:I
+      41: aload_0
+      42: iconst_0
+      43: putfield      #69                 // Field totalSteps:I
+      46: aload_0
+      47: iconst_0
+      48: putfield      #71                 // Field stepsToLastStrategy:I
+      51: aload_1
+      52: invokevirtual #73                 // Method com/texturesforplanets/model/BuildModel.strategies:()Ljava/lang/Iterable;
+      55: invokeinterface #79,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      60: astore        5
+      62: goto          116
+      65: aload         5
+      67: invokeinterface #85,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      72: checkcast     #91                 // class com/texturesforplanets/strategies/IStrategy
+      75: astore        4
+      77: aload         4
+      79: invokeinterface #93,  1           // InterfaceMethod com/texturesforplanets/strategies/IStrategy.clone:()Lcom/texturesforplanets/strategies/IStrategy;
+      84: astore        6
+      86: aload_0
+      87: getfield      #61                 // Field clonedStrategies:Ljava/util/List;
+      90: aload         6
+      92: invokeinterface #97,  2           // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      97: pop
+      98: aload_0
+      99: dup
+     100: getfield      #65                 // Field stepsPerPlanet:I
+     103: aload         6
+     105: aload_1
+     106: iconst_0
+     107: invokeinterface #103,  3          // InterfaceMethod com/texturesforplanets/strategies/IStrategy.getSteps:(Lcom/texturesforplanets/model/BuildModel;Z)I
+     112: iadd
+     113: putfield      #65                 // Field stepsPerPlanet:I
+     116: aload         5
+     118: invokeinterface #107,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     123: ifne          65
+     126: aload_0
+     127: iload_3
+     128: aload_0
+     129: getfield      #65                 // Field stepsPerPlanet:I
+     132: imul
+     133: putfield      #69                 // Field totalSteps:I
+     136: aload_0
+     137: new           #111                // class java/lang/Thread
+     140: dup
+     141: aload_0
+     142: invokespecial #113                // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+     145: putfield      #116                // Field thread:Ljava/lang/Thread;
+     148: aload_0
+     149: getfield      #116                // Field thread:Ljava/lang/Thread;
+     152: invokevirtual #118                // Method java/lang/Thread.start:()V
+     155: return
+
+  public void run();
+    Code:
+       0: iconst_1
+       1: istore_1
+       2: new           #127                // class java/util/Random
+       5: dup
+       6: invokespecial #129                // Method java/util/Random."<init>":()V
+       9: astore_2
+      10: iconst_1
+      11: istore_3
+      12: goto          406
+      15: aload_2
+      16: invokevirtual #130                // Method java/util/Random.nextDouble:()D
+      19: dstore        4
+      21: aload_0
+      22: iconst_0
+      23: putfield      #71                 // Field stepsToLastStrategy:I
+      26: new           #134                // class com/texturesforplanets/model/Output
+      29: dup
+      30: aload_0
+      31: getfield      #59                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+      34: iconst_0
+      35: invokespecial #136                // Method com/texturesforplanets/model/Output."<init>":(Lcom/texturesforplanets/model/BuildModel;Z)V
+      38: astore        6
+      40: aconst_null
+      41: astore        7
+      43: aload_0
+      44: getfield      #61                 // Field clonedStrategies:Ljava/util/List;
+      47: invokeinterface #139,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      52: astore        9
+      54: goto          114
+      57: aload         9
+      59: invokeinterface #85,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      64: checkcast     #91                 // class com/texturesforplanets/strategies/IStrategy
+      67: astore        8
+      69: aload         8
+      71: aload_2
+      72: aload         7
+      74: aload         6
+      76: aload_0
+      77: dload         4
+      79: iconst_0
+      80: invokeinterface #140,  8          // InterfaceMethod com/texturesforplanets/strategies/IStrategy.execute:(Ljava/util/Random;Lcom/texturesforplanets/model/Icosahedron;Lcom/texturesforplanets/model/Output;Lcom/texturesforplanets/strategies/IStrategyListener;DZ)Lcom/texturesforplanets/model/Icosahedron;
+      85: astore        7
+      87: aload         7
+      89: ifnonnull     93
+      92: return
+      93: aload_0
+      94: dup
+      95: getfield      #71                 // Field stepsToLastStrategy:I
+      98: aload         8
+     100: aload_0
+     101: getfield      #59                 // Field model:Lcom/texturesforplanets/model/BuildModel;
+     104: iconst_0
+     105: invokeinterface #103,  3          // InterfaceMethod com/texturesforplanets/strategies/IStrategy.getSteps:(Lcom/texturesforplanets/model/BuildModel;Z)I
+     110: iadd
+     111: putfield      #71                 // Field stepsToLastStrategy:I
+     114: aload         9
+     116: invokeinterface #107,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     121: ifne          57
+     124: aload         6
+     126: invokevirtual #144                // Method com/texturesforplanets/model/Output.getRenderings:()Ljava/util/List;
+     129: invokeinterface #139,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     134: astore        9
+     136: goto          376
+     139: aload         9
+     141: invokeinterface #85,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     146: checkcast     #148                // class com/texturesforplanets/model/Rendering
+     149: astore        8
+     151: aload         8
+     153: invokevirtual #150                // Method com/texturesforplanets/model/Rendering.getImage:()Ljava/awt/image/BufferedImage;
+     156: astore        10
+     158: aload         8
+     160: invokevirtual #154                // Method com/texturesforplanets/model/Rendering.getName:()Ljava/lang/String;
+     163: ldc           #158                // String #
+     165: new           #160                // class java/lang/StringBuilder
+     168: dup
+     169: invokespecial #162                // Method java/lang/StringBuilder."<init>":()V
+     172: iload_3
+     173: invokevirtual #163                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     176: invokevirtual #167                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     179: invokevirtual #170                // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+     182: astore        11
+     184: new           #124                // class java/io/File
+     187: dup
+     188: aload_0
+     189: getfield      #55                 // Field folder:Ljava/io/File;
+     192: new           #160                // class java/lang/StringBuilder
+     195: dup
+     196: aload         11
+     198: invokestatic  #176                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     201: invokespecial #180                // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     204: ldc           #183                // String .png
+     206: invokevirtual #185                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     209: invokevirtual #167                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     212: invokespecial #188                // Method java/io/File."<init>":(Ljava/io/File;Ljava/lang/String;)V
+     215: astore        12
+     217: aload         12
+     219: ifnull        376
+     222: aload         12
+     224: invokevirtual #191                // Method java/io/File.exists:()Z
+     227: ifeq          294
+     230: new           #160                // class java/lang/StringBuilder
+     233: dup
+     234: aload         12
+     236: invokevirtual #194                // Method java/io/File.getAbsolutePath:()Ljava/lang/String;
+     239: invokestatic  #176                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     242: invokespecial #180                // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     245: ldc           #197                // String  already exists.\n\nDo you want to replace it?
+     247: invokevirtual #185                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     250: invokevirtual #167                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     253: astore        13
+     255: invokestatic  #199                // Method com/texturesforplanets/ui/MainFrame.getFrames:()[Ljava/awt/Frame;
+     258: iconst_0
+     259: aaload
+     260: aload         13
+     262: ldc           #205                // String File Exists
+     264: iconst_0
+     265: invokestatic  #207                // Method javax/swing/JOptionPane.showConfirmDialog:(Ljava/awt/Component;Ljava/lang/Object;Ljava/lang/String;I)I
+     268: istore        14
+     270: iload         14
+     272: iconst_1
+     273: if_icmpne     288
+     276: new           #213                // class com/texturesforplanets/model/BulkRunThread$1
+     279: dup
+     280: aload_0
+     281: invokespecial #215                // Method com/texturesforplanets/model/BulkRunThread$1."<init>":(Lcom/texturesforplanets/model/BulkRunThread;)V
+     284: invokestatic  #218                // Method javax/swing/SwingUtilities.invokeLater:(Ljava/lang/Runnable;)V
+     287: return
+     288: aload         12
+     290: invokevirtual #223                // Method java/io/File.delete:()Z
+     293: pop
+     294: aload         10
+     296: ldc           #226                // String png
+     298: aload         12
+     300: invokestatic  #228                // Method javax/imageio/ImageIO.write:(Ljava/awt/image/RenderedImage;Ljava/lang/String;Ljava/io/File;)Z
+     303: pop
+     304: goto          376
+     307: astore        13
+     309: aload         13
+     311: invokevirtual #234                // Method java/lang/Exception.printStackTrace:()V
+     314: ldc           #239                // String resources/Bundle
+     316: invokestatic  #241                // Method java/util/ResourceBundle.getBundle:(Ljava/lang/String;)Ljava/util/ResourceBundle;
+     319: ldc           #247                // String RUN_FILE_WRITE_ERROR_MESSAGE
+     321: invokevirtual #249                // Method java/util/ResourceBundle.getString:(Ljava/lang/String;)Ljava/lang/String;
+     324: iconst_1
+     325: anewarray     #3                  // class java/lang/Object
+     328: dup
+     329: iconst_0
+     330: aload         13
+     332: invokevirtual #253                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     335: aastore
+     336: invokestatic  #256                // Method java/text/MessageFormat.format:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     339: astore        14
+     341: invokestatic  #262                // Method com/texturesforplanets/ui/UIState.getDefault:()Lcom/texturesforplanets/ui/UIState;
+     344: invokevirtual #267                // Method com/texturesforplanets/ui/UIState.getMainFrame:()Lcom/texturesforplanets/ui/MainFrame;
+     347: aload         14
+     349: ldc           #239                // String resources/Bundle
+     351: invokestatic  #241                // Method java/util/ResourceBundle.getBundle:(Ljava/lang/String;)Ljava/util/ResourceBundle;
+     354: ldc_w         #271                // String RUN_FILE_WRITE_ERROR_TITLE
+     357: invokevirtual #249                // Method java/util/ResourceBundle.getString:(Ljava/lang/String;)Ljava/lang/String;
+     360: iconst_0
+     361: invokestatic  #273                // Method javax/swing/JOptionPane.showMessageDialog:(Ljava/awt/Component;Ljava/lang/Object;Ljava/lang/String;I)V
+     364: new           #277                // class com/texturesforplanets/model/BulkRunThread$2
+     367: dup
+     368: aload_0
+     369: invokespecial #279                // Method com/texturesforplanets/model/BulkRunThread$2."<init>":(Lcom/texturesforplanets/model/BulkRunThread;)V
+     372: invokestatic  #218                // Method javax/swing/SwingUtilities.invokeLater:(Ljava/lang/Runnable;)V
+     375: return
+     376: aload         9
+     378: invokeinterface #107,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     383: ifne          139
+     386: iload_3
+     387: aload_0
+     388: getfield      #65                 // Field stepsPerPlanet:I
+     391: imul
+     392: istore_1
+     393: aload_0
+     394: iload_1
+     395: putfield      #63                 // Field currentStep:I
+     398: aload_0
+     399: iload_3
+     400: putfield      #67                 // Field completedPlanets:I
+     403: iinc          3, 1
+     406: iload_3
+     407: aload_0
+     408: getfield      #57                 // Field count:I
+     411: if_icmple     15
+     414: new           #280                // class com/texturesforplanets/model/BulkRunThread$3
+     417: dup
+     418: aload_0
+     419: invokespecial #282                // Method com/texturesforplanets/model/BulkRunThread$3."<init>":(Lcom/texturesforplanets/model/BulkRunThread;)V
+     422: invokestatic  #218                // Method javax/swing/SwingUtilities.invokeLater:(Ljava/lang/Runnable;)V
+     425: return
+    Exception table:
+       from    to  target type
+         294   304   307   Class java/lang/Exception
+
+  public void addListener(com.texturesforplanets.model.IBulkRunThreadListener);
+    Code:
+       0: aload_0
+       1: getfield      #42                 // Field listeners:Ljava/util/List;
+       4: aload_1
+       5: invokeinterface #97,  2           // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      10: pop
+      11: return
+
+  public void removeListener(com.texturesforplanets.model.IBulkRunThreadListener);
+    Code:
+       0: aload_0
+       1: getfield      #42                 // Field listeners:Ljava/util/List;
+       4: aload_1
+       5: invokeinterface #314,  2          // InterfaceMethod java/util/List.remove:(Ljava/lang/Object;)Z
+      10: pop
+      11: return
+
+  public void setCancel(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #37                 // Field requestCancel:Z
+       5: return
+
+  public boolean update(com.texturesforplanets.strategies.IStrategy, int);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: getfield      #67                 // Field completedPlanets:I
+       5: aload_0
+       6: getfield      #65                 // Field stepsPerPlanet:I
+       9: imul
+      10: aload_0
+      11: getfield      #71                 // Field stepsToLastStrategy:I
+      14: iadd
+      15: iload_2
+      16: iadd
+      17: putfield      #63                 // Field currentStep:I
+      20: aload_0
+      21: getfield      #37                 // Field requestCancel:Z
+      24: ifeq          57
+      27: invokestatic  #262                // Method com/texturesforplanets/ui/UIState.getDefault:()Lcom/texturesforplanets/ui/UIState;
+      30: aconst_null
+      31: invokevirtual #322                // Method com/texturesforplanets/ui/UIState.setOutput:(Lcom/texturesforplanets/model/Output;)V
+      34: new           #326                // class com/texturesforplanets/model/BulkRunThread$4
+      37: dup
+      38: aload_0
+      39: invokespecial #328                // Method com/texturesforplanets/model/BulkRunThread$4."<init>":(Lcom/texturesforplanets/model/BulkRunThread;)V
+      42: invokestatic  #218                // Method javax/swing/SwingUtilities.invokeLater:(Ljava/lang/Runnable;)V
+      45: aload_0
+      46: iconst_0
+      47: putfield      #37                 // Field requestCancel:Z
+      50: aload_0
+      51: aconst_null
+      52: putfield      #116                // Field thread:Ljava/lang/Thread;
+      55: iconst_0
+      56: ireturn
+      57: new           #329                // class com/texturesforplanets/model/BulkRunThread$5
+      60: dup
+      61: aload_0
+      62: invokespecial #331                // Method com/texturesforplanets/model/BulkRunThread$5."<init>":(Lcom/texturesforplanets/model/BulkRunThread;)V
+      65: invokestatic  #218                // Method javax/swing/SwingUtilities.invokeLater:(Ljava/lang/Runnable;)V
+      68: iconst_1
+      69: ireturn
+
+  static java.util.List access$0(com.texturesforplanets.model.BulkRunThread);
+    Code:
+       0: aload_0
+       1: getfield      #42                 // Field listeners:Ljava/util/List;
+       4: areturn
+
+  static int access$1(com.texturesforplanets.model.BulkRunThread);
+    Code:
+       0: aload_0
+       1: getfield      #63                 // Field currentStep:I
+       4: ireturn
+
+  static int access$2(com.texturesforplanets.model.BulkRunThread);
+    Code:
+       0: aload_0
+       1: getfield      #69                 // Field totalSteps:I
+       4: ireturn
+
+  static int access$3(com.texturesforplanets.model.BulkRunThread);
+    Code:
+       0: aload_0
+       1: getfield      #67                 // Field completedPlanets:I
+       4: ireturn
+}
+Compiled from "ColourizerLoader.java"
+public final class com.texturesforplanets.colourize.ColourizerLoader {
+  private static java.util.Map<java.lang.String, com.texturesforplanets.colourize.Colourizer> allColourizers;
+
+  private static java.util.List<com.texturesforplanets.colourize.Colourizer> newDialogColourizersOrdered;
+
+  private static java.lang.Iterable<com.texturesforplanets.colourize.Colourizer> allColourizersOrdered;
+
+  private com.texturesforplanets.colourize.ColourizerLoader();
+    Code:
+       0: aload_0
+       1: invokespecial #18                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static com.texturesforplanets.colourize.Colourizer getColourizer(java.lang.String);
+    Code:
+       0: getstatic     #26                 // Field allColourizers:Ljava/util/Map;
+       3: ifnonnull     9
+       6: invokestatic  #28                 // Method loadAllColourizers:()V
+       9: getstatic     #26                 // Field allColourizers:Ljava/util/Map;
+      12: aload_0
+      13: invokeinterface #31,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      18: checkcast     #37                 // class com/texturesforplanets/colourize/Colourizer
+      21: areturn
+
+  public static java.lang.Iterable<com.texturesforplanets.colourize.Colourizer> allColourizers(boolean);
+    Code:
+       0: getstatic     #26                 // Field allColourizers:Ljava/util/Map;
+       3: ifnonnull     9
+       6: invokestatic  #28                 // Method loadAllColourizers:()V
+       9: iload_0
+      10: ifeq          17
+      13: getstatic     #44                 // Field newDialogColourizersOrdered:Ljava/util/List;
+      16: areturn
+      17: getstatic     #46                 // Field allColourizersOrdered:Ljava/lang/Iterable;
+      20: areturn
+
+  public static com.texturesforplanets.colourize.Colourizer getDefaultCloudsColourizer();
+    Code:
+       0: ldc           #52                 // String Clouds
+       2: invokestatic  #54                 // Method getColourizer:(Ljava/lang/String;)Lcom/texturesforplanets/colourize/Colourizer;
+       5: astore_0
+       6: aload_0
+       7: ifnonnull     27
+      10: getstatic     #46                 // Field allColourizersOrdered:Ljava/lang/Iterable;
+      13: invokeinterface #56,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      18: invokeinterface #62,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      23: checkcast     #37                 // class com/texturesforplanets/colourize/Colourizer
+      26: astore_0
+      27: aload_0
+      28: areturn
+
+  private static void loadAllColourizers();
+    Code:
+       0: new           #70                 // class java/io/File
+       3: dup
+       4: new           #72                 // class java/lang/StringBuilder
+       7: dup
+       8: getstatic     #74                 // Field com/texturesforplanets/ui/util/PreferencesUtil$EPreference.HOME_FOLDER:Lcom/texturesforplanets/ui/util/PreferencesUtil$EPreference;
+      11: invokestatic  #80                 // Method com/texturesforplanets/ui/util/PreferencesUtil.getPreferenceString:(Lcom/texturesforplanets/ui/util/PreferencesUtil$EPreference;)Ljava/lang/String;
+      14: invokestatic  #86                 // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+      17: invokespecial #92                 // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+      20: getstatic     #95                 // Field java/io/File.separator:Ljava/lang/String;
+      23: invokevirtual #98                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      26: ldc           #102                // String Colourizers
+      28: invokevirtual #98                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      31: invokevirtual #104                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      34: invokespecial #108                // Method java/io/File."<init>":(Ljava/lang/String;)V
+      37: astore_0
+      38: new           #109                // class java/util/ArrayList
+      41: dup
+      42: invokespecial #111                // Method java/util/ArrayList."<init>":()V
+      45: astore_1
+      46: aload_0
+      47: invokevirtual #112                // Method java/io/File.listFiles:()[Ljava/io/File;
+      50: dup
+      51: astore        5
+      53: arraylength
+      54: istore        4
+      56: iconst_0
+      57: istore_3
+      58: goto          169
+      61: aload         5
+      63: iload_3
+      64: aaload
+      65: astore_2
+      66: aload_2
+      67: invokevirtual #116                // Method java/io/File.getName:()Ljava/lang/String;
+      70: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      73: ldc           #122                // String .col
+      75: invokevirtual #124                // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      78: ifne          96
+      81: aload_2
+      82: invokevirtual #116                // Method java/io/File.getName:()Ljava/lang/String;
+      85: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      88: ldc           #128                // String .zip
+      90: invokevirtual #124                // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      93: ifeq          166
+      96: new           #130                // class java/util/zip/ZipFile
+      99: dup
+     100: aload_2
+     101: invokespecial #132                // Method java/util/zip/ZipFile."<init>":(Ljava/io/File;)V
+     104: invokestatic  #135                // Method load:(Ljava/util/zip/ZipFile;)Lcom/texturesforplanets/colourize/Colourizer;
+     107: astore        6
+     109: aload         6
+     111: ifnull        166
+     114: aload_1
+     115: aload         6
+     117: invokeinterface #139,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     122: pop
+     123: goto          166
+     126: astore        6
+     128: getstatic     #145                // Field java/lang/System.err:Ljava/io/PrintStream;
+     131: new           #72                 // class java/lang/StringBuilder
+     134: dup
+     135: ldc           #151                // String Error reading
+     137: invokespecial #92                 // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     140: aload_2
+     141: invokevirtual #153                // Method java/io/File.getAbsolutePath:()Ljava/lang/String;
+     144: invokevirtual #98                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     147: ldc           #156                // String
+     149: invokevirtual #98                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     152: aload         6
+     154: invokevirtual #158                // Method java/io/IOException.getMessage:()Ljava/lang/String;
+     157: invokevirtual #98                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     160: invokevirtual #104                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     163: invokevirtual #163                // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+     166: iinc          3, 1
+     169: iload_3
+     170: iload         4
+     172: if_icmplt     61
+     175: aload_1
+     176: new           #168                // class com/texturesforplanets/colourize/ColourizerLoader$1
+     179: dup
+     180: invokespecial #170                // Method com/texturesforplanets/colourize/ColourizerLoader$1."<init>":()V
+     183: invokestatic  #171                // Method java/util/Collections.sort:(Ljava/util/List;Ljava/util/Comparator;)V
+     186: new           #177                // class java/util/Hashtable
+     189: dup
+     190: invokespecial #179                // Method java/util/Hashtable."<init>":()V
+     193: putstatic     #26                 // Field allColourizers:Ljava/util/Map;
+     196: new           #109                // class java/util/ArrayList
+     199: dup
+     200: invokespecial #111                // Method java/util/ArrayList."<init>":()V
+     203: putstatic     #44                 // Field newDialogColourizersOrdered:Ljava/util/List;
+     206: aload_1
+     207: invokeinterface #180,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     212: astore_3
+     213: goto          257
+     216: aload_3
+     217: invokeinterface #62,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     222: checkcast     #37                 // class com/texturesforplanets/colourize/Colourizer
+     225: astore_2
+     226: getstatic     #26                 // Field allColourizers:Ljava/util/Map;
+     229: aload_2
+     230: invokevirtual #181                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+     233: aload_2
+     234: invokeinterface #182,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     239: pop
+     240: aload_2
+     241: invokevirtual #186                // Method com/texturesforplanets/colourize/Colourizer.isShowInStartGallery:()Z
+     244: ifeq          257
+     247: getstatic     #44                 // Field newDialogColourizersOrdered:Ljava/util/List;
+     250: aload_2
+     251: invokeinterface #139,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     256: pop
+     257: aload_3
+     258: invokeinterface #190,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     263: ifne          216
+     266: aload_1
+     267: putstatic     #46                 // Field allColourizersOrdered:Ljava/lang/Iterable;
+     270: getstatic     #44                 // Field newDialogColourizersOrdered:Ljava/util/List;
+     273: new           #193                // class com/texturesforplanets/colourize/ColourizerLoader$2
+     276: dup
+     277: invokespecial #195                // Method com/texturesforplanets/colourize/ColourizerLoader$2."<init>":()V
+     280: invokestatic  #171                // Method java/util/Collections.sort:(Ljava/util/List;Ljava/util/Comparator;)V
+     283: return
+    Exception table:
+       from    to  target type
+          96   123   126   Class java/io/IOException
+
+  private static com.texturesforplanets.colourize.Colourizer load(java.util.zip.ZipFile) throws java.io.IOException;
+    Code:
+       0: new           #109                // class java/util/ArrayList
+       3: dup
+       4: invokespecial #111                // Method java/util/ArrayList."<init>":()V
+       7: astore_1
+       8: aconst_null
+       9: astore_2
+      10: aconst_null
+      11: astore_3
+      12: aconst_null
+      13: astore        4
+      15: ldc           #206                // String plain
+      17: astore        5
+      19: aconst_null
+      20: astore        6
+      22: ldc           #52                 // String Clouds
+      24: astore        7
+      26: iconst_1
+      27: istore        8
+      29: aload_0
+      30: invokevirtual #208                // Method java/util/zip/ZipFile.entries:()Ljava/util/Enumeration;
+      33: astore        9
+      35: goto          523
+      38: aload         9
+      40: invokeinterface #212,  1          // InterfaceMethod java/util/Enumeration.nextElement:()Ljava/lang/Object;
+      45: checkcast     #217                // class java/util/zip/ZipEntry
+      48: astore        10
+      50: aload         10
+      52: invokevirtual #219                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+      55: ldc           #220                // String colourizer.txt
+      57: invokevirtual #222                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      60: ifeq          452
+      63: new           #225                // class java/io/BufferedReader
+      66: dup
+      67: new           #227                // class java/io/InputStreamReader
+      70: dup
+      71: aload_0
+      72: aload         10
+      74: invokevirtual #229                // Method java/util/zip/ZipFile.getInputStream:(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
+      77: invokespecial #233                // Method java/io/InputStreamReader."<init>":(Ljava/io/InputStream;)V
+      80: invokespecial #236                // Method java/io/BufferedReader."<init>":(Ljava/io/Reader;)V
+      83: astore        11
+      85: goto          438
+      88: aload         12
+      90: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+      93: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+      96: ldc           #242                // String author
+      98: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     101: ifeq          140
+     104: aload         12
+     106: bipush        61
+     108: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     111: iconst_m1
+     112: if_icmpeq     140
+     115: aload         12
+     117: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     120: aload         12
+     122: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     125: bipush        61
+     127: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     130: iconst_1
+     131: iadd
+     132: invokevirtual #251                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     135: astore        4
+     137: goto          438
+     140: aload         12
+     142: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     145: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     148: ldc           #255                // String name
+     150: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     153: ifeq          191
+     156: aload         12
+     158: bipush        61
+     160: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     163: iconst_m1
+     164: if_icmpeq     191
+     167: aload         12
+     169: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     172: aload         12
+     174: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     177: bipush        61
+     179: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     182: iconst_1
+     183: iadd
+     184: invokevirtual #251                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     187: astore_3
+     188: goto          438
+     191: aload         12
+     193: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     196: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     199: ldc_w         #256                // String template=
+     202: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     205: ifeq          244
+     208: aload         12
+     210: bipush        61
+     212: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     215: iconst_m1
+     216: if_icmpeq     244
+     219: aload         12
+     221: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     224: aload         12
+     226: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     229: bipush        61
+     231: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     234: iconst_1
+     235: iadd
+     236: invokevirtual #251                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     239: astore        5
+     241: goto          438
+     244: aload         12
+     246: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     249: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     252: ldc_w         #258                // String template_colourizer_surface
+     255: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     258: ifeq          297
+     261: aload         12
+     263: bipush        61
+     265: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     268: iconst_m1
+     269: if_icmpeq     297
+     272: aload         12
+     274: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     277: aload         12
+     279: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     282: bipush        61
+     284: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     287: iconst_1
+     288: iadd
+     289: invokevirtual #251                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     292: astore        6
+     294: goto          438
+     297: aload         12
+     299: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     302: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     305: ldc_w         #260                // String template_colourizer_clouds
+     308: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     311: ifeq          365
+     314: aload         12
+     316: bipush        61
+     318: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     321: iconst_m1
+     322: if_icmpeq     365
+     325: aload         12
+     327: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     330: aload         12
+     332: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     335: bipush        61
+     337: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     340: iconst_1
+     341: iadd
+     342: invokevirtual #251                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     345: astore        7
+     347: aload         7
+     349: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     352: invokevirtual #262                // Method java/lang/String.length:()I
+     355: ifne          438
+     358: ldc           #52                 // String Clouds
+     360: astore        7
+     362: goto          438
+     365: aload         12
+     367: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     370: invokevirtual #119                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     373: ldc_w         #266                // String show_in_start_gallery
+     376: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     379: ifeq          438
+     382: aload         12
+     384: bipush        61
+     386: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     389: iconst_m1
+     390: if_icmpeq     438
+     393: aload         12
+     395: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     398: aload         12
+     400: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     403: bipush        61
+     405: invokevirtual #247                // Method java/lang/String.indexOf:(I)I
+     408: iconst_1
+     409: iadd
+     410: invokevirtual #251                // Method java/lang/String.substring:(I)Ljava/lang/String;
+     413: astore        13
+     415: aload         13
+     417: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     420: ldc_w         #268                // String false
+     423: invokevirtual #270                // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+     426: ifeq          435
+     429: iconst_0
+     430: istore        8
+     432: goto          438
+     435: iconst_1
+     436: istore        8
+     438: aload         11
+     440: invokevirtual #273                // Method java/io/BufferedReader.readLine:()Ljava/lang/String;
+     443: dup
+     444: astore        12
+     446: ifnonnull     88
+     449: goto          523
+     452: aload         10
+     454: invokevirtual #219                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+     457: ldc_w         #276                // String sample.png
+     460: invokevirtual #222                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     463: ifeq          479
+     466: aload_0
+     467: aload         10
+     469: invokevirtual #229                // Method java/util/zip/ZipFile.getInputStream:(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
+     472: invokestatic  #278                // Method javax/imageio/ImageIO.read:(Ljava/io/InputStream;)Ljava/awt/image/BufferedImage;
+     475: astore_2
+     476: goto          523
+     479: aload         10
+     481: invokevirtual #219                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+     484: ldc_w         #284                // String colours
+     487: invokevirtual #244                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     490: ifeq          523
+     493: aload         10
+     495: invokevirtual #219                // Method java/util/zip/ZipEntry.getName:()Ljava/lang/String;
+     498: ldc_w         #286                // String .png
+     501: invokevirtual #124                // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     504: ifeq          523
+     507: aload_1
+     508: aload_0
+     509: aload         10
+     511: invokevirtual #229                // Method java/util/zip/ZipFile.getInputStream:(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
+     514: invokestatic  #278                // Method javax/imageio/ImageIO.read:(Ljava/io/InputStream;)Ljava/awt/image/BufferedImage;
+     517: invokeinterface #139,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     522: pop
+     523: aload         9
+     525: invokeinterface #288,  1          // InterfaceMethod java/util/Enumeration.hasMoreElements:()Z
+     530: ifne          38
+     533: aload         6
+     535: ifnull        549
+     538: aload         6
+     540: invokevirtual #239                // Method java/lang/String.trim:()Ljava/lang/String;
+     543: invokevirtual #262                // Method java/lang/String.length:()I
+     546: ifne          552
+     549: aload_3
+     550: astore        6
+     552: aload_0
+     553: invokevirtual #291                // Method java/util/zip/ZipFile.close:()V
+     556: aload_3
+     557: ifnull        599
+     560: aload         4
+     562: ifnull        599
+     565: aload_2
+     566: ifnull        599
+     569: aload_1
+     570: invokeinterface #294,  1          // InterfaceMethod java/util/List.size:()I
+     575: ifle          599
+     578: new           #37                 // class com/texturesforplanets/colourize/Colourizer
+     581: dup
+     582: aload_3
+     583: aload         4
+     585: aload_1
+     586: aload_2
+     587: aload         5
+     589: aload         6
+     591: aload         7
+     593: iload         8
+     595: invokespecial #297                // Method com/texturesforplanets/colourize/Colourizer."<init>":(Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/awt/Image;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+     598: areturn
+     599: aconst_null
+     600: areturn
+}
+Compiled from "RenderStrategy.java"
+public class com.texturesforplanets.strategies.RenderStrategy implements com.texturesforplanets.strategies.IStrategy,com.texturesforplanets.strategies.IRendererStrategy {
+  private static final long serialVersionUID;
+
+  private transient com.texturesforplanets.colourize.Colourizer groundColourizer;
+
+  private java.lang.String groundColourizerName;
+
+  private com.texturesforplanets.renderer.EProjection projection;
+
+  private int width;
+
+  private int height;
+
+  private boolean renderGroundLayer;
+
+  private boolean renderCloudLayer;
+
+  private transient com.texturesforplanets.colourize.Colourizer cloudColourizer;
+
+  private java.lang.String cloudColourizerName;
+
+  public com.texturesforplanets.strategies.RenderStrategy(com.texturesforplanets.colourize.Colourizer);
+    Code:
+       0: aload_0
+       1: invokespecial #31                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: aload_1
+       6: invokevirtual #34                 // Method setGroundColourizer:(Lcom/texturesforplanets/colourize/Colourizer;)V
+       9: aload_0
+      10: getstatic     #37                 // Field com/texturesforplanets/renderer/EProjection.EQUIRECTANGULAR:Lcom/texturesforplanets/renderer/EProjection;
+      13: putfield      #42                 // Field projection:Lcom/texturesforplanets/renderer/EProjection;
+      16: aload_0
+      17: sipush        1024
+      20: putfield      #44                 // Field width:I
+      23: aload_0
+      24: sipush        512
+      27: putfield      #46                 // Field height:I
+      30: aload_0
+      31: iconst_1
+      32: putfield      #48                 // Field renderGroundLayer:Z
+      35: aload_0
+      36: iconst_0
+      37: putfield      #50                 // Field renderCloudLayer:Z
+      40: aload_0
+      41: invokestatic  #52                 // Method com/texturesforplanets/colourize/ColourizerLoader.getDefaultCloudsColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+      44: invokevirtual #58                 // Method setCloudColourizer:(Lcom/texturesforplanets/colourize/Colourizer;)V
+      47: return
+
+  public com.texturesforplanets.renderer.EProjection getProjection();
+    Code:
+       0: aload_0
+       1: getfield      #42                 // Field projection:Lcom/texturesforplanets/renderer/EProjection;
+       4: areturn
+
+  public int getWidth(boolean);
+    Code:
+       0: iload_1
+       1: ifeq          18
+       4: aload_0
+       5: getfield      #44                 // Field width:I
+       8: sipush        2048
+      11: if_icmple     18
+      14: sipush        2048
+      17: ireturn
+      18: aload_0
+      19: getfield      #44                 // Field width:I
+      22: ireturn
+
+  public int getHeight(boolean);
+    Code:
+       0: iload_1
+       1: ifeq          18
+       4: aload_0
+       5: getfield      #46                 // Field height:I
+       8: sipush        1024
+      11: if_icmple     18
+      14: sipush        1024
+      17: ireturn
+      18: aload_0
+      19: getfield      #46                 // Field height:I
+      22: ireturn
+
+  public void setWidth(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #44                 // Field width:I
+       5: return
+
+  public void setHeight(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #46                 // Field height:I
+       5: return
+
+  public com.texturesforplanets.colourize.Colourizer getGroundColourizer();
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+       4: ifnonnull     56
+       7: aload_0
+       8: getfield      #78                 // Field groundColourizerName:Ljava/lang/String;
+      11: ifnull        56
+      14: aload_0
+      15: aload_0
+      16: getfield      #78                 // Field groundColourizerName:Ljava/lang/String;
+      19: invokestatic  #80                 // Method com/texturesforplanets/colourize/ColourizerLoader.getColourizer:(Ljava/lang/String;)Lcom/texturesforplanets/colourize/Colourizer;
+      22: putfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      25: aload_0
+      26: getfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      29: ifnonnull     91
+      32: aload_0
+      33: iconst_0
+      34: invokestatic  #84                 // Method com/texturesforplanets/colourize/ColourizerLoader.allColourizers:(Z)Ljava/lang/Iterable;
+      37: invokeinterface #88,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      42: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      47: checkcast     #100                // class com/texturesforplanets/colourize/Colourizer
+      50: putfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      53: goto          91
+      56: aload_0
+      57: getfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      60: ifnonnull     91
+      63: aload_0
+      64: getfield      #78                 // Field groundColourizerName:Ljava/lang/String;
+      67: ifnonnull     91
+      70: aload_0
+      71: iconst_1
+      72: invokestatic  #84                 // Method com/texturesforplanets/colourize/ColourizerLoader.allColourizers:(Z)Ljava/lang/Iterable;
+      75: invokeinterface #88,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      80: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      85: checkcast     #100                // class com/texturesforplanets/colourize/Colourizer
+      88: invokevirtual #34                 // Method setGroundColourizer:(Lcom/texturesforplanets/colourize/Colourizer;)V
+      91: aload_0
+      92: getfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      95: areturn
+
+  public void setGroundColourizer(com.texturesforplanets.colourize.Colourizer);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #76                 // Field groundColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+       5: aload_0
+       6: aload_1
+       7: ifnonnull     14
+      10: aconst_null
+      11: goto          18
+      14: aload_1
+      15: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+      18: putfield      #78                 // Field groundColourizerName:Ljava/lang/String;
+      21: return
+
+  public com.texturesforplanets.colourize.Colourizer getCloudColourizer();
+    Code:
+       0: aload_0
+       1: getfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+       4: ifnonnull     56
+       7: aload_0
+       8: getfield      #112                // Field cloudColourizerName:Ljava/lang/String;
+      11: ifnull        56
+      14: aload_0
+      15: aload_0
+      16: getfield      #112                // Field cloudColourizerName:Ljava/lang/String;
+      19: invokestatic  #80                 // Method com/texturesforplanets/colourize/ColourizerLoader.getColourizer:(Ljava/lang/String;)Lcom/texturesforplanets/colourize/Colourizer;
+      22: putfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      25: aload_0
+      26: getfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      29: ifnonnull     77
+      32: aload_0
+      33: iconst_0
+      34: invokestatic  #84                 // Method com/texturesforplanets/colourize/ColourizerLoader.allColourizers:(Z)Ljava/lang/Iterable;
+      37: invokeinterface #88,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      42: invokeinterface #94,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      47: checkcast     #100                // class com/texturesforplanets/colourize/Colourizer
+      50: putfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      53: goto          77
+      56: aload_0
+      57: getfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      60: ifnonnull     77
+      63: aload_0
+      64: getfield      #112                // Field cloudColourizerName:Ljava/lang/String;
+      67: ifnonnull     77
+      70: aload_0
+      71: invokestatic  #52                 // Method com/texturesforplanets/colourize/ColourizerLoader.getDefaultCloudsColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+      74: invokevirtual #58                 // Method setCloudColourizer:(Lcom/texturesforplanets/colourize/Colourizer;)V
+      77: aload_0
+      78: getfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+      81: areturn
+
+  public void setCloudColourizer(com.texturesforplanets.colourize.Colourizer);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #110                // Field cloudColourizer:Lcom/texturesforplanets/colourize/Colourizer;
+       5: aload_0
+       6: aload_1
+       7: ifnonnull     14
+      10: aconst_null
+      11: goto          18
+      14: aload_1
+      15: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+      18: putfield      #112                // Field cloudColourizerName:Ljava/lang/String;
+      21: return
+
+  public boolean isRenderGroundLayer();
+    Code:
+       0: aload_0
+       1: getfield      #48                 // Field renderGroundLayer:Z
+       4: ifne          19
+       7: aload_0
+       8: getfield      #50                 // Field renderCloudLayer:Z
+      11: ifne          19
+      14: aload_0
+      15: iconst_1
+      16: putfield      #48                 // Field renderGroundLayer:Z
+      19: aload_0
+      20: getfield      #48                 // Field renderGroundLayer:Z
+      23: ireturn
+
+  public void setRenderGroundLayer(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #48                 // Field renderGroundLayer:Z
+       5: return
+
+  public boolean isRenderCloudLayer();
+    Code:
+       0: aload_0
+       1: getfield      #50                 // Field renderCloudLayer:Z
+       4: ireturn
+
+  public void setRenderCloudLayer(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #50                 // Field renderCloudLayer:Z
+       5: return
+
+  public void setProjection(com.texturesforplanets.renderer.EProjection);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #42                 // Field projection:Lcom/texturesforplanets/renderer/EProjection;
+       5: return
+
+  public com.texturesforplanets.strategies.IStrategy clone();
+    Code:
+       0: new           #1                  // class com/texturesforplanets/strategies/RenderStrategy
+       3: dup
+       4: aload_0
+       5: invokevirtual #124                // Method getGroundColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+       8: invokespecial #126                // Method "<init>":(Lcom/texturesforplanets/colourize/Colourizer;)V
+      11: astore_1
+      12: aload_1
+      13: aload_0
+      14: getfield      #46                 // Field height:I
+      17: invokevirtual #128                // Method setHeight:(I)V
+      20: aload_1
+      21: aload_0
+      22: getfield      #44                 // Field width:I
+      25: invokevirtual #130                // Method setWidth:(I)V
+      28: aload_1
+      29: aload_0
+      30: getfield      #42                 // Field projection:Lcom/texturesforplanets/renderer/EProjection;
+      33: invokevirtual #132                // Method setProjection:(Lcom/texturesforplanets/renderer/EProjection;)V
+      36: aload_1
+      37: aload_0
+      38: getfield      #48                 // Field renderGroundLayer:Z
+      41: invokevirtual #134                // Method setRenderGroundLayer:(Z)V
+      44: aload_1
+      45: aload_0
+      46: getfield      #50                 // Field renderCloudLayer:Z
+      49: invokevirtual #136                // Method setRenderCloudLayer:(Z)V
+      52: aload_1
+      53: aload_0
+      54: invokevirtual #138                // Method getCloudColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+      57: invokevirtual #58                 // Method setCloudColourizer:(Lcom/texturesforplanets/colourize/Colourizer;)V
+      60: aload_1
+      61: areturn
+
+  public com.texturesforplanets.model.Icosahedron execute(java.util.Random, com.texturesforplanets.model.Icosahedron, com.texturesforplanets.model.Output, com.texturesforplanets.strategies.IStrategyListener, double, boolean);
+    Code:
+       0: aload         4
+       2: aload_0
+       3: iconst_0
+       4: invokeinterface #143,  3          // InterfaceMethod com/texturesforplanets/strategies/IStrategyListener.update:(Lcom/texturesforplanets/strategies/IStrategy;I)Z
+       9: istore        8
+      11: iload         8
+      13: ifne          18
+      16: aconst_null
+      17: areturn
+      18: aconst_null
+      19: astore        9
+      21: aload_0
+      22: invokevirtual #149                // Method isRenderCloudLayer:()Z
+      25: ifeq          41
+      28: aload_3
+      29: aload_0
+      30: invokevirtual #138                // Method getCloudColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+      33: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+      36: invokevirtual #151                // Method com/texturesforplanets/model/Output.getCloudLayer:(Ljava/lang/String;)Ljava/awt/image/BufferedImage;
+      39: astore        9
+      41: aload_0
+      42: invokevirtual #124                // Method getGroundColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+      45: aload_0
+      46: invokevirtual #124                // Method getGroundColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+      49: invokevirtual #157                // Method com/texturesforplanets/colourize/Colourizer.getColoursImageCount:()I
+      52: i2d
+      53: dload         5
+      55: dmul
+      56: d2i
+      57: invokevirtual #161                // Method com/texturesforplanets/colourize/Colourizer.getColoursImage:(I)Ljava/awt/image/BufferedImage;
+      60: astore        10
+      62: aload_0
+      63: getfield      #42                 // Field projection:Lcom/texturesforplanets/renderer/EProjection;
+      66: invokevirtual #165                // Method com/texturesforplanets/renderer/EProjection.getRenderer:()Lcom/texturesforplanets/renderer/IRenderer;
+      69: aload_2
+      70: aload_3
+      71: aload         10
+      73: aload         9
+      75: aload_0
+      76: iload         7
+      78: invokeinterface #169,  7          // InterfaceMethod com/texturesforplanets/renderer/IRenderer.render:(Lcom/texturesforplanets/model/Icosahedron;Lcom/texturesforplanets/model/Output;Ljava/awt/image/BufferedImage;Ljava/awt/image/BufferedImage;Lcom/texturesforplanets/strategies/RenderStrategy;Z)Ljava/awt/image/BufferedImage;
+      83: astore        11
+      85: aload         11
+      87: ifnonnull     92
+      90: aconst_null
+      91: areturn
+      92: ldc           #175                // String
+      94: astore        12
+      96: aload_0
+      97: invokevirtual #177                // Method isRenderGroundLayer:()Z
+     100: ifeq          178
+     103: aload_0
+     104: invokevirtual #149                // Method isRenderCloudLayer:()Z
+     107: ifne          178
+     110: new           #179                // class java/lang/StringBuilder
+     113: dup
+     114: aload_0
+     115: invokevirtual #124                // Method getGroundColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+     118: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+     121: invokestatic  #181                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     124: invokespecial #185                // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     127: ldc           #188                // String -
+     129: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     132: aload_0
+     133: invokevirtual #194                // Method getProjection:()Lcom/texturesforplanets/renderer/EProjection;
+     136: invokevirtual #196                // Method com/texturesforplanets/renderer/EProjection.name:()Ljava/lang/String;
+     139: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     142: ldc           #199                // String -#-
+     144: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     147: aload_0
+     148: iload         7
+     150: invokevirtual #201                // Method getWidth:(Z)I
+     153: invokevirtual #203                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     156: ldc           #206                // String x
+     158: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     161: aload_0
+     162: iload         7
+     164: invokevirtual #208                // Method getHeight:(Z)I
+     167: invokevirtual #203                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     170: invokevirtual #210                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     173: astore        12
+     175: goto          354
+     178: aload_0
+     179: invokevirtual #177                // Method isRenderGroundLayer:()Z
+     182: ifne          260
+     185: aload_0
+     186: invokevirtual #149                // Method isRenderCloudLayer:()Z
+     189: ifeq          260
+     192: new           #179                // class java/lang/StringBuilder
+     195: dup
+     196: aload_0
+     197: invokevirtual #138                // Method getCloudColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+     200: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+     203: invokestatic  #181                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     206: invokespecial #185                // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     209: ldc           #188                // String -
+     211: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     214: aload_0
+     215: invokevirtual #194                // Method getProjection:()Lcom/texturesforplanets/renderer/EProjection;
+     218: invokevirtual #196                // Method com/texturesforplanets/renderer/EProjection.name:()Ljava/lang/String;
+     221: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     224: ldc           #199                // String -#-
+     226: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     229: aload_0
+     230: iload         7
+     232: invokevirtual #201                // Method getWidth:(Z)I
+     235: invokevirtual #203                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     238: ldc           #206                // String x
+     240: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     243: aload_0
+     244: iload         7
+     246: invokevirtual #208                // Method getHeight:(Z)I
+     249: invokevirtual #203                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     252: invokevirtual #210                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     255: astore        12
+     257: goto          354
+     260: aload_0
+     261: invokevirtual #177                // Method isRenderGroundLayer:()Z
+     264: ifeq          354
+     267: aload_0
+     268: invokevirtual #149                // Method isRenderCloudLayer:()Z
+     271: ifeq          354
+     274: new           #179                // class java/lang/StringBuilder
+     277: dup
+     278: aload_0
+     279: invokevirtual #124                // Method getGroundColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+     282: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+     285: invokestatic  #181                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     288: invokespecial #185                // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+     291: ldc           #188                // String -
+     293: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     296: aload_0
+     297: invokevirtual #138                // Method getCloudColourizer:()Lcom/texturesforplanets/colourize/Colourizer;
+     300: invokevirtual #102                // Method com/texturesforplanets/colourize/Colourizer.getName:()Ljava/lang/String;
+     303: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     306: ldc           #188                // String -
+     308: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     311: aload_0
+     312: invokevirtual #194                // Method getProjection:()Lcom/texturesforplanets/renderer/EProjection;
+     315: invokevirtual #196                // Method com/texturesforplanets/renderer/EProjection.name:()Ljava/lang/String;
+     318: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     321: ldc           #199                // String -#-
+     323: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     326: aload_0
+     327: iload         7
+     329: invokevirtual #201                // Method getWidth:(Z)I
+     332: invokevirtual #203                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     335: ldc           #206                // String x
+     337: invokevirtual #190                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     340: aload_0
+     341: iload         7
+     343: invokevirtual #208                // Method getHeight:(Z)I
+     346: invokevirtual #203                // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+     349: invokevirtual #210                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     352: astore        12
+     354: new           #213                // class com/texturesforplanets/model/Rendering
+     357: dup
+     358: aload         12
+     360: invokespecial #215                // Method com/texturesforplanets/model/Rendering."<init>":(Ljava/lang/String;)V
+     363: astore        13
+     365: aload         13
+     367: aload         11
+     369: invokevirtual #216                // Method com/texturesforplanets/model/Rendering.setImage:(Ljava/awt/image/BufferedImage;)V
+     372: aload_3
+     373: aload         13
+     375: invokevirtual #220                // Method com/texturesforplanets/model/Output.addRendering:(Lcom/texturesforplanets/model/Rendering;)Z
+     378: pop
+     379: aload         4
+     381: aload_0
+     382: iconst_2
+     383: invokeinterface #143,  3          // InterfaceMethod com/texturesforplanets/strategies/IStrategyListener.update:(Lcom/texturesforplanets/strategies/IStrategy;I)Z
+     388: istore        8
+     390: iload         8
+     392: ifne          397
+     395: aconst_null
+     396: areturn
+     397: aload_2
+     398: areturn
+
+  public int getSteps(com.texturesforplanets.model.BuildModel, boolean);
+    Code:
+       0: iconst_2
+       1: ireturn
+
+  public java.lang.Object clone() throws java.lang.CloneNotSupportedException;
+    Code:
+       0: aload_0
+       1: invokevirtual #250                // Method clone:()Lcom/texturesforplanets/strategies/IStrategy;
+       4: areturn
+}

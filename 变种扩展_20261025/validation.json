@@ -1,0 +1,397 @@
+{
+  "categories": 12,
+  "newGroundTextures": 24,
+  "cloudLayers": 10,
+  "composites": 10,
+  "nativeProjects": 24,
+  "uniqueImages": 44,
+  "sourceFingerprintsUnchanged": 89,
+  "canonicalUnchanged": true,
+  "checks": [
+    {
+      "file": "ground/continental_v01.png",
+      "seamMean": 0.838,
+      "adjacentMean": 0.937,
+      "seamRatio": 0.895,
+      "rgbStd": 59.01
+    },
+    {
+      "file": "clouds/continental_v01.png",
+      "seamMean": 1.472,
+      "adjacentMean": 3.076,
+      "seamRatio": 0.478,
+      "rgbStd": 118.18
+    },
+    {
+      "file": "composite/continental_v01.png",
+      "seamMean": 1.259,
+      "adjacentMean": 1.388,
+      "seamRatio": 0.907,
+      "rgbStd": 63.05
+    },
+    {
+      "file": "ground/continental_v02.png",
+      "seamMean": 0.538,
+      "adjacentMean": 0.576,
+      "seamRatio": 0.933,
+      "rgbStd": 70.06
+    },
+    {
+      "file": "clouds/continental_v02.png",
+      "seamMean": 5.301,
+      "adjacentMean": 7.231,
+      "seamRatio": 0.733,
+      "rgbStd": 115.45
+    },
+    {
+      "file": "composite/continental_v02.png",
+      "seamMean": 1.686,
+      "adjacentMean": 1.678,
+      "seamRatio": 1.004,
+      "rgbStd": 73.59
+    },
+    {
+      "file": "ground/ocean_v01.png",
+      "seamMean": 0.239,
+      "adjacentMean": 0.252,
+      "seamRatio": 0.945,
+      "rgbStd": 49.71
+    },
+    {
+      "file": "clouds/ocean_v01.png",
+      "seamMean": 3.428,
+      "adjacentMean": 4.417,
+      "seamRatio": 0.776,
+      "rgbStd": 110.17
+    },
+    {
+      "file": "composite/ocean_v01.png",
+      "seamMean": 1.564,
+      "adjacentMean": 1.568,
+      "seamRatio": 0.998,
+      "rgbStd": 73.89
+    },
+    {
+      "file": "ground/ocean_v02.png",
+      "seamMean": 0.283,
+      "adjacentMean": 0.31,
+      "seamRatio": 0.914,
+      "rgbStd": 48.89
+    },
+    {
+      "file": "clouds/ocean_v02.png",
+      "seamMean": 1.877,
+      "adjacentMean": 3.452,
+      "seamRatio": 0.544,
+      "rgbStd": 115.99
+    },
+    {
+      "file": "composite/ocean_v02.png",
+      "seamMean": 2.103,
+      "adjacentMean": 1.945,
+      "seamRatio": 1.081,
+      "rgbStd": 71.34
+    },
+    {
+      "file": "ground/desert_v01.png",
+      "seamMean": 0.421,
+      "adjacentMean": 0.46,
+      "seamRatio": 0.915,
+      "rgbStd": 39.24
+    },
+    {
+      "file": "clouds/desert_v01.png",
+      "seamMean": 3.807,
+      "adjacentMean": 2.323,
+      "seamRatio": 1.639,
+      "rgbStd": 116.01
+    },
+    {
+      "file": "composite/desert_v01.png",
+      "seamMean": 1.19,
+      "adjacentMean": 1.218,
+      "seamRatio": 0.977,
+      "rgbStd": 41.09
+    },
+    {
+      "file": "ground/desert_v02.png",
+      "seamMean": 0.876,
+      "adjacentMean": 0.857,
+      "seamRatio": 1.021,
+      "rgbStd": 42.13
+    },
+    {
+      "file": "clouds/desert_v02.png",
+      "seamMean": 3.654,
+      "adjacentMean": 2.64,
+      "seamRatio": 1.384,
+      "rgbStd": 117.1
+    },
+    {
+      "file": "composite/desert_v02.png",
+      "seamMean": 1.317,
+      "adjacentMean": 1.362,
+      "seamRatio": 0.967,
+      "rgbStd": 49.64
+    },
+    {
+      "file": "ground/tundra_v01.png",
+      "seamMean": 0.451,
+      "adjacentMean": 0.514,
+      "seamRatio": 0.876,
+      "rgbStd": 75.27
+    },
+    {
+      "file": "clouds/tundra_v01.png",
+      "seamMean": 5.528,
+      "adjacentMean": 4.093,
+      "seamRatio": 1.351,
+      "rgbStd": 118.8
+    },
+    {
+      "file": "composite/tundra_v01.png",
+      "seamMean": 1.807,
+      "adjacentMean": 1.887,
+      "seamRatio": 0.958,
+      "rgbStd": 72.8
+    },
+    {
+      "file": "ground/tundra_v02.png",
+      "seamMean": 0.587,
+      "adjacentMean": 0.632,
+      "seamRatio": 0.929,
+      "rgbStd": 63.03
+    },
+    {
+      "file": "clouds/tundra_v02.png",
+      "seamMean": 5.981,
+      "adjacentMean": 6.425,
+      "seamRatio": 0.931,
+      "rgbStd": 120.59
+    },
+    {
+      "file": "composite/tundra_v02.png",
+      "seamMean": 3.452,
+      "adjacentMean": 3.311,
+      "seamRatio": 1.043,
+      "rgbStd": 67.37
+    },
+    {
+      "file": "ground/tropical_v01.png",
+      "seamMean": 0.491,
+      "adjacentMean": 0.561,
+      "seamRatio": 0.876,
+      "rgbStd": 68.58
+    },
+    {
+      "file": "clouds/tropical_v01.png",
+      "seamMean": 5.103,
+      "adjacentMean": 4.041,
+      "seamRatio": 1.263,
+      "rgbStd": 118.56
+    },
+    {
+      "file": "composite/tropical_v01.png",
+      "seamMean": 2.512,
+      "adjacentMean": 2.382,
+      "seamRatio": 1.055,
+      "rgbStd": 67.41
+    },
+    {
+      "file": "ground/tropical_v02.png",
+      "seamMean": 1.113,
+      "adjacentMean": 1.203,
+      "seamRatio": 0.925,
+      "rgbStd": 60.67
+    },
+    {
+      "file": "clouds/tropical_v02.png",
+      "seamMean": 3.298,
+      "adjacentMean": 3.74,
+      "seamRatio": 0.882,
+      "rgbStd": 121.32
+    },
+    {
+      "file": "composite/tropical_v02.png",
+      "seamMean": 1.805,
+      "adjacentMean": 1.831,
+      "seamRatio": 0.986,
+      "rgbStd": 62.98
+    },
+    {
+      "file": "ground/molten_v01.png",
+      "seamMean": 0.846,
+      "adjacentMean": 0.926,
+      "seamRatio": 0.913,
+      "rgbStd": 61.65
+    },
+    {
+      "file": "ground/molten_v02.png",
+      "seamMean": 0.688,
+      "adjacentMean": 0.71,
+      "seamRatio": 0.969,
+      "rgbStd": 49.62
+    },
+    {
+      "file": "ground/toxic_v01.png",
+      "seamMean": 1.686,
+      "adjacentMean": 1.687,
+      "seamRatio": 0.999,
+      "rgbStd": 43.95
+    },
+    {
+      "file": "ground/toxic_v02.png",
+      "seamMean": 0.636,
+      "adjacentMean": 0.689,
+      "seamRatio": 0.924,
+      "rgbStd": 26.37
+    },
+    {
+      "file": "ground/barren_v01.png",
+      "seamMean": 0.341,
+      "adjacentMean": 0.371,
+      "seamRatio": 0.92,
+      "rgbStd": 36.2
+    },
+    {
+      "file": "ground/barren_v02.png",
+      "seamMean": 0.493,
+      "adjacentMean": 0.544,
+      "seamRatio": 0.907,
+      "rgbStd": 25.1
+    },
+    {
+      "file": "ground/gas_giant_v01.png",
+      "seamMean": 2.248,
+      "adjacentMean": 2.388,
+      "seamRatio": 0.942,
+      "rgbStd": 34.01
+    },
+    {
+      "file": "ground/gas_giant_v02.png",
+      "seamMean": 2.738,
+      "adjacentMean": 2.709,
+      "seamRatio": 1.011,
+      "rgbStd": 56.3
+    },
+    {
+      "file": "ground/ice_giant_v01.png",
+      "seamMean": 0.77,
+      "adjacentMean": 0.78,
+      "seamRatio": 0.986,
+      "rgbStd": 75.79
+    },
+    {
+      "file": "ground/ice_giant_v02.png",
+      "seamMean": 1.599,
+      "adjacentMean": 1.731,
+      "seamRatio": 0.924,
+      "rgbStd": 72.63
+    },
+    {
+      "file": "ground/frozen_v01.png",
+      "seamMean": 1.043,
+      "adjacentMean": 0.974,
+      "seamRatio": 1.07,
+      "rgbStd": 29.76
+    },
+    {
+      "file": "ground/frozen_v02.png",
+      "seamMean": 0.367,
+      "adjacentMean": 0.372,
+      "seamRatio": 0.987,
+      "rgbStd": 39.71
+    },
+    {
+      "file": "ground/frozen_dwarf_v01.png",
+      "seamMean": 0.361,
+      "adjacentMean": 0.451,
+      "seamRatio": 0.802,
+      "rgbStd": 29.3
+    },
+    {
+      "file": "ground/frozen_dwarf_v02.png",
+      "seamMean": 0.473,
+      "adjacentMean": 0.486,
+      "seamRatio": 0.972,
+      "rgbStd": 31.94
+    }
+  ],
+  "pairDifferences": [
+    {
+      "category": "continental",
+      "meanPixelDifference": 62.51
+    },
+    {
+      "category": "ocean",
+      "meanPixelDifference": 20.82
+    },
+    {
+      "category": "desert",
+      "meanPixelDifference": 46.13
+    },
+    {
+      "category": "tundra",
+      "meanPixelDifference": 48.61
+    },
+    {
+      "category": "tropical",
+      "meanPixelDifference": 52.51
+    },
+    {
+      "category": "molten",
+      "meanPixelDifference": 31.9
+    },
+    {
+      "category": "toxic",
+      "meanPixelDifference": 26.91
+    },
+    {
+      "category": "barren",
+      "meanPixelDifference": 29.49
+    },
+    {
+      "category": "gas_giant",
+      "meanPixelDifference": 79.65
+    },
+    {
+      "category": "ice_giant",
+      "meanPixelDifference": 50.72
+    },
+    {
+      "category": "frozen",
+      "meanPixelDifference": 42.85
+    },
+    {
+      "category": "frozen_dwarf",
+      "meanPixelDifference": 29.37
+    }
+  ],
+  "reproducibility": {
+    "sample": "continental_v01",
+    "size": [
+      1024,
+      512
+    ],
+    "independentNativeRuns": 2,
+    "byteIdentical": {
+      "ground": true,
+      "clouds": true,
+      "composite": true
+    }
+  },
+  "maxSeamRatio": 1.639,
+  "status": "pass",
+  "nativeProjectValidation": {
+    "nativeProjectReadback": 24,
+    "renderSettings": "pass"
+  },
+  "galleryStaticValidation": {
+    "variantButtons": 24,
+    "assetLinks": 174,
+    "missingAssets": 0,
+    "javascriptSyntax": "pass"
+  },
+  "browserInteractionValidation": "not_run: browser local-file protocol policy blocked access; no workaround attempted",
+  "seamCheck": "maximum first/last longitude-column difference is under 2x neighboring-column difference; visually reviewed on spheres"
+}

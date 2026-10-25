@@ -1,0 +1,362 @@
+{
+  "canonicalFile": "蔚蓝星域的观星者_3.3_统一候选版_v40-c60.json",
+  "canonicalSha256": "322a07a11fa8fbee7a259b2a9dddb828f4b56a60472c361ae07439527ba5f86b",
+  "sources": [
+    {
+      "file": "C:\\1MC\\观星者\\蔚蓝星域的观星者_3.3_统一候选版_v40-c60.json",
+      "sha256": "322a07a11fa8fbee7a259b2a9dddb828f4b56a60472c361ae07439527ba5f86b"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\_black_auction_v1\\current-release.json",
+      "sha256": "7c54cc4dc375342be8d50781b82b13916a7f64d25d1445c51978bb0a60b255d9"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\src\\terminal.js",
+      "sha256": "c7d38bd263ba19ed421f499bd4099a9f78b81e67e0dba1d0002c0d348723032a"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\蔚蓝星域的观星者_3.3_航程档案候选版.json",
+      "sha256": "e50e831f7382b4d150c3276d44dd97226022145bc0480b2e07c1b134d4b2a318"
+    },
+    {
+      "file": "C:\\1MC\\1\\Textures for Planets\\TexturesForPlanets.exe",
+      "sha256": "14dcfb61e0dfa0ee1392f5daeb3be8c963129003cdc1b6928657a4788b088230"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\crackedandcratered.tfp",
+      "sha256": "80e8ae443cb1a30cc0c32b2a7a58d2647707e058f341f3b7ea03a7630eef9c96"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\cratered.tfp",
+      "sha256": "2592b0b79298ab514452e8aa718b1cf3f4b237c13ea2f9b267068aed8074aec6"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\gasgiant.tfp",
+      "sha256": "bf9a1d34cf40dea1fc6772d3cd244c0e3fef8a674502512565a4ab7bffb6cf39"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\plain.tfp",
+      "sha256": "8bfbb75ac262632e6604a7414ce90145a7158d230424bf7fffeb9749d9403925"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\terrestrialclouds.tfp",
+      "sha256": "c130cd8b1d2a2447fb5d6259df134d72073fcd2842d2ecf9d1208ed4f1b4a62b"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\venusianclouds.tfp",
+      "sha256": "2bb3694caa8fc118481546e6fb1affc4c0235458f5ac0e836aae68f1008c7c26"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\violent.tfp",
+      "sha256": "4e837ce58f0cb85c50aacedcf54e6f09de238d2d5f78ce0df773d9a8a1345304"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\violentclouds.tfp",
+      "sha256": "a904f4bb377dda1043ef6fab29c527ce9529b6a0c13cf4a819ae5c7e043c4bf5"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\alpine.col",
+      "sha256": "c5a47ef740148695b77a53c9e0138ea6febe9d8947a89b840fdd6c8d38d350c6"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\clouds.col",
+      "sha256": "2c836b0deebbb3f265acc098a7d6886fc5d3298df38fde12da7dd41b3aa5d9cb"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\cloudsheavy.col",
+      "sha256": "00813a9e3c7a595d01b71608bd514928ec80b54737dcbca1f9e2c0f3e0650b83"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\cloudslight.col",
+      "sha256": "6d649bc25d0b38d0a4973ee294c8b0ea7035a7d598e26437db2b96bd629a25d3"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\dry.col",
+      "sha256": "00327e7d465300a76fe2aa9a6a2e0d2a143f3759fb26e052122d3e1f2a827292"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\fungal.col",
+      "sha256": "c7731cd7b94d12ae50564af481506430d1dbbc39bb74703b57c36e0dd186d7d9"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\gas.col",
+      "sha256": "5e66b153816ea1922f7a5e776366d030edb8ccbb70d58db3810d48118aca271b"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\ice.col",
+      "sha256": "12ba8ebff274da68ebd54f2e746a5097cfa935de10105bc542e4ee84c0622690"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\martian.col",
+      "sha256": "4b0278f8bf0873046ca49b39069c80c26553293c2063417622cc5cdfd7147359"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\oasis.col",
+      "sha256": "f1860653a69628dfa9a23602881b800fdac046a6a671b245fcfa3b9a481e2584"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\oceanic.col",
+      "sha256": "10e58e473f5360b019053e453e18462d34706192ad40611ea4b6c5de1723a7fa"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\primordial.col",
+      "sha256": "456e0450e34df5f05dd9083b1d7cf5399c5f69d45e7df9dd0ccde910abf55ad4"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\rock.col",
+      "sha256": "5931f98564a0f57022ef53f1e552465f29d65d3d6362afc19385728fe3f35c3e"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\savannah.col",
+      "sha256": "c9eccf97b832eec6d5473404d3e2dcdd2a5c110d28d6c6af8db9f85897ef54c2"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\swamp.col",
+      "sha256": "c787ce064cdd87bb0baded5ab5010c879334fa51cc3bac94580d746ffbf5e066"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\terrestrial.col",
+      "sha256": "b5628e5cce4696833e0d84c91f30662415d4ac0126f676350614f87dd0603572"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\tropical.col",
+      "sha256": "e29992cfa7c65e3d6b12b0e34983fdbc68ea22528cedc9b6dd08e2c18760d10c"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\tundra.col",
+      "sha256": "cd5157dfe94ed3cbe96ae6df954f7c7ef4cb7bc8166b5e2c8549b537f29013f9"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\venusian.col",
+      "sha256": "c287515d094499087b8454b38868709adbce0c3fde52cbc579894ad6c12b332d"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\volcanic.col",
+      "sha256": "d267e6f1a7a2e84cc10ce3197c111bfa567706a94f9908a6a0b28e87745eac8d"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\volcanicclouds.col",
+      "sha256": "1774e71b85935ff6e2eb218d11372d1ea5f042e5fa9aa2482dce395f3d2cccea"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\wetlands.col",
+      "sha256": "3e73f68e3b9db657dee5fca628759c81b0f3476e43c18b08b780759b2d384201"
+    },
+    {
+      "file": "C:\\1MC\\1\\Tools\\canyon.tool",
+      "sha256": "0f55aab0ea9d941ebd0e7e771f236b88b6e8b8517e05079993874e10080fe1f3"
+    },
+    {
+      "file": "C:\\1MC\\1\\Tools\\crater.tool",
+      "sha256": "7fc31874b27b0298a9905b724c06583d8279988a4e1528a83410fd55f08783e6"
+    },
+    {
+      "file": "C:\\1MC\\1\\Tools\\volcano.tool",
+      "sha256": "7b0ee6a27d2d113945c14fbeb5322fb88927116ae3267ce59b73348f1ff1c4dd"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-CloudsPack\\Clouds1.png",
+      "sha256": "063b922a8e45cb7525bf58acc4db65557c722a5ba9892c597c7fd28c56ebc19b"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-CloudsPack\\Clouds2.png",
+      "sha256": "dec6ecfe11de2b45117ff77f8119c2c8f0b0d1cca7f9962d6945096f913fbc7f"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-CloudsPack\\Clouds3.png",
+      "sha256": "4f2d6f103556022f4c29391d3e6e1b7258e4f9b801bed1143ca66b8b3b0f6ad5"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-CloudsPack\\Clouds4.png",
+      "sha256": "db63868cb20bf1b2e85b1ef173546708e1404440980a794a371a8df3aada8491"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-GasGiantPack\\Gaseous1.png",
+      "sha256": "f9ffca5fcae06ec79e773d6d08e79d58405624ff5aecd17d5808556f157157bc"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-GasGiantPack\\Gaseous2.png",
+      "sha256": "9a4b20f746144b84de178f808504b878da1ad94fa7e20994fcf01bcf79ca65ce"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-GasGiantPack\\Gaseous3.png",
+      "sha256": "adc7f848040b6efb1e5a740e0d4c73a761d0134052e1a89a12a2b4c9d9a663af"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-GasGiantPack\\Gaseous4.png",
+      "sha256": "ab7e4d85035b015de2faa441a206a463376035a52c37bad0d0521274e731c0a8"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-InhospitableWorldsPack\\Icy.png",
+      "sha256": "d1a182f031d92262e436beed17eba563c393d9100c6465c20672dd7717b7a426"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-InhospitableWorldsPack\\Martian.png",
+      "sha256": "29310b474d5789b82e520958a9d5a8fbd9a3db369a3c395bd8b91e3cbf3d38d1"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-InhospitableWorldsPack\\Venusian.png",
+      "sha256": "ddb7a0e4723e0f47a61c2090a5ce73bd996e3c715590c0902d7eca54ad210221"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-InhospitableWorldsPack\\Volcanic.png",
+      "sha256": "a86cbf72816822b0f3da3b80619db69922b0ffa8da0dad26f9707f9d59a0d07b"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial1.png",
+      "sha256": "c0ea5e8b8a88fd7a03ccbe49df1e6881458c5e9fdcdff8f9199ede0ded5129de"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial2.png",
+      "sha256": "1ecc2bedf60fd341e57abde04528cecc07b79a56b1dc9109835af2c555d0dd20"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial3.png",
+      "sha256": "e153eae1b92dea130f56d7b05635358cb13c6c3ae2cab8c776e5347457631076"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\stargazer-textures\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial4.png",
+      "sha256": "eb190e22f706c3534f23099724f8517481fb6a79b670a63d863dffcedbc12e47"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-CloudsPack\\Clouds1.png",
+      "sha256": "063b922a8e45cb7525bf58acc4db65557c722a5ba9892c597c7fd28c56ebc19b"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-CloudsPack\\Clouds2.png",
+      "sha256": "dec6ecfe11de2b45117ff77f8119c2c8f0b0d1cca7f9962d6945096f913fbc7f"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-CloudsPack\\Clouds3.png",
+      "sha256": "4f2d6f103556022f4c29391d3e6e1b7258e4f9b801bed1143ca66b8b3b0f6ad5"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-CloudsPack\\Clouds4.png",
+      "sha256": "db63868cb20bf1b2e85b1ef173546708e1404440980a794a371a8df3aada8491"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-GasGiantPack\\Gaseous1.png",
+      "sha256": "f9ffca5fcae06ec79e773d6d08e79d58405624ff5aecd17d5808556f157157bc"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-GasGiantPack\\Gaseous2.png",
+      "sha256": "9a4b20f746144b84de178f808504b878da1ad94fa7e20994fcf01bcf79ca65ce"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-GasGiantPack\\Gaseous3.png",
+      "sha256": "adc7f848040b6efb1e5a740e0d4c73a761d0134052e1a89a12a2b4c9d9a663af"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-GasGiantPack\\Gaseous4.png",
+      "sha256": "ab7e4d85035b015de2faa441a206a463376035a52c37bad0d0521274e731c0a8"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-HabitableWorldsPack\\Alpine.png",
+      "sha256": "716b041ffada13ba7bda5bccfabc45394a748522e2a2e52b318c8691597116b1"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-HabitableWorldsPack\\Savannah.png",
+      "sha256": "ac121ae2772ef205663660fc4623eced7b03d13d00e920448b9b2d0bcf09227f"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-HabitableWorldsPack\\Swamp.png",
+      "sha256": "a7352d6515bb38b8ee6b2f873c70925515701dcd079b72862787907b36277a10"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-HabitableWorldsPack\\Tropical.png",
+      "sha256": "66c10bbb5f089c75d10ef177b9edba12d4099d7fb7857664246482b495d34d4f"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-InhospitableWorldsPack\\Icy.png",
+      "sha256": "d1a182f031d92262e436beed17eba563c393d9100c6465c20672dd7717b7a426"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-InhospitableWorldsPack\\Martian.png",
+      "sha256": "29310b474d5789b82e520958a9d5a8fbd9a3db369a3c395bd8b91e3cbf3d38d1"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-InhospitableWorldsPack\\Venusian.png",
+      "sha256": "ddb7a0e4723e0f47a61c2090a5ce73bd996e3c715590c0902d7eca54ad210221"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-InhospitableWorldsPack\\Volcanic.png",
+      "sha256": "a86cbf72816822b0f3da3b80619db69922b0ffa8da0dad26f9707f9d59a0d07b"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial1.png",
+      "sha256": "c0ea5e8b8a88fd7a03ccbe49df1e6881458c5e9fdcdff8f9199ede0ded5129de"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial2.png",
+      "sha256": "1ecc2bedf60fd341e57abde04528cecc07b79a56b1dc9109835af2c555d0dd20"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial3.png",
+      "sha256": "e153eae1b92dea130f56d7b05635358cb13c6c3ae2cab8c776e5347457631076"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\_stargazer_repo\\TexturesForPlanets-TerrestrialWorldsPack\\Terrestrial4.png",
+      "sha256": "eb190e22f706c3534f23099724f8517481fb6a79b670a63d863dffcedbc12e47"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\2k_neptune.jpg",
+      "sha256": "cb42ea82709741d28b0af44d8b283cbc6dbd0c521a7f0e1e1e010ade00977df6"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\2k_uranus.jpg",
+      "sha256": "d15239d46f82d3ea13d2b260b5b29b2a382f42f2916dae0694d0387b1204a09d"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\4k_ceres_fictional.jpg",
+      "sha256": "e4452a4f84830a30d7a9b8be1b59c5a568e0aae8ed6ba5ebb7be0c3f672e7553"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\4k_eris_fictional.jpg",
+      "sha256": "682787869e69dfcf41ce5f4db2a9b54fb00bd7e28b97b7b61e6a0296956c1278"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\4k_haumea_fictional.jpg",
+      "sha256": "1e039b82323030cda110eb21e47e38f46a4e9c46dc24eb545428eb0263c28292"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\4k_makemake_fictional.jpg",
+      "sha256": "d94c950da2614aa643f88db24437d706c1e3975aa38f7943620141f14301625c"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\4k_venus_atmosphere.jpg",
+      "sha256": "a14aeba3c6ad7a56f989bb32008dec548077aeded420495b34df98f2dc14ba91"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_jupiter.jpg",
+      "sha256": "0bd844bf20822c4e3e80882b077859833c0dac44c7e4e1e0cd63d1b1b6d43085"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_mars.jpg",
+      "sha256": "4cc52149924abc6ae507d63032f994e1d42a55cb82c09e002d1a567ff66c23ee"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_mercury.jpg",
+      "sha256": "5c8bd885ae3571c6ba2cd34b3446b9c6d767e314bf0ee8c1d5c147cadd388fc3"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_moon.jpg",
+      "sha256": "d1875bcec83588ca25e4802e576f6bb9f88b39e1e403cb41ff55867419c54796"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_saturn.jpg",
+      "sha256": "0d39a4a490c87c3edabe00a3881a29bb3418364178c79c534fe0986e97e09853"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_saturn_ring_alpha.png",
+      "sha256": "f1f826933c9ff87d64ecf0518d6256b8ed990b003722794f67e96e3d2b876ae4"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_sun.jpg",
+      "sha256": "f22b1cfb306ddce72a7e3b628668a0175b745038ce6268557cb2f7f1bdf98b9d"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\Solar System Scope Textures\\8k_venus_surface.jpg",
+      "sha256": "9bc21a50577ed8ac734cda91058724c7a741c19427aa276224ce349351432c5b"
+    }
+  ]
+}

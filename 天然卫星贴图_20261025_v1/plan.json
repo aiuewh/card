@@ -1,0 +1,179 @@
+{
+  "naturalSatellites": true,
+  "variants": [
+    {
+      "id": "moon_silver_crater",
+      "name": "银灰环坑",
+      "description": "密集撞击坑、明暗相间的灰色岩质高地。",
+      "template": "cratered",
+      "colourizer": "Moon Silver Rock",
+      "seed": 2026102701,
+      "iterations": 2200,
+      "craterCount": [
+        85,
+        115
+      ],
+      "craterSize": [
+        8,
+        35
+      ],
+      "canyonCount": [
+        0,
+        0
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false
+    },
+    {
+      "id": "moon_basalt_maria",
+      "name": "玄武月海",
+      "description": "暗色玄武岩平原与较明亮的古老高地，撞击坑较稀疏。",
+      "template": "cratered",
+      "colourizer": "Moon Dark Basalt",
+      "seed": 2026102702,
+      "iterations": 1300,
+      "craterCount": [
+        18,
+        30
+      ],
+      "craterSize": [
+        15,
+        60
+      ],
+      "canyonCount": [
+        0,
+        0
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false
+    },
+    {
+      "id": "moon_rust_rock",
+      "name": "赤褐岩月",
+      "description": "赤褐色矿物岩壳与大小交叠的陨石坑。",
+      "template": "cratered",
+      "colourizer": "Martian",
+      "seed": 2026102703,
+      "iterations": 2600,
+      "craterCount": [
+        45,
+        70
+      ],
+      "craterSize": [
+        10,
+        48
+      ],
+      "canyonCount": [
+        0,
+        0
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false
+    },
+    {
+      "id": "moon_fractured_ice",
+      "name": "裂纹冰卫",
+      "description": "浅色冰壳、长裂谷与少量古老撞击盆地。",
+      "template": "crackedandcratered",
+      "colourizer": "Ice",
+      "seed": 2026102704,
+      "iterations": 1800,
+      "craterCount": [
+        12,
+        22
+      ],
+      "craterSize": [
+        12,
+        38
+      ],
+      "canyonCount": [
+        45,
+        65
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false
+    },
+    {
+      "id": "moon_ancient_dirtyice",
+      "name": "古老脏冰",
+      "description": "被尘埃和岩质沉积染暗的冰层，保留密集古坑与较少裂谷。",
+      "template": "crackedandcratered",
+      "colourizer": "Moon Dirty Ice",
+      "seed": 2026102705,
+      "iterations": 2800,
+      "craterCount": [
+        70,
+        95
+      ],
+      "craterSize": [
+        7,
+        38
+      ],
+      "canyonCount": [
+        8,
+        15
+      ],
+      "volcanoCount": [
+        0,
+        0
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false
+    },
+    {
+      "id": "moon_sulfur_volcanic",
+      "name": "硫黄火山",
+      "description": "硫黄色沉积、橙褐喷发区与稀疏火山口，无大气云层。",
+      "template": "violent",
+      "colourizer": "Moon Sulfur",
+      "seed": 2026102706,
+      "iterations": 1400,
+      "craterCount": [
+        0,
+        0
+      ],
+      "canyonCount": [
+        16,
+        25
+      ],
+      "volcanoCount": [
+        25,
+        40
+      ],
+      "width": 2048,
+      "height": 1024,
+      "projection": "EQUIRECTANGULAR",
+      "clouds": false,
+      "craterSize": [
+        10,
+        50
+      ]
+    }
+  ]
+}

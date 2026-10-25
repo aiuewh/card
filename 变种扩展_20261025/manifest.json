@@ -1,0 +1,1244 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "generator": "Textures for Planets 2.1 installed native strategy pipeline",
+  "generatorExeSha256": "14dcfb61e0dfa0ee1392f5daeb3be8c963129003cdc1b6928657a4788b088230",
+  "canonicalFile": "蔚蓝星域的观星者_3.3_统一候选版_v40-c60.json",
+  "canonicalSha256": "322a07a11fa8fbee7a259b2a9dddb828f4b56a60472c361ae07439527ba5f86b",
+  "status": "local-asset-pack",
+  "cardIntegration": "not-modified",
+  "existingAssets": "byte-identical",
+  "newVariantCount": 24,
+  "resolution": [
+    2048,
+    1024
+  ],
+  "categories": [
+    {
+      "id": "continental",
+      "type": "大陆世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-TerrestrialWorldsPack/Terrestrial1.png",
+          "sha256": "c0ea5e8b8a88fd7a03ccbe49df1e6881458c5e9fdcdff8f9199ede0ded5129de",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-TerrestrialWorldsPack/Terrestrial1.png",
+          "preview": "preview/continental_old_0.webp",
+          "flatPreview": "preview/continental_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "ocean",
+      "type": "海洋世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-TerrestrialWorldsPack/Terrestrial3.png",
+          "sha256": "e153eae1b92dea130f56d7b05635358cb13c6c3ae2cab8c776e5347457631076",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-TerrestrialWorldsPack/Terrestrial3.png",
+          "preview": "preview/ocean_old_0.webp",
+          "flatPreview": "preview/ocean_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "desert",
+      "type": "沙漠世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Martian.png",
+          "sha256": "29310b474d5789b82e520958a9d5a8fbd9a3db369a3c395bd8b91e3cbf3d38d1",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Martian.png",
+          "preview": "preview/desert_old_0.webp",
+          "flatPreview": "preview/desert_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "tundra",
+      "type": "寒冷世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Icy.png",
+          "sha256": "d1a182f031d92262e436beed17eba563c393d9100c6465c20672dd7717b7a426",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Icy.png",
+          "preview": "preview/tundra_old_0.webp",
+          "flatPreview": "preview/tundra_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "tropical",
+      "type": "热带世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-TerrestrialWorldsPack/Terrestrial2.png",
+          "sha256": "1ecc2bedf60fd341e57abde04528cecc07b79a56b1dc9109835af2c555d0dd20",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-TerrestrialWorldsPack/Terrestrial2.png",
+          "preview": "preview/tropical_old_0.webp",
+          "flatPreview": "preview/tropical_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "molten",
+      "type": "熔岩世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Volcanic.png",
+          "sha256": "a86cbf72816822b0f3da3b80619db69922b0ffa8da0dad26f9707f9d59a0d07b",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Volcanic.png",
+          "preview": "preview/molten_old_0.webp",
+          "flatPreview": "preview/molten_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "toxic",
+      "type": "毒气世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Venusian.png",
+          "sha256": "ddb7a0e4723e0f47a61c2090a5ce73bd996e3c715590c0902d7eca54ad210221",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Venusian.png",
+          "preview": "preview/toxic_old_0.webp",
+          "flatPreview": "preview/toxic_old_0_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/4k_venus_atmosphere.jpg",
+          "sha256": "a14aeba3c6ad7a56f989bb32008dec548077aeded420495b34df98f2dc14ba91",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/4k_venus_atmosphere.jpg",
+          "preview": "preview/toxic_old_1.webp",
+          "flatPreview": "preview/toxic_old_1_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "barren",
+      "type": "荒原世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Martian.png",
+          "sha256": "29310b474d5789b82e520958a9d5a8fbd9a3db369a3c395bd8b91e3cbf3d38d1",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Martian.png",
+          "preview": "preview/barren_old_0.webp",
+          "flatPreview": "preview/barren_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "gas_giant",
+      "type": "气态巨行星",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-GasGiantPack/Gaseous2.png",
+          "sha256": "9a4b20f746144b84de178f808504b878da1ad94fa7e20994fcf01bcf79ca65ce",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-GasGiantPack/Gaseous2.png",
+          "preview": "preview/gas_giant_old_0.webp",
+          "flatPreview": "preview/gas_giant_old_0_flat.webp"
+        },
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-GasGiantPack/Gaseous4.png",
+          "sha256": "ab7e4d85035b015de2faa441a206a463376035a52c37bad0d0521274e731c0a8",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-GasGiantPack/Gaseous4.png",
+          "preview": "preview/gas_giant_old_1.webp",
+          "flatPreview": "preview/gas_giant_old_1_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/8k_jupiter.jpg",
+          "sha256": "0bd844bf20822c4e3e80882b077859833c0dac44c7e4e1e0cd63d1b1b6d43085",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/8k_jupiter.jpg",
+          "preview": "preview/gas_giant_old_2.webp",
+          "flatPreview": "preview/gas_giant_old_2_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/8k_saturn.jpg",
+          "sha256": "0d39a4a490c87c3edabe00a3881a29bb3418364178c79c534fe0986e97e09853",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/8k_saturn.jpg",
+          "preview": "preview/gas_giant_old_3.webp",
+          "flatPreview": "preview/gas_giant_old_3_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "ice_giant",
+      "type": "冰巨星",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-GasGiantPack/Gaseous3.png",
+          "sha256": "adc7f848040b6efb1e5a740e0d4c73a761d0134052e1a89a12a2b4c9d9a663af",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-GasGiantPack/Gaseous3.png",
+          "preview": "preview/ice_giant_old_0.webp",
+          "flatPreview": "preview/ice_giant_old_0_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/2k_neptune.jpg",
+          "sha256": "cb42ea82709741d28b0af44d8b283cbc6dbd0c521a7f0e1e1e010ade00977df6",
+          "size": [
+            2048,
+            1024
+          ],
+          "url": "../Solar System Scope Textures/2k_neptune.jpg",
+          "preview": "preview/ice_giant_old_1.webp",
+          "flatPreview": "preview/ice_giant_old_1_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/2k_uranus.jpg",
+          "sha256": "d15239d46f82d3ea13d2b260b5b29b2a382f42f2916dae0694d0387b1204a09d",
+          "size": [
+            2048,
+            1024
+          ],
+          "url": "../Solar System Scope Textures/2k_uranus.jpg",
+          "preview": "preview/ice_giant_old_2.webp",
+          "flatPreview": "preview/ice_giant_old_2_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "frozen",
+      "type": "冰封世界",
+      "existing": [
+        {
+          "file": "星球/_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Icy.png",
+          "sha256": "d1a182f031d92262e436beed17eba563c393d9100c6465c20672dd7717b7a426",
+          "size": [
+            2000,
+            1000
+          ],
+          "url": "../_stargazer_repo/TexturesForPlanets-InhospitableWorldsPack/Icy.png",
+          "preview": "preview/frozen_old_0.webp",
+          "flatPreview": "preview/frozen_old_0_flat.webp"
+        }
+      ]
+    },
+    {
+      "id": "frozen_dwarf",
+      "type": "冰封矮星",
+      "existing": [
+        {
+          "file": "星球/Solar System Scope Textures/4k_ceres_fictional.jpg",
+          "sha256": "e4452a4f84830a30d7a9b8be1b59c5a568e0aae8ed6ba5ebb7be0c3f672e7553",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/4k_ceres_fictional.jpg",
+          "preview": "preview/frozen_dwarf_old_0.webp",
+          "flatPreview": "preview/frozen_dwarf_old_0_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/4k_eris_fictional.jpg",
+          "sha256": "682787869e69dfcf41ce5f4db2a9b54fb00bd7e28b97b7b61e6a0296956c1278",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/4k_eris_fictional.jpg",
+          "preview": "preview/frozen_dwarf_old_1.webp",
+          "flatPreview": "preview/frozen_dwarf_old_1_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/4k_haumea_fictional.jpg",
+          "sha256": "1e039b82323030cda110eb21e47e38f46a4e9c46dc24eb545428eb0263c28292",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/4k_haumea_fictional.jpg",
+          "preview": "preview/frozen_dwarf_old_2.webp",
+          "flatPreview": "preview/frozen_dwarf_old_2_flat.webp"
+        },
+        {
+          "file": "星球/Solar System Scope Textures/4k_makemake_fictional.jpg",
+          "sha256": "d94c950da2614aa643f88db24437d706c1e3975aa38f7943620141f14301625c",
+          "size": [
+            4096,
+            2048
+          ],
+          "url": "../Solar System Scope Textures/4k_makemake_fictional.jpg",
+          "preview": "preview/frozen_dwarf_old_3.webp",
+          "flatPreview": "preview/frozen_dwarf_old_3_flat.webp"
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "id": "continental_v01",
+      "category": "continental",
+      "type": "大陆世界",
+      "name": "碧海长陆",
+      "template": "terrestrialclouds",
+      "colourizer": "Terrestrial",
+      "seed": 2026102501,
+      "iterations": 2200,
+      "palette": 0.2,
+      "clouds": true,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "36284bc7bb95e393e8e897d26c66acf19f3b1c19cc437b6f7b1cd5ae9ea6d876"
+    },
+    {
+      "id": "continental_v02",
+      "category": "continental",
+      "type": "大陆世界",
+      "name": "雪岭群陆",
+      "template": "terrestrialclouds",
+      "colourizer": "Alpine",
+      "seed": 2026102502,
+      "iterations": 3100,
+      "palette": 0.65,
+      "clouds": true,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "0e611afb1bac5e1703179944a02b140a0f958189aae9e61aa49ca2fd4a5d9ba0"
+    },
+    {
+      "id": "ocean_v01",
+      "category": "ocean",
+      "type": "海洋世界",
+      "name": "深蓝群岛",
+      "template": "terrestrialclouds",
+      "colourizer": "Oceanic",
+      "seed": 2026102511,
+      "iterations": 1600,
+      "palette": 0.2,
+      "clouds": true,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "38382279e65e3381562e8eed6992151c62693a00b5063e81c258ae0990722ee0"
+    },
+    {
+      "id": "ocean_v02",
+      "category": "ocean",
+      "type": "海洋世界",
+      "name": "破碎海盆",
+      "template": "terrestrialclouds",
+      "colourizer": "Oceanic",
+      "seed": 2026102512,
+      "iterations": 3200,
+      "palette": 0.7,
+      "clouds": true,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "1487778589a7efdcfdef49b1b8e8eec9cc9d2d8b519e09cc93bab93127c24ded"
+    },
+    {
+      "id": "desert_v01",
+      "category": "desert",
+      "type": "沙漠世界",
+      "name": "沙海绿洲",
+      "template": "plain",
+      "colourizer": "Oasis",
+      "seed": 2026102521,
+      "iterations": 1700,
+      "palette": 0.2,
+      "clouds": true,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "f03be62d5f1fc63b2efb687ea7b580dfc1b973bee0aed697f77f2e875995cc92"
+    },
+    {
+      "id": "desert_v02",
+      "category": "desert",
+      "type": "沙漠世界",
+      "name": "龟裂旱海",
+      "template": "crackedandcratered",
+      "colourizer": "Dry",
+      "seed": 2026102522,
+      "iterations": 2700,
+      "palette": 0.7,
+      "clouds": true,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "3af14485338203ef57f88eb3efda5bc86da64a791e4ca6df204b98727cc85f2c"
+    },
+    {
+      "id": "tundra_v01",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "name": "苔原冻海",
+      "template": "terrestrialclouds",
+      "colourizer": "Tundral",
+      "seed": 2026102531,
+      "iterations": 1800,
+      "palette": 0.2,
+      "clouds": true,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "3cee2c6019fde552f2786e3cbbd2972f1ed136f01c335d1c2cc0c6d2ee78274c"
+    },
+    {
+      "id": "tundra_v02",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "name": "高纬雪原",
+      "template": "terrestrialclouds",
+      "colourizer": "Alpine",
+      "seed": 2026102532,
+      "iterations": 2800,
+      "palette": 0.7,
+      "clouds": true,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "a46ab006ba9490e2d4bbcba63d1eaaaf6ddf10781bf9e57e7188e9bf134194db"
+    },
+    {
+      "id": "tropical_v01",
+      "category": "tropical",
+      "type": "热带世界",
+      "name": "雨林大洋",
+      "template": "terrestrialclouds",
+      "colourizer": "Tropical",
+      "seed": 2026102541,
+      "iterations": 1800,
+      "palette": 0.2,
+      "clouds": true,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "32cc11ec4bc0746d2402702cb0522600c7621a986166b3731abd216244b4ea1e"
+    },
+    {
+      "id": "tropical_v02",
+      "category": "tropical",
+      "type": "热带世界",
+      "name": "湿地水网",
+      "template": "terrestrialclouds",
+      "colourizer": "Wetlands",
+      "seed": 2026102542,
+      "iterations": 3000,
+      "palette": 0.7,
+      "clouds": true,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "3f11cf8c81558ca4d3cee3e8a86f558e52fbdcacd0b731afd176e7503b198821"
+    },
+    {
+      "id": "molten_v01",
+      "category": "molten",
+      "type": "熔岩世界",
+      "name": "熔脉焦壳",
+      "template": "violent",
+      "colourizer": "Volcanic",
+      "seed": 2026102551,
+      "iterations": 1800,
+      "palette": 0.2,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "e969a76caed80edad64ccd37aedfb7d7bf1e4587810cc76d70795e69633f9344"
+    },
+    {
+      "id": "molten_v02",
+      "category": "molten",
+      "type": "熔岩世界",
+      "name": "赤热裂域",
+      "template": "violent",
+      "colourizer": "Volcanic",
+      "seed": 2026102552,
+      "iterations": 3200,
+      "palette": 0.7,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "91857f438326b1c92cb8c4d27582f5ec2031db2dc91080ad608bc293a212975c"
+    },
+    {
+      "id": "toxic_v01",
+      "category": "toxic",
+      "type": "毒气世界",
+      "name": "硫雾涡旋",
+      "template": "venusianclouds",
+      "colourizer": "Venusian",
+      "seed": 2026102561,
+      "iterations": 2000,
+      "palette": 0.05,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "eb9badf05ea2f9003176c6c39aa97e5a91650509825c368fca80e21f2ed84a82"
+    },
+    {
+      "id": "toxic_v02",
+      "category": "toxic",
+      "type": "毒气世界",
+      "name": "绛色毒霭",
+      "template": "venusianclouds",
+      "colourizer": "Venusian",
+      "seed": 2026102562,
+      "iterations": 2000,
+      "palette": 0.45,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "eb9badf05ea2f9003176c6c39aa97e5a91650509825c368fca80e21f2ed84a82"
+    },
+    {
+      "id": "barren_v01",
+      "category": "barren",
+      "type": "荒原世界",
+      "name": "赤砂陨原",
+      "template": "cratered",
+      "colourizer": "Martian",
+      "seed": 2026102571,
+      "iterations": 1800,
+      "palette": 0.2,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "6276bc7e187f94d09c3d6a55230e010c54e8df8ea75261814b724b5c8705504b"
+    },
+    {
+      "id": "barren_v02",
+      "category": "barren",
+      "type": "荒原世界",
+      "name": "灰岩环坑",
+      "template": "cratered",
+      "colourizer": "Rock",
+      "seed": 2026102572,
+      "iterations": 2600,
+      "palette": 0.7,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "8b8a57e18974fb79bfd9fab7607db7fcc7e93520d5997e9741c56cb95133a979"
+    },
+    {
+      "id": "gas_giant_v01",
+      "category": "gas_giant",
+      "type": "气态巨行星",
+      "name": "琥珀风带",
+      "template": "gasgiant",
+      "colourizer": "Gas Giant",
+      "seed": 2026102581,
+      "iterations": 2000,
+      "palette": 0.05,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "44eae9880d7aac88468087ee991bba0eeaacfe2aa65c88255455b344ddbf3f81"
+    },
+    {
+      "id": "gas_giant_v02",
+      "category": "gas_giant",
+      "type": "气态巨行星",
+      "name": "绯云巨涡",
+      "template": "gasgiant",
+      "colourizer": "Gas Giant",
+      "seed": 2026102582,
+      "iterations": 2000,
+      "palette": 0.4,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "4f341ae054652dd16d950563803937a8fa12d5c50f1d4bfe33152c0856d8d96f"
+    },
+    {
+      "id": "ice_giant_v01",
+      "category": "ice_giant",
+      "type": "冰巨星",
+      "name": "青蓝风带",
+      "template": "gasgiant",
+      "colourizer": "Gas Giant",
+      "seed": 2026102591,
+      "iterations": 2000,
+      "palette": 0.5,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "44eae9880d7aac88468087ee991bba0eeaacfe2aa65c88255455b344ddbf3f81"
+    },
+    {
+      "id": "ice_giant_v02",
+      "category": "ice_giant",
+      "type": "冰巨星",
+      "name": "青碧风暴",
+      "template": "gasgiant",
+      "colourizer": "Gas Giant",
+      "seed": 2026102592,
+      "iterations": 2000,
+      "palette": 0.78,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "4f341ae054652dd16d950563803937a8fa12d5c50f1d4bfe33152c0856d8d96f"
+    },
+    {
+      "id": "frozen_v01",
+      "category": "frozen",
+      "type": "冰封世界",
+      "name": "裂冰大洋",
+      "template": "crackedandcratered",
+      "colourizer": "Ice",
+      "seed": 2026102601,
+      "iterations": 2000,
+      "palette": 0.2,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "9bdcc30b07f087145377d5c452a35153cb26c7b5df690df250d5eb06a3993c43"
+    },
+    {
+      "id": "frozen_v02",
+      "category": "frozen",
+      "type": "冰封世界",
+      "name": "霜白裂原",
+      "template": "crackedandcratered",
+      "colourizer": "Ice",
+      "seed": 2026102602,
+      "iterations": 3300,
+      "palette": 0.7,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "99623d72152c8c37b2b2d2e43f96ffb17a63034a8afe6f17e4299011c8a920e2"
+    },
+    {
+      "id": "frozen_dwarf_v01",
+      "category": "frozen_dwarf",
+      "type": "冰封矮星",
+      "name": "密坑冰壳",
+      "template": "cratered",
+      "colourizer": "Ice",
+      "seed": 2026102611,
+      "iterations": 1400,
+      "palette": 0.2,
+      "clouds": false,
+      "variant": 1,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "167c85a8db9c3400b04029f0b5ba6f41370661e88c48ea9e797dfe4a9478ae9d"
+    },
+    {
+      "id": "frozen_dwarf_v02",
+      "category": "frozen_dwarf",
+      "type": "冰封矮星",
+      "name": "古裂冰丘",
+      "template": "crackedandcratered",
+      "colourizer": "Ice",
+      "seed": 2026102612,
+      "iterations": 2400,
+      "palette": 0.7,
+      "clouds": false,
+      "variant": 2,
+      "width": 2048,
+      "height": 1024,
+      "projectSha256": "00d51955f53cbb87b4341bf6e1498153871945f41491fd2d93fccc2102d5ed3e"
+    }
+  ],
+  "assets": [
+    {
+      "variant": "continental_v01",
+      "category": "continental",
+      "type": "大陆世界",
+      "label": "碧海长陆",
+      "layer": "ground",
+      "file": "ground/continental_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3044690,
+      "sha256": "e431e0d8f34af8cabcc26638686b3255d0d2277650902740db3df815dae9b8de"
+    },
+    {
+      "variant": "continental_v01",
+      "category": "continental",
+      "type": "大陆世界",
+      "label": "碧海长陆",
+      "layer": "clouds",
+      "file": "clouds/continental_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 996544,
+      "sha256": "8917b9ac7ee839fb741ae11fae41365471ee3103c89dfc5fe03a59c729faa05d"
+    },
+    {
+      "variant": "continental_v01",
+      "category": "continental",
+      "type": "大陆世界",
+      "label": "碧海长陆",
+      "layer": "composite",
+      "file": "composite/continental_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3825056,
+      "sha256": "f3f872d64774c57138e1e8a5d3c4c075408dfa4c5c82c173692abbfc700bc3a9"
+    },
+    {
+      "variant": "continental_v02",
+      "category": "continental",
+      "type": "大陆世界",
+      "label": "雪岭群陆",
+      "layer": "ground",
+      "file": "ground/continental_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2405802,
+      "sha256": "5d41a438d3f1e5abac67fe15b4ea37a2a53ca2dd124a6be1e2b241d6e8e57ce2"
+    },
+    {
+      "variant": "continental_v02",
+      "category": "continental",
+      "type": "大陆世界",
+      "label": "雪岭群陆",
+      "layer": "clouds",
+      "file": "clouds/continental_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1140332,
+      "sha256": "77c46f60cbfc62a50ac38c452541a2156e400b2f60f4d73d41d3013a7b15632e"
+    },
+    {
+      "variant": "continental_v02",
+      "category": "continental",
+      "type": "大陆世界",
+      "label": "雪岭群陆",
+      "layer": "composite",
+      "file": "composite/continental_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3155192,
+      "sha256": "c11e5635f2898a451864a416932ab0d105c68fb05fecb05a10b765b7f4753334"
+    },
+    {
+      "variant": "ocean_v01",
+      "category": "ocean",
+      "type": "海洋世界",
+      "label": "深蓝群岛",
+      "layer": "ground",
+      "file": "ground/ocean_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2148987,
+      "sha256": "3b5890c5569f5696b573e08f8d09b436f6549071efc1b6e113b1fa637d198d59"
+    },
+    {
+      "variant": "ocean_v01",
+      "category": "ocean",
+      "type": "海洋世界",
+      "label": "深蓝群岛",
+      "layer": "clouds",
+      "file": "clouds/ocean_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1177670,
+      "sha256": "209da1544d2a41edacc8b7605c56776ad334ff78ccb227f57b1d66ac0c5b424a"
+    },
+    {
+      "variant": "ocean_v01",
+      "category": "ocean",
+      "type": "海洋世界",
+      "label": "深蓝群岛",
+      "layer": "composite",
+      "file": "composite/ocean_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3359808,
+      "sha256": "61f556059bc37f98528a78fd1a6365c5e8b0465d9deaadf2b80021ca808beb77"
+    },
+    {
+      "variant": "ocean_v02",
+      "category": "ocean",
+      "type": "海洋世界",
+      "label": "破碎海盆",
+      "layer": "ground",
+      "file": "ground/ocean_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2056988,
+      "sha256": "e64c626f1c7f9d61842837a6dbc6702cc8c0dc5335dfdb0373d18ed32ff594e4"
+    },
+    {
+      "variant": "ocean_v02",
+      "category": "ocean",
+      "type": "海洋世界",
+      "label": "破碎海盆",
+      "layer": "clouds",
+      "file": "clouds/ocean_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 975063,
+      "sha256": "eac265974f56b3ae142ca3a10750cd58addb2466ebe8cccb7d36aff7e60202c3"
+    },
+    {
+      "variant": "ocean_v02",
+      "category": "ocean",
+      "type": "海洋世界",
+      "label": "破碎海盆",
+      "layer": "composite",
+      "file": "composite/ocean_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3058039,
+      "sha256": "9595b52841cb58b489a6ce37fe366d93a2bbd08a8591d026f97dfa23eeefa9d6"
+    },
+    {
+      "variant": "desert_v01",
+      "category": "desert",
+      "type": "沙漠世界",
+      "label": "沙海绿洲",
+      "layer": "ground",
+      "file": "ground/desert_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1898850,
+      "sha256": "047c6d996598a26a625fcb3c3af17643d4409d7fe6126c681fcdf04a0ece33a9"
+    },
+    {
+      "variant": "desert_v01",
+      "category": "desert",
+      "type": "沙漠世界",
+      "label": "沙海绿洲",
+      "layer": "clouds",
+      "file": "clouds/desert_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1100818,
+      "sha256": "04c1e997216d2decb55cfb8dfccc510d57589f2c470987a6f11379d1f3963992"
+    },
+    {
+      "variant": "desert_v01",
+      "category": "desert",
+      "type": "沙漠世界",
+      "label": "沙海绿洲",
+      "layer": "composite",
+      "file": "composite/desert_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2865331,
+      "sha256": "d163dc9068f1736587b8c395e28918c7e9acc365d8b7e2935e3f085e00f8568a"
+    },
+    {
+      "variant": "desert_v02",
+      "category": "desert",
+      "type": "沙漠世界",
+      "label": "龟裂旱海",
+      "layer": "ground",
+      "file": "ground/desert_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2648105,
+      "sha256": "6ec18efb6a1b38effacea2abb636720bbbbcd16e30e0e5e21f9054c4ffabfc08"
+    },
+    {
+      "variant": "desert_v02",
+      "category": "desert",
+      "type": "沙漠世界",
+      "label": "龟裂旱海",
+      "layer": "clouds",
+      "file": "clouds/desert_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1062598,
+      "sha256": "5051e44b23e2fd8898d3ce8ac6d6ed85bc7361a1123881a87d6d5f7d9edcce89"
+    },
+    {
+      "variant": "desert_v02",
+      "category": "desert",
+      "type": "沙漠世界",
+      "label": "龟裂旱海",
+      "layer": "composite",
+      "file": "composite/desert_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3614649,
+      "sha256": "27ff265ad577fa389ea4e830c6e320ae72b522159073ae4fed6dddf24cb28ef0"
+    },
+    {
+      "variant": "tundra_v01",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "label": "苔原冻海",
+      "layer": "ground",
+      "file": "ground/tundra_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2588607,
+      "sha256": "832f5dddeba9b5d3f7351fd8086d89497b34fb12e4cb495236621c5c0b937375"
+    },
+    {
+      "variant": "tundra_v01",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "label": "苔原冻海",
+      "layer": "clouds",
+      "file": "clouds/tundra_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1110686,
+      "sha256": "9034e06ddd440347146eb307c8e83c7dda29383f87b6d21bafd96c786e502b2d"
+    },
+    {
+      "variant": "tundra_v01",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "label": "苔原冻海",
+      "layer": "composite",
+      "file": "composite/tundra_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3431050,
+      "sha256": "90396c0a2cd0988de3cae568c787c5fb090c10eecb27383694794e5b2247c04e"
+    },
+    {
+      "variant": "tundra_v02",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "label": "高纬雪原",
+      "layer": "ground",
+      "file": "ground/tundra_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2468938,
+      "sha256": "5fda8ca9bafa8be821e2d5d5cbe2feb03f251a5b5fde716ef4e6a3f5af480e96"
+    },
+    {
+      "variant": "tundra_v02",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "label": "高纬雪原",
+      "layer": "clouds",
+      "file": "clouds/tundra_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1097209,
+      "sha256": "7a48bce87622f4deefb6a690b083aa221484940386e9ce59de31b9807ccc195e"
+    },
+    {
+      "variant": "tundra_v02",
+      "category": "tundra",
+      "type": "寒冷世界",
+      "label": "高纬雪原",
+      "layer": "composite",
+      "file": "composite/tundra_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3327215,
+      "sha256": "87a7c6a875521843fb38894c7b065a35a2c9c34de0cfac4dc5dd84db58cd8935"
+    },
+    {
+      "variant": "tropical_v01",
+      "category": "tropical",
+      "type": "热带世界",
+      "label": "雨林大洋",
+      "layer": "ground",
+      "file": "ground/tropical_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2606077,
+      "sha256": "c78125fb325b906248c5720f53246b009c6fbdfc3945f480999187304b8ad3dc"
+    },
+    {
+      "variant": "tropical_v01",
+      "category": "tropical",
+      "type": "热带世界",
+      "label": "雨林大洋",
+      "layer": "clouds",
+      "file": "clouds/tropical_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1101298,
+      "sha256": "66a88f4e56fa0daa3a9d7f433af8d0d6b1ea8c2780c3a976e3a771367c5c3aa5"
+    },
+    {
+      "variant": "tropical_v01",
+      "category": "tropical",
+      "type": "热带世界",
+      "label": "雨林大洋",
+      "layer": "composite",
+      "file": "composite/tropical_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3641556,
+      "sha256": "46d4ac42ab15841e8eee0e1a2f4bea293d2320a714c93df7460a9f0c76b74a46"
+    },
+    {
+      "variant": "tropical_v02",
+      "category": "tropical",
+      "type": "热带世界",
+      "label": "湿地水网",
+      "layer": "ground",
+      "file": "ground/tropical_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 4252426,
+      "sha256": "aef480cb164fee254ae822a6874cd9806389ff540139c1169a80298364e21469"
+    },
+    {
+      "variant": "tropical_v02",
+      "category": "tropical",
+      "type": "热带世界",
+      "label": "湿地水网",
+      "layer": "clouds",
+      "file": "clouds/tropical_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1056904,
+      "sha256": "702a4a9b016f4fa79e95fd22345706a172c5310fad3e21d16ec6cd0d7fd50b4b"
+    },
+    {
+      "variant": "tropical_v02",
+      "category": "tropical",
+      "type": "热带世界",
+      "label": "湿地水网",
+      "layer": "composite",
+      "file": "composite/tropical_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 4888034,
+      "sha256": "757d3c6391004742c4995f9b1250ef2cb2211c6f1b3d24d495dda4ef881a1b74"
+    },
+    {
+      "variant": "molten_v01",
+      "category": "molten",
+      "type": "熔岩世界",
+      "label": "熔脉焦壳",
+      "layer": "ground",
+      "file": "ground/molten_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2916382,
+      "sha256": "72a4d16535d17da1d0b4680fee642481f2fb09bf0096b3bc91991b4cca8b6b03"
+    },
+    {
+      "variant": "molten_v02",
+      "category": "molten",
+      "type": "熔岩世界",
+      "label": "赤热裂域",
+      "layer": "ground",
+      "file": "ground/molten_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 3059546,
+      "sha256": "e1f881dd11c7b1d4cbf33434cfbd5efa4118d8a99e3061383bc1e8b2d98ffd0e"
+    },
+    {
+      "variant": "toxic_v01",
+      "category": "toxic",
+      "type": "毒气世界",
+      "label": "硫雾涡旋",
+      "layer": "ground",
+      "file": "ground/toxic_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1871628,
+      "sha256": "ae527dd0c02243ea862b39560a686e298b1055370b27e163188afe6c4c73ad52"
+    },
+    {
+      "variant": "toxic_v02",
+      "category": "toxic",
+      "type": "毒气世界",
+      "label": "绛色毒霭",
+      "layer": "ground",
+      "file": "ground/toxic_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1720662,
+      "sha256": "75aad2cea3f689a8d8c11e229c1c575c1e320397e85b93149244754ab67adae9"
+    },
+    {
+      "variant": "barren_v01",
+      "category": "barren",
+      "type": "荒原世界",
+      "label": "赤砂陨原",
+      "layer": "ground",
+      "file": "ground/barren_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2276520,
+      "sha256": "b35bb9484723527f8989f95110580c08d26eb74bfa8f0093d464514ad9b8e0a2"
+    },
+    {
+      "variant": "barren_v02",
+      "category": "barren",
+      "type": "荒原世界",
+      "label": "灰岩环坑",
+      "layer": "ground",
+      "file": "ground/barren_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1724434,
+      "sha256": "d982350c2e858f35cccb4924f3e953824a408a20f3ad49603a56164821cc76b1"
+    },
+    {
+      "variant": "gas_giant_v01",
+      "category": "gas_giant",
+      "type": "气态巨行星",
+      "label": "琥珀风带",
+      "layer": "ground",
+      "file": "ground/gas_giant_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 882674,
+      "sha256": "dd19f3da9f4c22e4d84c7db6e4eef30bc4c3afa53f4a1a74ff9872ffa08e08e5"
+    },
+    {
+      "variant": "gas_giant_v02",
+      "category": "gas_giant",
+      "type": "气态巨行星",
+      "label": "绯云巨涡",
+      "layer": "ground",
+      "file": "ground/gas_giant_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1058850,
+      "sha256": "ed8ca694a01d84b81075de0067233702e96be0299b2a2db8205d1c9e44af2689"
+    },
+    {
+      "variant": "ice_giant_v01",
+      "category": "ice_giant",
+      "type": "冰巨星",
+      "label": "青蓝风带",
+      "layer": "ground",
+      "file": "ground/ice_giant_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 944509,
+      "sha256": "a45c0872970962066cba6753dac09a6bc6103b0ebdf8583321b6cb20b112aa9d"
+    },
+    {
+      "variant": "ice_giant_v02",
+      "category": "ice_giant",
+      "type": "冰巨星",
+      "label": "青碧风暴",
+      "layer": "ground",
+      "file": "ground/ice_giant_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1032147,
+      "sha256": "091f0b786b59e92f3b0f133fccfb4498530d67367500424af3aa27caf7a49359"
+    },
+    {
+      "variant": "frozen_v01",
+      "category": "frozen",
+      "type": "冰封世界",
+      "label": "裂冰大洋",
+      "layer": "ground",
+      "file": "ground/frozen_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2763232,
+      "sha256": "80c9991b5f9972dc3524045ae922c4c0a8202c879161f5266b93631ae1396504"
+    },
+    {
+      "variant": "frozen_v02",
+      "category": "frozen",
+      "type": "冰封世界",
+      "label": "霜白裂原",
+      "layer": "ground",
+      "file": "ground/frozen_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 1949705,
+      "sha256": "cf6ba7e6a5bbcd4b6a5dc32cf03d03c7b251d49e1ed15c54994c56e7bc9b430b"
+    },
+    {
+      "variant": "frozen_dwarf_v01",
+      "category": "frozen_dwarf",
+      "type": "冰封矮星",
+      "label": "密坑冰壳",
+      "layer": "ground",
+      "file": "ground/frozen_dwarf_v01.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2317660,
+      "sha256": "b08016039ce3bcfa6be1e0c28fe4406eb42d08ac23f0096e00b3d596d057f969"
+    },
+    {
+      "variant": "frozen_dwarf_v02",
+      "category": "frozen_dwarf",
+      "type": "冰封矮星",
+      "label": "古裂冰丘",
+      "layer": "ground",
+      "file": "ground/frozen_dwarf_v02.png",
+      "width": 2048,
+      "height": 1024,
+      "bytes": 2560166,
+      "sha256": "516c056cf45745adabb445cd5d6ff24e4500f302220f7e572fb317ea8c2e85f3"
+    }
+  ],
+  "reproduction": {
+    "jobs": "source/jobs.tsv",
+    "runner": "source/NativeBatch.java",
+    "seed": "java.util.Random(long); one nextDouble consumed as native bulk pipeline; explicit palette fraction used",
+    "nativeProjects": "projects/*.tfp",
+    "note": "TFP GUI opens saved strategy recipes but uses a fresh seed; exact seed and palette are retained in this manifest and jobs.tsv."
+  }
+}

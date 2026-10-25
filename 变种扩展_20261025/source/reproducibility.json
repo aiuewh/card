@@ -1,0 +1,13 @@
+{
+  "sample": "continental_v01",
+  "size": [
+    1024,
+    512
+  ],
+  "independentNativeRuns": 2,
+  "byteIdentical": {
+    "ground": true,
+    "clouds": true,
+    "composite": true
+  }
+}

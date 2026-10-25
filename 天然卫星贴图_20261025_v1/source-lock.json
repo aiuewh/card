@@ -1,0 +1,258 @@
+{
+  "canonicalFile": "蔚蓝星域的观星者_3.3_统一候选版_v40-c61.json",
+  "canonicalSha256": "2dbd4479ecef82d7f6a3853f94a0d482918bff6306b92ec6da9b3d2745fe6991",
+  "sources": [
+    {
+      "file": "C:\\1MC\\观星者\\_black_auction_v1\\current-release.json",
+      "sha256": "95c65de934dca6a70b607e37486986667743d315b6a07dd4aae0362d38a825e9"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\蔚蓝星域的观星者_3.3_统一候选版_v40-c61.json",
+      "sha256": "2dbd4479ecef82d7f6a3853f94a0d482918bff6306b92ec6da9b3d2745fe6991"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\蔚蓝星域的观星者_3.3_航程档案候选版.json",
+      "sha256": "e50e831f7382b4d150c3276d44dd97226022145bc0480b2e07c1b134d4b2a318"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\source\\NativeBatch.java",
+      "sha256": "77310218eb130ecb940a16bf4e17105da72030e5090c4d14c8691a3ab32e0fe0"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\source\\TexturesForPlanets-original.jar",
+      "sha256": "4d82738c587180d9a14ac003441c60bde5c3a84fe3c2fbe1bc0444e8524e7784"
+    },
+    {
+      "file": "C:\\1MC\\1\\Textures for Planets\\TexturesForPlanets.exe",
+      "sha256": "14dcfb61e0dfa0ee1392f5daeb3be8c963129003cdc1b6928657a4788b088230"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\alpine.col",
+      "sha256": "c5a47ef740148695b77a53c9e0138ea6febe9d8947a89b840fdd6c8d38d350c6"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\clouds.col",
+      "sha256": "2c836b0deebbb3f265acc098a7d6886fc5d3298df38fde12da7dd41b3aa5d9cb"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\cloudsheavy.col",
+      "sha256": "00813a9e3c7a595d01b71608bd514928ec80b54737dcbca1f9e2c0f3e0650b83"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\cloudslight.col",
+      "sha256": "6d649bc25d0b38d0a4973ee294c8b0ea7035a7d598e26437db2b96bd629a25d3"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\dry.col",
+      "sha256": "00327e7d465300a76fe2aa9a6a2e0d2a143f3759fb26e052122d3e1f2a827292"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\fungal.col",
+      "sha256": "c7731cd7b94d12ae50564af481506430d1dbbc39bb74703b57c36e0dd186d7d9"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\gas.col",
+      "sha256": "5e66b153816ea1922f7a5e776366d030edb8ccbb70d58db3810d48118aca271b"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\ice.col",
+      "sha256": "12ba8ebff274da68ebd54f2e746a5097cfa935de10105bc542e4ee84c0622690"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\martian.col",
+      "sha256": "4b0278f8bf0873046ca49b39069c80c26553293c2063417622cc5cdfd7147359"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\oasis.col",
+      "sha256": "f1860653a69628dfa9a23602881b800fdac046a6a671b245fcfa3b9a481e2584"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\oceanic.col",
+      "sha256": "10e58e473f5360b019053e453e18462d34706192ad40611ea4b6c5de1723a7fa"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\primordial.col",
+      "sha256": "456e0450e34df5f05dd9083b1d7cf5399c5f69d45e7df9dd0ccde910abf55ad4"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\rock.col",
+      "sha256": "5931f98564a0f57022ef53f1e552465f29d65d3d6362afc19385728fe3f35c3e"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\savannah.col",
+      "sha256": "c9eccf97b832eec6d5473404d3e2dcdd2a5c110d28d6c6af8db9f85897ef54c2"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\swamp.col",
+      "sha256": "c787ce064cdd87bb0baded5ab5010c879334fa51cc3bac94580d746ffbf5e066"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\terrestrial.col",
+      "sha256": "b5628e5cce4696833e0d84c91f30662415d4ac0126f676350614f87dd0603572"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\tropical.col",
+      "sha256": "e29992cfa7c65e3d6b12b0e34983fdbc68ea22528cedc9b6dd08e2c18760d10c"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\tundra.col",
+      "sha256": "cd5157dfe94ed3cbe96ae6df954f7c7ef4cb7bc8166b5e2c8549b537f29013f9"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\venusian.col",
+      "sha256": "c287515d094499087b8454b38868709adbce0c3fde52cbc579894ad6c12b332d"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\volcanic.col",
+      "sha256": "d267e6f1a7a2e84cc10ce3197c111bfa567706a94f9908a6a0b28e87745eac8d"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\volcanicclouds.col",
+      "sha256": "1774e71b85935ff6e2eb218d11372d1ea5f042e5fa9aa2482dce395f3d2cccea"
+    },
+    {
+      "file": "C:\\1MC\\1\\Colourizers\\wetlands.col",
+      "sha256": "3e73f68e3b9db657dee5fca628759c81b0f3476e43c18b08b780759b2d384201"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\crackedandcratered.tfp",
+      "sha256": "80e8ae443cb1a30cc0c32b2a7a58d2647707e058f341f3b7ea03a7630eef9c96"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\cratered.tfp",
+      "sha256": "2592b0b79298ab514452e8aa718b1cf3f4b237c13ea2f9b267068aed8074aec6"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\gasgiant.tfp",
+      "sha256": "bf9a1d34cf40dea1fc6772d3cd244c0e3fef8a674502512565a4ab7bffb6cf39"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\plain.tfp",
+      "sha256": "8bfbb75ac262632e6604a7414ce90145a7158d230424bf7fffeb9749d9403925"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\terrestrialclouds.tfp",
+      "sha256": "c130cd8b1d2a2447fb5d6259df134d72073fcd2842d2ecf9d1208ed4f1b4a62b"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\venusianclouds.tfp",
+      "sha256": "2bb3694caa8fc118481546e6fb1affc4c0235458f5ac0e836aae68f1008c7c26"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\violent.tfp",
+      "sha256": "4e837ce58f0cb85c50aacedcf54e6f09de238d2d5f78ce0df773d9a8a1345304"
+    },
+    {
+      "file": "C:\\1MC\\1\\Templates\\violentclouds.tfp",
+      "sha256": "a904f4bb377dda1043ef6fab29c527ce9529b6a0c13cf4a819ae5c7e043c4bf5"
+    },
+    {
+      "file": "C:\\1MC\\1\\Tools\\canyon.tool",
+      "sha256": "0f55aab0ea9d941ebd0e7e771f236b88b6e8b8517e05079993874e10080fe1f3"
+    },
+    {
+      "file": "C:\\1MC\\1\\Tools\\crater.tool",
+      "sha256": "7fc31874b27b0298a9905b724c06583d8279988a4e1528a83410fd55f08783e6"
+    },
+    {
+      "file": "C:\\1MC\\1\\Tools\\volcano.tool",
+      "sha256": "7b0ee6a27d2d113945c14fbeb5322fb88927116ae3267ce59b73348f1ff1c4dd"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\barren_v01.png",
+      "sha256": "b35bb9484723527f8989f95110580c08d26eb74bfa8f0093d464514ad9b8e0a2"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\barren_v02.png",
+      "sha256": "d982350c2e858f35cccb4924f3e953824a408a20f3ad49603a56164821cc76b1"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\continental_v01.png",
+      "sha256": "e431e0d8f34af8cabcc26638686b3255d0d2277650902740db3df815dae9b8de"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\continental_v02.png",
+      "sha256": "5d41a438d3f1e5abac67fe15b4ea37a2a53ca2dd124a6be1e2b241d6e8e57ce2"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\desert_v01.png",
+      "sha256": "047c6d996598a26a625fcb3c3af17643d4409d7fe6126c681fcdf04a0ece33a9"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\desert_v02.png",
+      "sha256": "6ec18efb6a1b38effacea2abb636720bbbbcd16e30e0e5e21f9054c4ffabfc08"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\frozen_dwarf_v01.png",
+      "sha256": "b08016039ce3bcfa6be1e0c28fe4406eb42d08ac23f0096e00b3d596d057f969"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\frozen_dwarf_v02.png",
+      "sha256": "516c056cf45745adabb445cd5d6ff24e4500f302220f7e572fb317ea8c2e85f3"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\frozen_v01.png",
+      "sha256": "80c9991b5f9972dc3524045ae922c4c0a8202c879161f5266b93631ae1396504"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\frozen_v02.png",
+      "sha256": "cf6ba7e6a5bbcd4b6a5dc32cf03d03c7b251d49e1ed15c54994c56e7bc9b430b"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\gas_giant_v01.png",
+      "sha256": "dd19f3da9f4c22e4d84c7db6e4eef30bc4c3afa53f4a1a74ff9872ffa08e08e5"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\gas_giant_v02.png",
+      "sha256": "ed8ca694a01d84b81075de0067233702e96be0299b2a2db8205d1c9e44af2689"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\ice_giant_v01.png",
+      "sha256": "a45c0872970962066cba6753dac09a6bc6103b0ebdf8583321b6cb20b112aa9d"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\ice_giant_v02.png",
+      "sha256": "091f0b786b59e92f3b0f133fccfb4498530d67367500424af3aa27caf7a49359"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\molten_v01.png",
+      "sha256": "72a4d16535d17da1d0b4680fee642481f2fb09bf0096b3bc91991b4cca8b6b03"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\molten_v02.png",
+      "sha256": "e1f881dd11c7b1d4cbf33434cfbd5efa4118d8a99e3061383bc1e8b2d98ffd0e"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\ocean_v01.png",
+      "sha256": "3b5890c5569f5696b573e08f8d09b436f6549071efc1b6e113b1fa637d198d59"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\ocean_v02.png",
+      "sha256": "e64c626f1c7f9d61842837a6dbc6702cc8c0dc5335dfdb0373d18ed32ff594e4"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\toxic_v01.png",
+      "sha256": "ae527dd0c02243ea862b39560a686e298b1055370b27e163188afe6c4c73ad52"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\toxic_v02.png",
+      "sha256": "75aad2cea3f689a8d8c11e229c1c575c1e320397e85b93149244754ab67adae9"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\tropical_v01.png",
+      "sha256": "c78125fb325b906248c5720f53246b009c6fbdfc3945f480999187304b8ad3dc"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\tropical_v02.png",
+      "sha256": "aef480cb164fee254ae822a6874cd9806389ff540139c1169a80298364e21469"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\tundra_v01.png",
+      "sha256": "832f5dddeba9b5d3f7351fd8086d89497b34fb12e4cb495236621c5c0b937375"
+    },
+    {
+      "file": "C:\\1MC\\观星者\\星球\\变种扩展_20261025\\ground\\tundra_v02.png",
+      "sha256": "5fda8ca9bafa8be821e2d5d5cbe2feb03f251a5b5fde716ef4e6a3f5af480e96"
+    }
+  ]
+}
