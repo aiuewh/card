@@ -122,6 +122,10 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          # 仓库首次部署时自动启用 Pages（源 = GitHub Actions），
+          # 免去手动去 Settings → Pages 点选；已启用时该项无副作用。
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
