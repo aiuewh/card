@@ -1,0 +1,136 @@
+name: Deploy DND Card Site to GitHub Pages
+
+# 一个 Pages 站点同时承载两类内容：
+#   1) 仓库根级的费伦地图终端等静态文件（直接拷贝）
+#   2) battle-forge/ 下的 Next.js 战斗前端（静态导出到 /battle-forge/ 子路径）
+#
+# 访问地址：
+#   https://<owner>.github.io/card/                     ← 地图终端等
+#   https://<owner>.github.io/card/battle-forge/        ← 战斗前端
+#
+# 前置：仓库 Settings → Pages → Source 选「GitHub Actions」。
+
+on:
+  push:
+    branches: [main]
+    # 只有地图文件或前端源码变动才重建；纯文档改动不触发
+    paths:
+      - 'battle-forge/**'
+      - '*.html'
+      - '*.js'
+      - '_dataF.js'
+      - 'faerun_zh.js'
+      - 'name_zh.js'
+      - '费伦地图/**'
+      - '无冬城地图/**'
+      - '深水城地图/**'
+      - '*.jpg'
+      - '*.png'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ---------- 1) 战斗前端：静态导出到 battle-forge-dist/ ----------
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: battle-forge/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: battle-forge
+        run: npm install --no-audit --no-fund
+
+      - name: Remove server-only routes (static export)
+        working-directory: battle-forge
+        run: rm -rf src/app/api
+
+      - name: Build battle-forge (static export)
+        working-directory: battle-forge
+        env:
+          EXPORT_MODE: "1"
+          # 子路径必须带仓库名：项目页地址是 /<repo>/，前端再挂在 /battle-forge 下
+          BASE_PATH: /${{ github.event.repository.name }}/battle-forge
+        run: npm run build:static
+
+      # ---------- 2) 组装站点根目录 ----------
+      - name: Assemble site
+        run: |
+          set -euo pipefail
+          SITE=_site
+          rm -rf "$SITE"
+          mkdir -p "$SITE"
+
+          # 2a. 前端静态导出产物 → /battle-forge/
+          cp -r battle-forge/out "$SITE/battle-forge"
+
+          # 2b. 根级地图终端与数据文件（只拷存在的，避免路径写错时静默失败）
+          shopt -s nullglob
+          for item in \
+            *.html *.js *.jpg *.png *.json \
+            费伦地图 无冬城地图 深水城地图 \
+            _dataF.js faerun_zh.js name_zh.js ; do
+            [ -e "$item" ] && cp -r "$item" "$SITE/" || true
+          done
+
+          # 2c. 星球贴图目录（地图终端按需加载）
+          for dir in *_2048x1024 SolarSystemScope TexturesForPlanets-* ; do
+            [ -d "$dir" ] && cp -r "$dir" "$SITE/" || true
+          done
+
+          # 2d. 根目录没有 index.html 时生成一个入口页，避免直接访问 404
+          if [ ! -f "$SITE/index.html" ]; then
+            cat > "$SITE/index.html" <<'HTML'
+          <!DOCTYPE html>
+          <html lang="zh-CN"><head><meta charset="utf-8">
+          <title>D&amp;D 2024 · 站点索引</title>
+          <style>body{font-family:system-ui,sans-serif;max-width:640px;margin:64px auto;padding:0 20px;line-height:1.9;color:#e8e2d4;background:#14110d}
+          a{color:#e5bd7d}li{margin:6px 0}h1{font-size:20px}</style></head>
+          <body><h1>D&amp;D 2024 · 站点索引</h1><ul>
+          <li><a href="./battle-forge/">⚔ 战斗前端（Battle Forge）</a></li>
+          <li><a href="./faerun_map_terminal.html">🗺 费伦地图终端</a></li>
+          <li><a href="./剑湾双城交互地图.html">🏙 剑湾双城交互地图</a></li>
+          </ul></body></html>
+          HTML
+          fi
+
+          echo "--- 站点根目录 ---"
+          ls -la "$SITE" | head -40
+          echo "--- 前端入口校验 ---"
+          test -f "$SITE/battle-forge/index.html" || { echo "缺少 battle-forge/index.html"; exit 1; }
+          echo "battle-forge/index.html 存在"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

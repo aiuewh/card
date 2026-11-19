@@ -1,0 +1,68 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+.mimosa
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+local-*
+.claude
+.z-ai-config
+*.log
+dev.log
+dev.out.log
+test
+prompt
+
+server.log
+# Skills directory
+/skills/
+# Engine regression-test build output
+/.engtest/
+/.engtest_run/
+
+# 本目录在 card 仓库里只是子目录：上面 test / prompt / local-* 等无前导斜杠的规则
+# 会被 git 当作「任意层级匹配」，可能误伤 card 根目录下的同名路径。
+# 这里显式放行本目录自身的所有内容，作用域交回给根级 .gitignore。
+!*
+
+# 本地静态导出构建产物
+/.next-export/
+# 本地测试页（仅本地验证，不部署）
+/public/action-flow-harness.html

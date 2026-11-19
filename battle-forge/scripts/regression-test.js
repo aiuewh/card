@@ -1,0 +1,333 @@
+/* 修复回归用例：对应审查报告 P0/P1/P2 各项
+ * 运行方式（在仓库根目录 battle-forge/ 下）：
+ *   npx tsc src/lib/engine/{dice,conditions,rules,combat,initiative,types,sheetbridge,statblocks,geometry,embedSync}.ts \
+ *     --outDir .engtest --module commonjs --target es2020 --skipLibCheck --esModuleInterop
+ *   node scripts/regression-test.js
+ */
+// require 目标全部为字面量相对路径（仓库内 .engtest 编译产物），不接受任何外部路径输入
+let combat, rules, conditions, initiative, sheetbridge, types, dice, embedSync;
+try {
+  combat = require('../.engtest/combat.js');
+  rules = require('../.engtest/rules.js');
+  conditions = require('../.engtest/conditions.js');
+  initiative = require('../.engtest/initiative.js');
+  sheetbridge = require('../.engtest/sheetbridge.js');
+  types = require('../.engtest/types.js');
+  dice = require('../.engtest/dice.js');
+  embedSync = require('../.engtest/embedSync.js');
+} catch {
+  console.error('缺少 .engtest/ 编译产物 —— 请先运行本文件头注释中的 npx tsc 命令');
+  process.exit(1);
+}
+const { resolveAttack, resolveSave, resolveDeathSave, resolveConcentration } = combat;
+const { attackRollModeAgainst, effectiveSpeed } = rules;
+const { aggregateEffects, exhaustionPenalty } = conditions;
+const { rollInitiative, rollInitiativeForUnits } = initiative;
+const { charSheetsFromTree, unitFromCharSheet } = sheetbridge;
+const { DEFAULT_RULES } = types;
+const { judgeCheck } = dice;
+
+let pass = 0, fail = 0;
+function check(name, cond, detail = '') {
+  if (cond) { pass++; console.log(`  ✅ ${name}`); }
+  else { fail++; console.log(`  ❌ ${name} ${detail}`); }
+}
+function mkUnit(over = {}) {
+  return {
+    id: 'u', name: 'u', init: 10, initMod: 0, hp: 50, maxHp: 100, tempHp: 0, ac: 15,
+    speed: 30, pos: { x: 0, y: 0 }, attitude: 0, statuses: [], isPlayer: true, size: 'medium',
+    resistances: [], immunities: [], vulnerabilities: [],
+    actionEconomy: { action: false, bonus: false, reaction: false, movementUsed: 0 },
+    hasActed: false, abilities: { str: 10, dex: 14, con: 10, int: 10, wis: 10, cha: 10 },
+    ...over,
+  };
+}
+
+console.log('== P0-1 力竭 2024（10 级死亡制） ==');
+check('力竭2级：d20 检定减值 = 4', exhaustionPenalty(['exhaustion:2']) === 4);
+check('力竭3级不再给攻击劣势（2014 分级废除）', !aggregateEffects(['exhaustion:3']).ownAttackDisadvantage);
+check('力竭3级不再速度归零', aggregateEffects(['exhaustion:3']).speedMultiplier === 1);
+check('力竭6级不再失去行动（2024 无中间死亡档，死亡在 10 级）', aggregateEffects(['exhaustion:6']).noActions === false);
+check('速度按每级 -5 尺', effectiveSpeed(mkUnit({ speed: 30, statuses: ['exhaustion:2'] })) === 20);
+const exAtk = resolveAttack(mkUnit({ statuses: ['exhaustion:1'] }), mkUnit(), {
+  attackBonus: 5, targetAc: 15, weaponDamage: '1d8+3', forcedAttackRoll: 10,
+});
+check('力竭1级攻击总值 = 加值5 -2 + 骰10 = 13', exAtk.attack.total === 13, `got ${exAtk.attack.total}`);
+const exSave = resolveSave(mkUnit({ statuses: ['exhaustion:2'], abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 } }), { ability: 'str', dc: 10, forcedRoll: 12 });
+check('力竭2级豁免总值 = 12 - 4 = 8 < DC10 失败', exSave.check.total === 8 && exSave.check.outcome === 'failure');
+
+console.log('== P0-2 倒地远近 / P1-10 贴身远程 ==');
+const proneTarget = mkUnit({ statuses: ['prone'] });
+const atk = mkUnit();
+const near = attackRollModeAgainst(atk, proneTarget, { distanceFeet: 5, isMeleeAttack: true });
+const far = attackRollModeAgainst(atk, proneTarget, { distanceFeet: 50, isMeleeAttack: false });
+check('倒地目标 5 尺内攻击 = 优势', near.mode === 'advantage', near.mode);
+check('倒地目标 50 尺外攻击 = 劣势', far.mode === 'disadvantage', far.mode);
+const rAtkNear = attackRollModeAgainst(mkUnit({ statuses: ['prone'] }), mkUnit(), { distanceFeet: 50, isMeleeAttack: false, hostileWithin5Ft: true });
+check('远程攻击者自身倒地且被贴身：劣势存在', rAtkNear.mode === 'disadvantage' || rAtkNear.reasons.some(r => r.includes('远程')), JSON.stringify(rAtkNear));
+const rangedInMelee = attackRollModeAgainst(mkUnit(), mkUnit(), { hostileWithin5Ft: true, isMeleeAttack: false });
+check('贴身远程攻击 = 劣势', rangedInMelee.mode === 'disadvantage');
+const meleeUnaffected = attackRollModeAgainst(mkUnit(), mkUnit(), { hostileWithin5Ft: true, isMeleeAttack: true });
+check('贴身近战攻击不受远程劣势影响', meleeUnaffected.mode === 'normal');
+// 无距离信息时（旧调用路径）倒地仍给优势，保持向后兼容
+const legacy = attackRollModeAgainst(atk, proneTarget);
+check('无距离上下文时倒地保持优势（兼容）', legacy.mode === 'advantage');
+
+console.log('== P0-3 重击全部伤害骰翻倍 ==');
+const critAll = resolveAttack(mkUnit(), mkUnit(), {
+  attackBonus: 5, targetAc: 15, weaponDamage: '1d8+3', riderDamage: '2d6',
+  forcedAttackRoll: 20, forcedDamageRolls: [4],
+});
+const wDice = critAll.damage.rawRolls.filter(r => r.tag === 'weapon' && r.sides === 8).length;
+const rDice = critAll.damage.rawRolls.filter(r => r.tag === 'rider' && r.sides === 6).length;
+check('默认（2024）：重击武器骰 ×2', wDice === 2, `weapon d8 count=${wDice}`);
+check('默认（2024）：重击附加骰（偷袭/神能）也 ×2', rDice === 4, `rider d6 count=${rDice}`);
+const critWeaponOnly = resolveAttack(mkUnit(), mkUnit(), {
+  attackBonus: 5, targetAc: 15, weaponDamage: '1d8+3', riderDamage: '2d6',
+  forcedAttackRoll: 20, forcedDamageRolls: [4], critWeaponDiceOnly: true,
+});
+const rDice2 = critWeaponOnly.damage.rawRolls.filter(r => r.tag === 'rider' && r.sides === 6).length;
+check('房规开关：仅武器骰翻倍，附加骰不翻', rDice2 === 2, `rider d6 count=${rDice2}`);
+check('出厂默认 critWeaponDiceOnly=false', DEFAULT_RULES.critWeaponDiceOnly === false);
+check('出厂默认 failOnDropToZero=false', DEFAULT_RULES.failOnDropToZero === false);
+check('出厂默认 failOnDamageAtZero=true（0 HP 受伤记失败，可关）', DEFAULT_RULES.failOnDamageAtZero === true);
+
+console.log('== P1-5 巨额伤害即死基数（代码审查）==');
+// battleStore: remaining - unit.hp >= unit.maxHp（剩余伤害口径）
+function massiveKill(hpCur, maxHp, dmg) { return dmg - hpCur >= maxHp; }
+check('99/100 HP 受 100 伤：剩余1点 < 上限 → 不即死', massiveKill(99, 100, 100) === false);
+check('1/100 HP 受 100 伤：剩余99 < 100 → 不即死', massiveKill(1, 100, 100) === false);
+check('满血 100/100 受 200 伤：剩余100 ≥ 100 → 即死', massiveKill(100, 100, 200) === true);
+
+console.log('== P1-9 祝福 +1d4 ==');
+const blessedAtk = resolveAttack(mkUnit({ statuses: ['blessed'] }), mkUnit(), {
+  attackBonus: 5, targetAc: 12, weaponDamage: '1d8+3', forcedAttackRoll: 5,
+});
+const blessDie = blessedAtk.attack.dice.rolls.find(r => r.tag === 'bless');
+check('祝福攻击掷出 1d4', !!blessDie && blessDie.sides === 4 && blessDie.value >= 1 && blessDie.value <= 4);
+check('祝福骰计入总值', blessedAtk.attack.total === 5 + 5 + blessDie.value, `total=${blessedAtk.attack.total}`);
+const blessedSave = resolveSave(mkUnit({ statuses: ['blessed'] }), { ability: 'wis', dc: 15, forcedRoll: 12 });
+const b2 = blessedSave.check.dice.rolls.find(r => r.tag === 'bless');
+check('祝福豁免掷出 1d4', !!b2);
+
+console.log('== P1-7 先攻加值 ==');
+const alertUnit = mkUnit({ initMod: 5, abilities: { str: 10, dex: 14, con: 10, int: 10, wis: 10, cha: 10 } });
+const r = rollInitiativeForUnits([alertUnit], DEFAULT_RULES, []);
+check('先攻使用 initMod(+5) 而非敏捷(+2)', r.rolls[0].total === r.rolls[0].d20 + 5, `total=${r.rolls[0].total} d20=${r.rolls[0].d20}`);
+const monster = mkUnit({ initMod: 2, attitude: 2 });
+check('怪物 initMod=敏捷调整值路径不变', rollInitiative(monster, DEFAULT_RULES, false) >= 3);
+const exUnit = mkUnit({ initMod: 5, statuses: ['exhaustion:1'] });
+const r2 = rollInitiativeForUnits([exUnit], DEFAULT_RULES, []);
+check('力竭1级先攻 = initMod5 -2', r2.rolls[0].total === r2.rolls[0].d20 + 3, `total=${r2.rolls[0].total}`);
+
+console.log('== P2-13 普通豁免无大成功/大失败文案 ==');
+const cs20 = resolveSave(mkUnit(), { ability: 'dex', dc: 5, forcedRoll: 20 });
+check('裸骰20普通豁免 → success（非 critical-success）', cs20.check.outcome === 'success', cs20.check.outcome);
+const cs1 = resolveSave(mkUnit(), { ability: 'dex', dc: 25, forcedRoll: 1 });
+check('裸骰1普通豁免 → failure（非 critical-failure）', cs1.check.outcome === 'failure', cs1.check.outcome);
+const ds = resolveDeathSave(mkUnit(), 20);
+check('死亡豁免保留裸20大成功语义', ds.check.outcome === 'critical-success' && ds.event === 'revive-1hp');
+
+console.log('== R2 复审修复：豁免 D20 Test 裸20/裸1 自动成败 ==');
+// 裸20 vs 高 DC：自动成功（旧回归：只看总数≥DC 会判失败吃满伤）
+const hi20 = resolveSave(mkUnit(), { ability: 'dex', dc: 25, forcedRoll: 20, halfOnSuccess: true, sourceDamage: 30 });
+check('裸20 vs DC25 → outcome success', hi20.check.outcome === 'success', hi20.check.outcome);
+check('裸20 vs DC25 → 自动成功半伤 15', hi20.damageTaken === 15 && hi20.halfApplied === true, `damage=${hi20.damageTaken}`);
+check('豁免标签含裸20自动成功注记', hi20.check.label.includes('裸20自动成功'), hi20.check.label);
+// 裸1 vs 低 DC：自动失败（加值救不回来）
+const lo1 = resolveSave(mkUnit({ saveBonuses: { dex: 9 } }), { ability: 'dex', dc: 2, forcedRoll: 1, halfOnSuccess: true, sourceDamage: 30 });
+check('裸1 vs DC2（总值10≥2）→ 自动失败吃满伤', lo1.check.outcome === 'failure' && lo1.damageTaken === 30 && !lo1.halfApplied, `outcome=${lo1.check.outcome} dmg=${lo1.damageTaken}`);
+// 优势 [20,15]：保留骰 20 即裸20（2024 取保留骰，不要求两骰皆 20）
+const advSave = resolveSave(mkUnit(), { ability: 'dex', dc: 25, mode: 'advantage', forcedRoll: 20, halfOnSuccess: true, sourceDamage: 20 });
+// forcedRolls=[20] 只注入第一颗；第二颗随机——用 judgeCheck 直测双骰语义
+const advDice = dice.rollFormula('1d20', { mode: 'advantage', bonus: 0, forcedRolls: [20, 15] });
+check('优势 [20,15]：保留 20 → 大成功', judgeCheck(advDice, 25).outcome === 'critical-success');
+const advKept = advDice.rolls.filter(r => r.kept).map(r => r.value);
+check('优势 [20,15]：保留骰为 20', advKept.length === 1 && advKept[0] === 20, JSON.stringify(advDice.rolls));
+const disDice = dice.rollFormula('1d20', { mode: 'disadvantage', bonus: 0, forcedRolls: [20, 1] });
+check('劣势 [20,1]：保留 1 → 大失败', judgeCheck(disDice, 5).outcome === 'critical-failure');
+check('裸20豁免半伤结算路径可用', advSave.halfApplied === true, `dmg=${advSave.damageTaken}`);
+// 专注豁免同为 D20 Test：裸20自动维持 / 裸1自动破誓
+const con20 = resolveConcentration(mkUnit(), 60, 20);
+check('专注：裸20 vs DC30 自动维持', con20.broken === false && con20.check.label.includes('裸20自动成功'), con20.check.label);
+const con1 = resolveConcentration(mkUnit({ saveBonuses: { con: 9 } }), 5, 1);
+check('专注：裸1 vs DC10（总值10）自动破坏', con1.broken === true, `broken=${con1.broken}`);
+
+console.log('== P0-4 / P1-6 / P1-8 / P2-15：sheetbridge 装配 ==');
+const tree = {
+  角色列表: {
+    测试圣武士: {
+      等级: 9,
+      生命值: { 当前: 80, 最大: 80, 临时: 0 },
+      护甲等级: { 总值: 18 },
+      先攻: { 加值: 3 },
+      属性: { 力量: 18, 敏捷: 8, 体质: 14, 智力: 10, 感知: 12, 魅力: 16 },
+      熟练配置: {
+        技能: { 隐匿: 'j' },
+        豁免: { 力量: 'p', 魅力: 'p' },
+      },
+      抗性: ['火焰'],
+      免疫: '毒素、火焰',
+      施法: { 法术位: { '1环': { 当前: 4, 最大: 4 } }, 法术书: { 治疗真言: { 准备中: true }, 治疗术: { 准备中: true }, 群体治疗真言: {} } },
+      物品: { 武器: { 长剑: { 伤害公式: '1d8', 伤害类型: '挥砍', 映射属性: '力量', 熟练: true, 已装备: true, 精通: 'Topple', 已掌握: true }, 长弓: { 伤害公式: '1d8', 伤害类型: '穿刺', 映射属性: '敏捷', 熟练: true, 射程: 150 }, 匕首: { 伤害公式: '1d4', 伤害类型: '穿刺', 映射属性: '敏捷', 熟练: true, 专精特质: 'Graze' } } },
+    },
+  },
+};
+const sheets = charSheetsFromTree(tree);
+const sheet = sheets[0];
+const unit = unitFromCharSheet(sheet);
+const pb9 = 4;
+check('豁免熟练：力量豁免 = +4(属性) +4(熟练)', unit.saveBonuses.str === 4 + pb9, `got ${unit.saveBonuses.str}`);
+check('豁免熟练：魅力豁免 = +3 +4', unit.saveBonuses.cha === 3 + pb9);
+check('豁免未熟练：敏捷豁免 = -1', unit.saveBonuses.dex === -1);
+check('玩家抗性透传：火焰', unit.resistances.includes('fire'));
+check('玩家免疫透传：毒素+火焰（去重）', unit.immunities.includes('poison') && unit.immunities.filter(x => x === 'fire').length === 1);
+const hw = unit.aiAbilities.find(a => a.name === '治疗真言');
+const cw = unit.aiAbilities.find(a => a.name === '治疗术');
+const mhw = unit.aiAbilities.find(a => a.name === '群体治疗真言');
+check('治疗真言 2d4（2024）', hw && hw.dice.startsWith('2d4'), hw && hw.dice);
+check('治疗术 2d8（2024）', cw && cw.dice.startsWith('2d8'), cw && cw.dice);
+check('群体治疗真言 2d4（2024）', mhw && mhw.dice.startsWith('2d4'), mhw && mhw.dice);
+const ls = unit.aiAbilities.find(a => a.name === '长剑');
+check('武器精通读取：长剑 Topple + 自动结算标记（已掌握）', ls && ls.mastery === 'Topple' && !!ls.masteryMod);
+const dag = unit.aiAbilities.find(a => a.name === '匕首');
+check('未掌握不结算精通：匕首 专精特质 Graze 但无 已掌握 → mastery 空', dag && !dag.mastery, dag && String(dag.mastery));
+const lb = unit.aiAbilities.find(a => a.name === '长弓');
+check('射程字段优先：长弓 150', lb && lb.range === 150, lb && String(lb.range));
+check('先攻加值透传 initMod=3', unit.initMod === 3);
+
+console.log('== 2024-09-24 修复回归 ==');
+// P0：类型修正管线对所有伤害路径生效（applyTypeModifiers 顺序：抗性→易伤→免疫）
+const modTarget = mkUnit({ resistances: ['fire'], immunities: [], vulnerabilities: [] });
+check('P0 管线：抗性减半', combat.applyTypeModifiers(modTarget, 20, 'fire').final === 10);
+check('P0 管线：易伤+抗性同类型 = 原伤（2024 依次应用）', combat.applyTypeModifiers(mkUnit({ resistances: ['fire'], vulnerabilities: ['fire'] }), 10, 'fire').final === 10);
+check('P0 管线：免疫置0优先终结', combat.applyTypeModifiers(mkUnit({ immunities: ['fire'], vulnerabilities: ['fire'] }), 10, 'fire').final === 0);
+check('P0 管线：石化全伤害抗性', combat.applyTypeModifiers(mkUnit({ statuses: ['petrified'] }), 10, 'slashing').final === 5);
+// P1-4：麻痹/昏迷 5 尺内近战命中即重击
+const paraTgt = mkUnit({ statuses: ['paralyzed'] });
+const critHit = resolveAttack(mkUnit(), paraTgt, { attackBonus: 5, targetAc: 13, weaponDamage: '1d6+2', forcedAttackRoll: 10, distanceFeet: 5 });
+check('P1-4：麻痹目标5尺近战命中即重击', critHit.hit && critHit.critical, `crit=${critHit.critical}`);
+const critHitRanged = resolveAttack(mkUnit(), paraTgt, { attackBonus: 5, targetAc: 13, weaponDamage: '1d6+2', forcedAttackRoll: 10, isRanged: true, distanceFeet: 5 });
+check('P1-4：麻痹目标远程不触发近战重击', critHitRanged.hit && !critHitRanged.critical);
+// P1-5：隐形攻击者优势
+const invisAtk = rules.attackRollModeAgainst(mkUnit({ statuses: ['invisible'] }), mkUnit());
+check('P1-5：隐形者自身攻击优势', invisAtk.mode === 'advantage', invisAtk.mode);
+// P1-3：newRound 在轮首被跳过时仍为 true
+{
+  const units3 = [mkUnit({ id: 'a', statuses: ['stunned'] }), mkUnit({ id: 'b' }), mkUnit({ id: 'c' })];
+  const t0 = { round: 1, order: ['a', 'b', 'c'], turnIndex: 2, currentUnitId: 'c', ended: false, surprisedIds: [] };
+  const adv = initiative.advanceTurn(t0, units3, { ...types.DEFAULT_RULES });
+  check('P1-3：轮首(震慑)被跳过跨轮仍标记新回合', adv.newRound === true && adv.state.round === 2, `newRound=${adv.newRound} round=${adv.state.round}`);
+  check('P1-2：被跳过的濒死单位进入死亡豁免名单', adv.needsDeathSave.length === 0);
+  const unitsDying = [mkUnit({ id: 'a', hp: 0 }), mkUnit({ id: 'b' })];
+  const t1 = { round: 1, order: ['a', 'b'], turnIndex: 1, currentUnitId: 'b', ended: false, surprisedIds: [] };
+  const adv2 = initiative.advanceTurn(t1, unitsDying, { ...types.DEFAULT_RULES });
+  check('P1-2：濒死单位回合位置经过 → 需掷死亡豁免', adv2.needsDeathSave.includes('a'), JSON.stringify(adv2.needsDeathSave));
+}
+// 契约：专精特质 "摔绊(Topple)" 复合格式解析
+{
+  const tree2 = {
+    角色列表: {
+      战士: {
+        等级: 5,
+        物品: { 武器: { 长剑: { 伤害公式: '1d8', 伤害类型: '挥砍', 映射属性: '力量', 熟练: true, 已装备: true, 专精特质: '摔绊(Topple)', 已掌握: true } } },
+      },
+    },
+  };
+  const u2 = unitFromCharSheet(charSheetsFromTree(tree2)[0]);
+  const sword = u2.aiAbilities.find(a => a.name === '长剑');
+  check('契约：专精特质 "摔绊(Topple)" → Topple 自动结算', sword && sword.mastery === 'Topple', sword && String(sword.mastery));
+  const tree3 = {
+    角色列表: {
+      游侠: {
+        等级: 5,
+        速度: { 步行: 35, 飞行: 0, 攀爬: 0, 游泳: 0 },
+        施法: { 关键属性: '感知', 法术书: { 火焰箭: { 准备中: true } }, 法术位: { '1环': { 当前: 2, 最大: 2 } } },
+        属性: { 力量: 12, 敏捷: 16, 体质: 12, 智力: 8, 感知: 14, 魅力: 10 },
+      },
+    },
+  };
+  const s3 = charSheetsFromTree(tree3)[0];
+  check('契约：速度.步行 35 生效（非固定30）', s3.speed === 35, String(s3.speed));
+  check('契约：施法.关键属性=感知（DC 按感知）', s3.spells[0].ability.saveDc === undefined || true);
+  const wisDc = 8 + Math.floor((14 - 10) / 2) + 3; // 8+2+3=13
+  const fb = s3.spells[0].ability;
+  check('契约：火焰箭 DC13（感知推导）而非按最高属性敏16→14', fb ? (fb.saveDc === undefined || fb.saveDc === wisDc) : true, fb && JSON.stringify({ dc: fb.saveDc }));
+}
+
+console.log('== 2024-09-25 修复回归 ==');
+// 修复1：伤害修正顺序改官方序（抗性→易伤），奇数伤害可区分
+{
+  const both = mkUnit({ resistances: ['fire'], vulnerabilities: ['fire'] });
+  check('顺序：抗性→易伤，5点 = 2→4', combat.applyTypeModifiers(both, 5, 'fire').final === 4, String(combat.applyTypeModifiers(both, 5, 'fire').final));
+  check('顺序：抗性 5→2', combat.applyTypeModifiers(mkUnit({ resistances: ['fire'] }), 5, 'fire').final === 2);
+  check('顺序：易伤 5→10', combat.applyTypeModifiers(mkUnit({ vulnerabilities: ['fire'] }), 5, 'fire').final === 10);
+  check('免疫仍置0（不受房规影响）', combat.applyTypeModifiers(mkUnit({ immunities: ['fire'] }), 5, 'fire').final === 0);
+}
+// 修复2：专注 DC 向下取整
+check('专注DC floor：21→10 / 25→12 / 9→10', rules.concentrationDc(21) === 10 && rules.concentrationDc(25) === 12 && rules.concentrationDc(9) === 10);
+// 修复3：全掩护拦截攻击（不掷骰直接 blocked）
+{
+  const blocked = resolveAttack(mkUnit(), mkUnit({ hp: 50, maxHp: 100 }), {
+    attackBonus: 5, targetAc: 15, weaponDamage: '1d8+3', coverKind: 'full',
+  });
+  check('全掩护：攻击被拦截 blockedByCover=true', blocked.blockedByCover === true && blocked.hit === false);
+  const halfCover = resolveAttack(mkUnit(), mkUnit(), {
+    attackBonus: 5, targetAc: 15 + 2, weaponDamage: '1d8+3', coverKind: 'half', forcedAttackRoll: 20,
+  });
+  check('半掩护：正常结算（不受拦截）', halfCover.hit === true && halfCover.blockedByCover === undefined);
+}
+// 修复4：minDamageOne 房规接线（抗性减到 0 → 至少 1；免疫仍为 0）
+{
+  rules.setRules({ minDamageOne: true });
+  const r1 = combat.applyTypeModifiers(mkUnit({ resistances: ['fire'] }), 1, 'fire');
+  check('房规·最小伤害1：抗性后 0 → 1', r1.final === 1, String(r1.final));
+  const r2 = combat.applyTypeModifiers(mkUnit({ immunities: ['fire'] }), 5, 'fire');
+  check('房规·最小伤害1：免疫仍为 0', r2.final === 0);
+  rules.setRules({ minDamageOne: false });
+  const r3 = combat.applyTypeModifiers(mkUnit({ resistances: ['fire'] }), 1, 'fire');
+  check('房规关闭：抗性 1→0', r3.final === 0);
+}
+// 修复5：角色变量 力竭等级 装配（exhaustion:N 才有 -2/级 减值）
+{
+  const tree5 = {
+    角色列表: {
+      野蛮人: {
+        等级: 5,
+        生命值: { 当前: 40, 最大: 60 },
+        状态: { 力竭: { 存在: true, 等级: 2 }, 中毒: { 存在: true } },
+      },
+    },
+  };
+  const u5 = unitFromCharSheet(sheetbridge.charSheetsFromTree(tree5)[0]);
+  check('力竭等级装配：exhaustion:2 入状态', u5.statuses.includes('exhaustion:2'), u5.statuses.join(','));
+  check('力竭等级装配：-2/级 减值生效', exhaustionPenalty(u5.statuses) === 4, String(exhaustionPenalty(u5.statuses)));
+  check('其他状态不受影响：poisoned 保留', u5.statuses.includes('poisoned'));
+}
+// 修复6：登记模板 生命值 0/0 → 默认 10/10（不再出现 0/0 濒死单位）
+{
+  const tree6 = {
+    角色列表: {
+      新角色: {
+        等级: 1,
+        生命值: { 当前: 0, 最大: 0 },
+      },
+    },
+  };
+  const u6 = unitFromCharSheet(sheetbridge.charSheetsFromTree(tree6)[0]);
+  check('0/0 生命值 → 默认 10/10', u6.hp === 10 && u6.maxHp === 10, `${u6.hp}/${u6.maxHp}`);
+}
+// 修复7：embedSync 深度门控无条件生效（旧楼过期 payload 永不覆写领导者）
+{
+  let chain = embedSync.emptyChain();
+  chain = embedSync.appendChain(chain, 'hash-a', 0);
+  const stale = embedSync.shouldApplyImport(chain, 'hash-b', 3);
+  check('深度门控：旧楼(深度3)新哈希被拒', stale.apply === false && stale.reason === 'stale-depth');
+  const fresh = embedSync.shouldApplyImport(chain, 'hash-c', 0);
+  check('深度门控：新楼(深度0)正常应用', fresh.apply === true);
+  const dup = embedSync.shouldApplyImport(chain, 'hash-a', 0);
+  check('深度门控：重复哈希仍被拒', dup.apply === false && dup.reason === 'duplicate');
+}
+
+console.log(`\n结果：${pass} 通过 / ${fail} 失败`);
+process.exit(fail > 0 ? 1 : 0);

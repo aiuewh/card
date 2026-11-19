@@ -1,0 +1,989 @@
+/**
+ * 角色数据桥：把酒馆 <UpdateVariable>（MVU JSONPatch）转成可战斗的角色单位
+ * 链路：DM 消息 → JSONPatch 流 → 变量树（持久缓存）→ 角色卡 CharSheet → 战斗单位
+ * 字段映射基于【D&D 2024版】卡实际变量结构：
+ *   /角色列表/{名}/生命值.{当前,最大,临时}、护甲等级.总值、先攻.加值、等级、属性.{力量..魅力}
+ *   /施法/法术位.{1环..9环}.{当前,最大}、/施法/法术书.{法术名}
+ *   /物品/武器.{武器名}.{伤害公式,伤害类型,映射属性,魔法加值,熟练,已装备,属性特征}
+ *   /状态.{名}.{存在}、/熟练配置.技能.隐匿
+ */
+import type {
+  Abilities, AbilityKey, AiAbility, BattleUnit, DamageType, SpellSlots, UnitSpeeds,
+} from './types';
+import { abilityMod, proficiencyBonus, formatMod } from './rules';
+import { DAMAGE_TYPE_CN, DAMAGE_TYPE_TO_CN, stripInstanceSuffix, parseAttack } from './statblocks';
+
+// ============ 变量树 ============
+
+export type VarTree = Record<string, unknown>;
+
+export interface PatchApplyResult {
+  applied: number;
+  errors: string[];
+}
+
+const FORBIDDEN_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function parsePath(path: string): string[] {
+  const segs = path.split('/').filter(Boolean);
+  // 反原型污染：拒绝危险路径段（/a/__proto__/x 会沿原型链走到 Object.prototype）
+  for (const s of segs) {
+    if (FORBIDDEN_SEGMENTS.has(s)) throw new Error(`非法路径段: ${s}`);
+  }
+  return segs;
+}
+
+/** 路径游走：取/建 seg 对应的子节点；`-` 段 = 数组追加新元素（卡片真实语义：/冒险日志/-/记录） */
+function ensureNode(parent: unknown, key: string, nextIsDash: boolean): unknown {
+  if (Array.isArray(parent)) {
+    if (key === '-') { parent.push({}); return parent[parent.length - 1]; }
+    const i = /^\d+$/.test(key) ? parseInt(key, 10) : NaN;
+    if (!Number.isNaN(i)) {
+      if (!parent[i]) parent[i] = {};
+      return parent[i];
+    }
+    return undefined;
+  }
+  if (parent && typeof parent === 'object') {
+    const o = parent as Record<string, unknown>;
+    if (o[key] === undefined || typeof o[key] !== 'object' || o[key] === null) {
+      o[key] = nextIsDash ? [] : {};
+    }
+    return o[key];
+  }
+  return undefined;
+}
+
+/** RFC6902 子集 + MVU delta 扩展；`-` 段表示数组追加；原地修改 tree */
+export function applyPatches(tree: VarTree, patches: Array<{ op: string; path: string; value?: unknown }>): PatchApplyResult {
+  const errors: string[] = [];
+  let applied = 0;
+  for (const p of patches) {
+    try {
+      const segs = parsePath(p.path);
+      if (segs.length === 0) { errors.push(`空路径: ${p.path}`); continue; }
+      // 游走到倒数第二层
+      let node: unknown = tree;
+      let ok = true;
+      for (let i = 0; i < segs.length - 1; i++) {
+        node = ensureNode(node, segs[i], segs[i + 1] === '-');
+        if (node === undefined) { ok = false; break; }
+      }
+      if (!ok || node === null || node === undefined) { errors.push(`路径不可达: ${p.path}`); continue; }
+      const last = segs[segs.length - 1];
+
+      switch (p.op) {
+        case 'replace':
+        case 'insert':
+        case 'add': { // RFC6902 标准 add：数组同 insert/追加，对象同 replace
+          if (Array.isArray(node)) {
+            if (last === '-') { node.push(p.value); applied++; break; }
+            const i = /^\d+$/.test(last) ? parseInt(last, 10) : NaN;
+            if (Number.isNaN(i)) { errors.push(`数组路径非法: ${p.path}`); break; }
+            if (p.op === 'insert') node.splice(i, 0, p.value);
+            else node[i] = p.value;
+          } else if (typeof node === 'object') {
+            (node as Record<string, unknown>)[last] = p.value;
+          } else { errors.push(`目标非容器: ${p.path}`); break; }
+          applied++;
+          break;
+        }
+        case 'delta': {
+          const po = node as Record<string, unknown>;
+          const cur = typeof po[last] === 'number' ? (po[last] as number) : 0;
+          const d = typeof p.value === 'number' ? p.value : parseFloat(String(p.value));
+          if (Number.isNaN(d)) { errors.push(`delta 非数值: ${p.path}`); break; }
+          po[last] = cur + d;
+          applied++;
+          break;
+        }
+        case 'remove':
+        case 'delete': { // delete 非标准但常见变体
+          if (Array.isArray(node) && /^\d+$/.test(last)) node.splice(parseInt(last, 10), 1);
+          else if (typeof node === 'object') delete (node as Record<string, unknown>)[last];
+          else { errors.push(`目标非容器: ${p.path}`); break; }
+          applied++;
+          break;
+        }
+        case 'move': {
+          if (typeof p.value !== 'string') { errors.push(`move 缺目标: ${p.path}`); break; }
+          const srcSegs = parsePath(p.value);
+          let srcParent: unknown = tree;
+          let sok = true;
+          for (let i = 0; i < srcSegs.length - 1; i++) {
+            srcParent = ensureNode(srcParent, srcSegs[i], srcSegs[i + 1] === '-');
+            if (srcParent === undefined) { sok = false; break; }
+          }
+          const srcLast = srcSegs[srcSegs.length - 1];
+          if (!sok || !srcParent || typeof srcParent !== 'object' || !(srcLast in (srcParent as object))) {
+            errors.push(`move 源不存在: ${p.value}`);
+            break;
+          }
+          const sp = srcParent as Record<string, unknown>;
+          const val = sp[srcLast];
+          delete sp[srcLast];
+          (node as Record<string, unknown>)[last] = val;
+          applied++;
+          break;
+        }
+        default:
+          errors.push(`未知操作: ${p.op}`);
+      }
+    } catch (e) {
+      errors.push(`${p.op} ${p.path}: ${String(e)}`);
+    }
+  }
+  return { applied, errors };
+}
+
+function getNum(o: unknown, ...keys: string[]): number | undefined {
+  if (!o || typeof o !== 'object') return undefined;
+  const rec = o as Record<string, unknown>;
+  for (const k of keys) {
+    if (typeof rec[k] === 'number') return rec[k] as number;
+    if (typeof rec[k] === 'string') {
+      const m = (rec[k] as string).match(/-?\d+(?:\.\d+)?/);
+      if (m) return parseFloat(m[0]);
+    }
+  }
+  return undefined;
+}
+
+function getStr(o: unknown, ...keys: string[]): string | undefined {
+  if (!o || typeof o !== 'object') return undefined;
+  const rec = o as Record<string, unknown>;
+  for (const k of keys) {
+    if (typeof rec[k] === 'string' && (rec[k] as string).trim()) return (rec[k] as string).trim();
+  }
+  return undefined;
+}
+
+// ============ 角色卡 ============
+
+export interface WeaponDef {
+  name: string;
+  formula: string;          // "1d8"
+  damageType?: DamageType;
+  ability: AbilityKey;      // 映射属性
+  magicBonus: number;
+  proficient: boolean;
+  equipped: boolean;
+  versatile?: string;       // "多用(1d10)" 原始标签
+  /** 两用双手持用的伤害骰（如 "1d10"），未标两用时 undefined */
+  versatileDice?: string;
+  /** 显式攻击加值覆盖（状态栏写入）：优先于属性+熟练+魔法加值推导 */
+  attackOverride?: number;
+  ranged: boolean;
+  range: number;
+  /** 2024 武器精通词条（Graze/Topple/Push/Vex/Sap/Slow/Nick/Cleave） */
+  mastery?: string;
+}
+
+export interface SpellDef {
+  name: string;
+  level: number;            // 0=戏法
+  prepared: boolean;
+  /** 未结构化（非模板命中且非自定义结构化）：战斗面板以通用施法占位动作兜底 */
+  descriptive?: boolean;
+  matched: boolean;         // 是否匹配到内置法术库（可自动结算）
+  /** 自定义结构化法术：内置库未命中，但条目带结构化动作字段（伤害/命中/豁免…），按敌卡解析器结算 */
+  custom?: boolean;
+  ability?: Omit<AiAbility, 'id'>; // 匹配到的机制（内置库或自定义结构化）
+}
+
+/**
+ * 条目是否携带结构化动作字段（与敌卡「攻击」同字段契约，见战斗协议 attack_examples）。
+ * 用于把玩家侧自设法术/特性动作接进结算器；纯描述条目（仅 描述/文本）不误判。
+ */
+function hasStructuredActionFields(o: Record<string, unknown>): boolean {
+  const keys = ['伤害公式', '伤害', '命中', '命中加值', '加值', '攻击加值', '豁免', '豁免DC', '治疗', 'save', 'dice', 'damage', 'attackBonus', 'heal'];
+  const hit = keys.some(k => {
+    const v = o[k];
+    if (v === undefined || v === null || v === false) return false;
+    if (typeof v === 'number') return true;
+    if (typeof v === 'string' && v.trim() !== '') return true;
+    if (typeof v === 'object') return true; // 豁免对象 {属性,DC,半伤}
+    return false;
+  });
+  // 伤害为空串/占位不算；排除纯资源形态 {当前,最大}（领地/资源条目不进动作栏）
+  if (!hit) return false;
+  const isResourceShape = '当前' in o && '最大' in o && !('伤害' in o) && !('伤害公式' in o) && !('命中' in o) && !('豁免' in o);
+  return !isResourceShape;
+}
+
+export interface CharSheet {
+  name: string;
+  level: number;
+  /** 熟练加值：变量显式声明优先（房规/怪物化角色），缺省按等级推导 */
+  pb?: number;
+  /** 2024 额外攻击次数：额外攻击 变量字段优先，缺省按 职业 字段查表（战士 5/11/20→2/3/4；野蛮人/圣武士/游侠 5→2；其余 1） */
+  extraAttacks?: number;
+  hp: number;
+  maxHp: number;
+  tempHp: number;
+  ac: number;
+  initMod: number;
+  speed: number;
+  /** 全量速度（E13）：来自 速度:{步行,飞行,攀爬,游泳}；纯数字旧形态为 undefined */
+  speeds?: UnitSpeeds;
+  abilities: Abilities;
+  spellSlots?: SpellSlots;
+  weapons: WeaponDef[];
+  spells: SpellDef[];
+  /** 特性动作：/特性.{种族,职业,专长} 下带结构化动作字段的条目（自设招式），按敌卡解析器结算 */
+  traitActions: Omit<AiAbility, 'id'>[];
+  statuses: string[];       // 映射为引擎状态 key
+  /** 2024 英雄激励（/英雄激励） */
+  inspiration?: boolean;
+  stealthBonus?: number;
+  /** 豁免熟练属性（来自 熟练配置.豁免，装配时折算为 saveBonuses） */
+  saveProficiencies?: Set<AbilityKey>;
+  /** 伤害抗性/免疫/易伤（来自变量 抗性/免疫/易伤 字段） */
+  resistances: DamageType[];
+  immunities: DamageType[];
+  vulnerabilities: DamageType[];
+  notes?: string;
+  /** 首次同步时间 / 更新时间 */
+  syncedAt: number;
+}
+
+/** 武器精通词条归一（中英文 → 标准 key；引擎自动结算 Graze/Topple/Push） */
+const MASTERY_CN: Record<string, string> = {
+  'graze': 'Graze', '擦掠': 'Graze', '擦伤': 'Graze',
+  'cleave': 'Cleave', '横扫': 'Cleave', '顺势斩': 'Cleave',
+  'topple': 'Topple', '失衡': 'Topple', '摔绊': 'Topple',
+  'vex': 'Vex', '侵扰': 'Vex', '扰乱': 'Vex',
+  'nick': 'Nick', '迅击': 'Nick',
+  'sap': 'Sap', '削弱': 'Sap',
+  'slow': 'Slow', '缓速': 'Slow',
+  'push': 'Push', '推离': 'Push',
+};
+
+/** 解析抗性/免疫/易伤字段值（数组或顿号/逗号分隔字符串，中英文伤害类型名） */
+function parseDamageTypes(raw: unknown): DamageType[] {
+  const items: string[] = [];
+  if (Array.isArray(raw)) items.push(...raw.map(String));
+  else if (typeof raw === 'string') items.push(...raw.split(/[、,，/]/));
+  const out: DamageType[] = [];
+  for (const item of items) {
+    const t = item.trim();
+    if (!t) continue;
+    const mapped = DAMAGE_TYPE_CN[t]
+      ?? DAMAGE_TYPE_CN[t.toLowerCase()]
+      ?? DAMAGE_TYPE_CN[t.charAt(0).toUpperCase() + t.slice(1).toLowerCase()];
+    if (mapped && !out.includes(mapped)) out.push(mapped);
+  }
+  return out;
+}
+
+/** 变量树里的 状态.{名} → 引擎状态 key */
+const STATUS_CN: Record<string, string> = {
+  '中毒': 'poisoned', '目盲': 'blinded', '失明': 'blinded', '麻痹': 'paralyzed',
+  '恐慌': 'frightened', '恐惧': 'frightened', '倒地': 'prone', '昏迷': 'unconscious',
+  '隐形': 'invisible', '隐身': 'invisible', '擒抱': 'grappled', '束缚': 'restrained',
+  '震慑': 'stunned', '石化': 'petrified', '魅惑': 'charmed', '失聪': 'deafened',
+  '失能': 'incapacitated',
+  // 战斗协议常用别名词（协议清单与引擎映射对齐，2026-10-11）
+  '眩晕': 'stunned', '被擒': 'grappled', '受缚': 'restrained',
+  // 注意：'力竭' 不入此表——它必须走下方带 等级 的分支拼出 exhaustion:N，
+  // 引擎只认 exhaustion:N（conditions.ts 的 -2检定/-5尺速度 都按等级结算），纯 'exhaustion' 无减值
+};
+
+const ABILITY_CN_KEY: Record<string, AbilityKey> = {
+  '力量': 'str', '敏捷': 'dex', '体质': 'con', '智力': 'int', '感知': 'wis', '魅力': 'cha',
+};
+
+/**
+ * 熟练等级码 → 等级：0=无 1=熟练(p) 2=专精(e) 0.5=半熟练(j)。
+ * 只认精确形态，绝不用 includes 猜字母 —— 字符串 "false" 含 e，
+ * 曾导致「未熟练」被判成「专精」（六项豁免全熟练、隐匿按专精结算）。
+ * 兼容：布尔、'true'/'false'、中文、以及带数值前缀的 "5p"/"3e"/"2j"。
+ */
+function proficiencyRank(raw: unknown): number {
+  if (raw === true) return 1;
+  if (raw === false || raw === null || raw === undefined) return 0;
+  if (typeof raw === 'number') return Number.isFinite(raw) && raw > 0 ? 1 : 0;
+  const s = String(raw).trim().toLowerCase();
+  if (!s || s === 'false' || s === '0' || s === '无' || s === 'none') return 0;
+  if (s === 'true' || s === 'p' || s === 'proficient' || s === '熟练') return 1;
+  if (s === 'e' || s === 'expertise' || s === '专精') return 2;
+  if (s === 'j' || s === 'half' || s === '半熟练') return 0.5;
+  // "5p" / "8e" / "2j"：前导数字是已算好的总值，等级码在末尾
+  const m = s.match(/[+-]?\d+\s*([pej])$/);
+  if (m) return m[1] === 'e' ? 2 : m[1] === 'j' ? 0.5 : 1;
+  return 0;
+}
+
+/**
+ * 2024 额外攻击职业表：战士 5/11/20 级 → 2/3/4 次；野蛮人/圣武士/游侠 5 级 → 2 次；
+ * 其余职业（法师/术士/邪术师等）无额外攻击，保持 1 次。
+ */
+const EXTRA_ATTACK_TABLE: Record<string, Array<[number, number]>> = {
+  '战士': [[20, 4], [11, 3], [5, 2]],
+  '野蛮人': [[5, 2]],
+  '圣武士': [[5, 2]],
+  '游侠': [[5, 2]],
+};
+
+/**
+ * 从 职业 字段解析 2024 额外攻击次数（字段为中文字符串，如「战士 3」「法师 5/邪术师 2」「圣武士（复仇之愿）5」）。
+ * 兼职不叠加额外攻击（2024 多职业规则：特性不叠加），取单职业最高档；识别不到职业/等级时回退 1。
+ */
+export function extraAttacksFromClass(classRaw: string | undefined, fallbackLevel: number): number {
+  if (!classRaw) return 1;
+  let best = 1;
+  for (const part of classRaw.split(/[/、,，+]/)) {
+    const seg = part.trim();
+    if (!seg) continue;
+    for (const [cls, ladder] of Object.entries(EXTRA_ATTACK_TABLE)) {
+      if (!seg.includes(cls)) continue;
+      // 等级 = 段内首个数字（如「战士 11」「战士11级」）；缺数字回退角色总等级
+      const lv = parseInt(seg.match(/(\d+)/)?.[1] ?? '', 10) || fallbackLevel;
+      for (const [threshold, attacks] of ladder) {
+        if (lv >= threshold) { best = Math.max(best, attacks); break; }
+      }
+    }
+  }
+  return best;
+}
+
+// ============ 内置常见法术库（2024 数值，法术书名匹配后自动获得机制） ============
+
+interface SpellTemplate {
+  keys: string[];              // 匹配关键词（包含匹配）
+  level: number;
+  build: (mod: number, dc: number, pb: number) => Omit<AiAbility, 'id'>;
+}
+
+const COMMON_SPELLS: SpellTemplate[] = [
+  {
+    keys: ['火焰箭', 'fire bolt', '火栓'], level: 0,
+    build: (mod) => ({ name: '火焰箭', kind: 'ranged', attackBonus: mod, dice: `1d10${formatMod(mod)}`, damageType: 'fire', range: 120, spellLevel: 0 }),
+  },
+  {
+    keys: ['冰冻射线', 'ray of frost'], level: 0,
+    build: (mod) => ({ name: '冰冻射线', kind: 'ranged', attackBonus: mod, dice: `1d8${formatMod(mod)}`, damageType: 'cold', range: 120, spellLevel: 0, note: '命中降速10尺' }),
+  },
+  {
+    keys: ['神圣火花', 'sacred flame'], level: 0,
+    build: (_mod, dc) => ({ name: '神圣火花', kind: 'save', dice: '1d8', damageType: 'radiant', range: 60, saveAbility: 'dex', saveDc: dc, spellLevel: 0, note: '目标无法借掩护加值' }),
+  },
+  {
+    keys: ['酸液飞溅', 'acid splash'], level: 0,
+    build: (_mod, dc) => ({ name: '酸液飞溅', kind: 'save-aoe', dice: '1d6', damageType: 'acid', range: 60, saveAbility: 'dex', saveDc: dc, aoe: { kind: 'sphere', size: 5 }, spellLevel: 0 }),
+  },
+  {
+    keys: ['魔能爆', 'eldritch blast'], level: 0,
+    build: (mod) => ({ name: '魔能爆', kind: 'ranged', attackBonus: mod, dice: `1d10${formatMod(mod)}`, damageType: 'force', range: 120, spellLevel: 0 }),
+  },
+  {
+    keys: ['治疗真言', 'healing word'], level: 1,
+    build: (mod) => ({ name: '治疗真言', kind: 'heal', dice: `2d4${formatMod(mod)}`, range: 60, spellLevel: 1, bonusAction: true, upcast: { perLevel: '1d8', kind: 'heal' } }),
+  },
+  {
+    keys: ['治疗术', 'cure wounds'], level: 1,
+    build: (mod) => ({ name: '治疗术', kind: 'heal', dice: `2d8${formatMod(mod)}`, range: 5, spellLevel: 1, upcast: { perLevel: '1d8', kind: 'heal' } }),
+  },
+  {
+    keys: ['魔法飞弹', 'magic missile'], level: 1,
+    build: () => ({ name: '魔法飞弹', kind: 'save', dice: '3d4+3', damageType: 'force', range: 120, spellLevel: 1, upcast: { perLevel: '1d4+1', kind: 'damage' }, note: '自动命中，无需攻击检定' }),
+  },
+  {
+    keys: ['雷鸣波', 'thunderwave'], level: 1,
+    build: (_mod, dc) => ({ name: '雷鸣波', kind: 'save-aoe', dice: '2d8', damageType: 'thunder', range: 15, saveAbility: 'con', saveDc: dc, halfOnSuccess: true, aoe: { kind: 'cube', size: 15 }, spellLevel: 1, upcast: { perLevel: '1d8', kind: 'damage' }, note: '豁免失败被推开10尺' }),
+  },
+  {
+    keys: ['燃烧之手', 'burning hands'], level: 1,
+    build: (_mod, dc) => ({ name: '燃烧之手', kind: 'save-aoe', dice: '3d6', damageType: 'fire', range: 15, saveAbility: 'dex', saveDc: dc, halfOnSuccess: true, aoe: { kind: 'cone', size: 15 }, spellLevel: 1, upcast: { perLevel: '1d6', kind: 'damage' } }),
+  },
+  {
+    keys: ['妖火', 'faerie fire'], level: 1,
+    build: (_mod, dc) => ({ name: '妖火', kind: 'save', dice: '0', range: 60, saveAbility: 'dex', saveDc: dc, applyStatus: 'lit', spellLevel: 1, concentration: true, note: '范围内豁免失败者发光：对其攻击有优势' }),
+  },
+  {
+    keys: ['护盾术', 'shield'], level: 1,
+    build: () => ({ name: '护盾术', kind: 'save', dice: '0', range: 0, spellLevel: 1, reaction: true, note: '反应施放：AC+5 直至下回合开始（被攻击时可触发反应窗口）' }),
+  },
+  {
+    keys: ['人类定身术', 'hold person'], level: 2,
+    build: (_mod, dc) => ({ name: '人类定身术', kind: 'save', dice: '0', range: 60, saveAbility: 'wis', saveDc: dc, applyStatus: 'paralyzed', spellLevel: 2, concentration: true, requiresSight: true, durationRounds: 10, repeatSave: { ability: 'wis', dc, timing: 'end' }, note: '人形生物豁免失败则麻痹（每回合可重掷）' }),
+  },
+  {
+    keys: ['隐形术', 'invisibility'], level: 2,
+    build: () => ({ name: '隐形术', kind: 'save', dice: '0', range: 0, spellLevel: 2, concentration: true, applyStatus: 'invisible', note: '目标隐形' }),
+  },
+  {
+    keys: ['蛛网术', 'web'], level: 2,
+    build: (_mod, dc) => ({ name: '蛛网术', kind: 'save-aoe', dice: '0', range: 60, saveAbility: 'dex', saveDc: dc, applyStatus: 'restrained', aoe: { kind: 'cube', size: 20 }, spellLevel: 2, concentration: true }),
+  },
+  {
+    keys: ['灼热射线', 'scorching ray'], level: 2,
+    build: (mod) => ({ name: '灼热射线', kind: 'ranged', attackBonus: mod, dice: `2d6${formatMod(0)}`, damageType: 'fire', range: 120, multiAttack: 3, spellLevel: 2 }),
+  },
+  {
+    keys: ['马友夫箭', 'melf'], level: 2,
+    build: (mod) => ({ name: '马友夫强酸箭', kind: 'ranged', attackBonus: mod, dice: '4d4', damageType: 'acid', range: 90, spellLevel: 2, upcast: { perLevel: '1d4', kind: 'damage' } }),
+  },
+  {
+    keys: ['闪电束', 'lightning bolt'], level: 3,
+    build: (_mod, dc) => ({ name: '闪电束', kind: 'save-aoe', dice: '8d6', damageType: 'lightning', range: 100, saveAbility: 'dex', saveDc: dc, halfOnSuccess: true, aoe: { kind: 'line', size: 100 }, spellLevel: 3, upcast: { perLevel: '1d8', kind: 'damage' } }),
+  },
+  {
+    keys: ['火球术', 'fireball'], level: 3,
+    build: (_mod, dc) => ({ name: '火球术', kind: 'save-aoe', dice: '8d6', damageType: 'fire', range: 150, saveAbility: 'dex', saveDc: dc, halfOnSuccess: true, aoe: { kind: 'sphere', size: 20 }, spellLevel: 3, upcast: { perLevel: '1d6', kind: 'damage' } }),
+  },
+  {
+    keys: ['飞行术', 'fly'], level: 3,
+    build: () => ({ name: '飞行术', kind: 'save', dice: '0', range: 0, applyStatus: 'flying', spellLevel: 3, concentration: true, note: '目标获得 60 尺飞行速度' }),
+  },
+  {
+    keys: ['冰风暴', 'ice storm'], level: 4,
+    build: (_mod, dc) => ({ name: '冰风暴', kind: 'save-aoe', dice: '2d8+4d6', damageType: 'bludgeoning', range: 300, saveAbility: 'dex', saveDc: dc, halfOnSuccess: true, aoe: { kind: 'sphere', size: 40 }, spellLevel: 4, upcast: { perLevel: '1d8', kind: 'damage' }, note: '含 4d6 冷冻伤害' }),
+  },
+  {
+    keys: ['石肤术', 'stoneskin'], level: 4,
+    build: () => ({ name: '石肤术', kind: 'save', dice: '0', range: 0, spellLevel: 4, concentration: true, note: '目标获得非魔法钝击/穿刺/挥砍抗性（手动加抗性）' }),
+  },
+  {
+    keys: ['怪物定身术', 'hold monster'], level: 5,
+    build: (_mod, dc) => ({ name: '怪物定身术', kind: 'save', dice: '0', range: 90, saveAbility: 'wis', saveDc: dc, applyStatus: 'paralyzed', spellLevel: 5, concentration: true, requiresSight: true, durationRounds: 10, repeatSave: { ability: 'wis', dc, timing: 'end' } }),
+  },
+  {
+    keys: ['群体治疗真言', 'mass healing word'], level: 3,
+    build: (mod) => ({ name: '群体治疗真言', kind: 'heal', dice: `2d4${formatMod(mod)}`, range: 60, spellLevel: 3, bonusAction: true, upcast: { perLevel: '1d8', kind: 'heal' } }),
+  },
+];
+
+/** 2024 戏法成长：1/5/11/17 级 → 骰数 ×1/2/3/4（保留调整值后缀；非标准骰式原样返回） */
+function scaleCantripDice(dice: string, level: number): string {
+  const tier = level >= 17 ? 4 : level >= 11 ? 3 : level >= 5 ? 2 : 1;
+  if (tier <= 1) return dice;
+  const m = /^(\d+)d(\d+)([+-].+)?$/.exec(dice.replace(/\s+/g, ''));
+  if (!m) return dice;
+  return `${parseInt(m[1], 10) * tier}d${m[2]}${m[3] ?? ''}`;
+}
+
+/** 法术名归一：去空白/括号注音/分隔符，用于跨译名与复合键匹配（「定身类人(Hold Person)」→「定身类人」） */
+function normalizeSpellKey(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '')
+    .replace(/[（(][^）)]*[）)]/g, '')
+    .replace(/[’'`·・]/g, '');
+}
+
+/** 译名别名：升级面板法术 DB 口径 → 模板规范名（精确键查表，修复「治愈真言/疗伤术/定身类人」等断匹配） */
+const SPELL_KEY_ALIASES: Record<string, string> = {
+  '治愈真言': '治疗真言',
+  '群体治愈真言': '群体治疗真言',
+  '冷冻射线': '冰冻射线',
+  '定身类人': '人类定身术',
+  '定身怪物': '怪物定身术',
+  '疗伤术': '治疗术',
+  '马友夫强酸箭': '马友夫箭',
+  '雪雨暴': '冰风暴',
+  '圣火术': '神圣火花',
+};
+
+function matchSpell(name: string): SpellTemplate | undefined {
+  const lower = name.toLowerCase();
+  const norm = normalizeSpellKey(name);
+  // 最长关键词优先：避免「治疗真言」劫持「群体治疗真言」这类子串匹配
+  let best: { tpl: SpellTemplate; keyLen: number } | null = null;
+  for (const tpl of COMMON_SPELLS) {
+    for (const k of tpl.keys) {
+      const nk = normalizeSpellKey(k);
+      if (lower.includes(k) || (nk.length > 1 && norm.includes(nk))) {
+        const len = Math.max(k.length, nk.length);
+        if (!best || len > best.keyLen) best = { tpl, keyLen: len };
+      }
+    }
+  }
+  if (!best) {
+    const canonical = SPELL_KEY_ALIASES[norm];
+    if (canonical) return matchSpell(canonical);
+  }
+  return best?.tpl;
+}
+
+// ============ 变量树 → 角色卡 ============
+
+/** 施法属性推导：显式字段（关键属性/施法属性） > 智/感/魅最高者 */
+function castingAbility(sheetAbilities: Abilities, casting: unknown): AbilityKey {
+  const explicit = getStr(casting, '关键属性', '施法属性', '属性');
+  if (explicit && ABILITY_CN_KEY[explicit]) return ABILITY_CN_KEY[explicit];
+  const cands: Array<[AbilityKey, number]> = [
+    ['int', sheetAbilities.int], ['wis', sheetAbilities.wis], ['cha', sheetAbilities.cha],
+  ];
+  cands.sort((a, b) => b[1] - a[1]);
+  return cands[0][0];
+}
+
+/** 从变量树提取全部角色卡 */
+export function charSheetsFromTree(tree: VarTree): CharSheet[] {
+  // 反例防御：持久化恢复出 null/非对象时直接空名单，不抛异常
+  if (!tree || typeof tree !== 'object' || Array.isArray(tree)) return [];
+  const list = (tree as Record<string, unknown>)['角色列表'];
+  if (!list || typeof list !== 'object' || Array.isArray(list)) return [];
+  const out: CharSheet[] = [];
+  for (const [name, raw] of Object.entries(list as Record<string, unknown>)) {
+    if (!raw || typeof raw !== 'object') continue;
+    const c = raw as Record<string, unknown>;
+    const abilities: Abilities = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+    const abRaw = c['属性'];
+    if (abRaw && typeof abRaw === 'object') {
+      for (const [k, v] of Object.entries(abRaw as Record<string, unknown>)) {
+        const key = ABILITY_CN_KEY[k];
+        if (key && typeof v === 'number') abilities[key] = v;
+      }
+    }
+    const level = getNum(c, '等级') ?? 1;
+    // 熟练加值：MVU 变量显式字段优先（状态栏/房规/怪物化角色会写），缺省按 2024 等级表
+    const pbDeclared = getNum(c, '熟练加值');
+    const pb = pbDeclared !== undefined && pbDeclared > 0 ? pbDeclared : proficiencyBonus(level);
+    // 额外攻击：可选变量字段直接指定；缺省按 职业 字符串查 2024 职业表
+    const extraAttacks = Math.max(1, Math.round(getNum(c, '额外攻击') ?? extraAttacksFromClass(getStr(c, '职业'), level)));
+
+    // 生命值
+    const hpRaw = c['生命值'];
+    let maxHp = getNum(hpRaw, '最大', '最大值') ?? getNum(c, '生命值') ?? 10;
+    let hp = Math.min(maxHp, getNum(hpRaw, '当前', '当前值') ?? maxHp);
+    // 登记模板占位 0/0（未填实际值）：按默认 10/10 装配，避免面板出现 0/0 的濒死单位
+    if (maxHp <= 0 && hp <= 0) { maxHp = 10; hp = 10; }
+    const tempHp = getNum(hpRaw, '临时') ?? 0;
+
+    // 护甲 / 先攻 / 速度
+    const acRaw = c['护甲等级'];
+    const ac = getNum(acRaw, '总值', '值') ?? (typeof acRaw === 'number' ? acRaw : 13);
+    const initMod = getNum(c['先攻'], '加值', '总值') ?? abilityMod(abilities.dex);
+    // 速度：卡内为对象 {步行,飞行,攀爬,游泳}，主字段取步行；E13 全量装配 speeds（缺省项回退步行）；兼容纯数字旧形态
+    const speedRaw = c['速度'];
+    const speed = getNum(speedRaw, '步行') ?? getNum(c, '速度') ?? 30;
+    const speeds: UnitSpeeds | undefined = speedRaw && typeof speedRaw === 'object' && !Array.isArray(speedRaw)
+      ? {
+          walk: speed,
+          fly: getNum(speedRaw, '飞行'),
+          climb: getNum(speedRaw, '攀爬'),
+          swim: getNum(speedRaw, '游泳'),
+        }
+      : undefined;
+
+    // 法术位
+    const casting = c['施法'];
+    // R3：玩家显式设定的施法攻击/DC 覆盖（状态栏编辑保存写入）；污染对（0/10，旧默认落库）视为未设置
+    const rawAtkOv = getNum(casting, '法术攻击调整值');
+    const rawDcOv = getNum(casting, '法术豁免DC');
+    const spellOverridePolluted = rawAtkOv === 0 && rawDcOv === 10;
+    const spellAtkOverride = !spellOverridePolluted && rawAtkOv !== undefined ? rawAtkOv : undefined;
+    const spellDcOverride = !spellOverridePolluted && rawDcOv !== undefined ? rawDcOv : undefined;
+    let spellSlots: SpellSlots | undefined;
+    if (casting && typeof casting === 'object') {
+      const slotRaw = (casting as Record<string, unknown>)['法术位'];
+      if (slotRaw && typeof slotRaw === 'object') {
+        spellSlots = {};
+        for (const [k, v] of Object.entries(slotRaw as Record<string, unknown>)) {
+          const lv = parseInt(k.replace(/[^\d]/g, ''), 10);
+          if (!Number.isNaN(lv) && v && typeof v === 'object') {
+            const cur = getNum(v, '当前') ?? 0;
+            const max = getNum(v, '最大') ?? 0;
+            if (max > 0) spellSlots[lv] = { current: Math.min(cur, max), max };
+          }
+        }
+        if (Object.keys(spellSlots).length === 0) spellSlots = undefined;
+      }
+    }
+
+    // 武器 → WeaponDef
+    const weapons: WeaponDef[] = [];
+    const invRaw = c['物品'];
+    if (invRaw && typeof invRaw === 'object') {
+      const wRaw = (invRaw as Record<string, unknown>)['武器'];
+      if (wRaw && typeof wRaw === 'object') {
+        for (const [wName, wv] of Object.entries(wRaw as Record<string, unknown>)) {
+          if (!wv || typeof wv !== 'object') continue;
+          const w = wv as Record<string, unknown>;
+          const formula = getStr(w, '伤害公式', '伤害') ?? '1d4';
+          const dtRaw = getStr(w, '伤害类型') ?? '挥砍';
+          const abRaw2 = getStr(w, '映射属性') ?? '力量';
+          const wNameLower = wName.toLowerCase();
+          const isRangedW = /弓|弩|镖|投石索|手雷|弓箭/.test(wName);
+          const isThrown = /投掷|标枪|匕首|手斧/.test(getStr(w, '属性特征') ?? '') || /标枪/.test(wName);
+          // 射程：显式 射程 字段优先（尺），否则按名称推断（接近规则值：长弓150/重弩100/其他弓弩80/投掷30）
+          const rangeField = getNum(w, '射程', '射程(尺)', '射程（尺）');
+          const rangeFallback = isRangedW
+            ? (/长弓/.test(wName) ? 150 : /重弩/.test(wName) ? 100 : 80)
+            : (isThrown ? 30 : 5);
+          const rangeFinal = rangeField !== undefined && rangeField > 0 ? rangeField : rangeFallback;
+          // 攻击加值覆盖：状态栏写入的显式命中加值（自定义/房规/魔法武器）——优先于自动推导
+          const atkOverride = getNum(w, '攻击加值覆盖', '攻击加值', '命中加值', '命中加值覆盖', 'attackBonusOverride');
+          // 两用（Versatile）：属性特征形如「多用(1d10)」/「两用(1d10)」/「Versatile 1d10」，抽出第二段骰
+          const tags = getStr(w, '属性特征') ?? '';
+          const versatileMatch = tags.match(/(?:多用|两用|versatile)[^0-9]{0,6}(\d+d\d+)/i);
+          // 武器精通：词条库判定优先级——先确认掌握（武器.已掌握），再按词条结算。
+          // 卡内协议存复合形态如 "摔绊(Topple)" / "推离(Push)"：剥离括号查中文别名，
+          // 再提取括号内英文键兜底（条目28《新角色变量登记规则》规定的书写格式）
+          const masteryRaw = (getStr(w, '精通', '精通词条', '专精特质') ?? '').trim();
+          const mastered = w['已掌握'] === true || w['已掌握'] === 'true';
+          const masteryKey = (() => {
+            const bare = masteryRaw.toLowerCase().replace(/\s+/g, '');
+            if (MASTERY_CN[bare]) return MASTERY_CN[bare];
+            const en = masteryRaw.match(/\(([A-Za-z]+)\)/)?.[1]?.toLowerCase();
+            if (en && MASTERY_CN[en]) return MASTERY_CN[en];
+            return MASTERY_CN[masteryRaw.toLowerCase()];
+          })();
+          weapons.push({
+            name: wName,
+            formula: formula.replace(/\s/g, ''),
+            damageType: DAMAGE_TYPE_CN[dtRaw] ?? DAMAGE_TYPE_CN[dtRaw.toLowerCase()] ?? 'slashing',
+            ability: ABILITY_CN_KEY[abRaw2] ?? ABILITY_CN_KEY[abRaw2.toLowerCase()] ?? 'str',
+            magicBonus: getNum(w, '魔法加值', '加值') ?? 0,
+            proficient: w['熟练'] === true || w['熟练'] === 'true',
+            equipped: w['已装备'] === true,
+            versatile: tags || undefined,
+            versatileDice: versatileMatch?.[1],
+            attackOverride: atkOverride,
+            // 远程武器类别按武器名判定；投掷类近战武器（匕首/标枪）保持 melee kind，
+            // 由行动栏「远程/近战」开关按本次攻击方式切换（避免把匕首误判成纯远程武器）
+            ranged: isRangedW,
+            range: rangeFinal,
+            mastery: mastered ? masteryKey : undefined,
+          });
+        }
+      }
+    }
+
+    // 法术书 → SpellDef
+    const spells: SpellDef[] = [];
+    if (casting && typeof casting === 'object') {
+      const sbRaw = (casting as Record<string, unknown>)['法术书'];
+      if (sbRaw && typeof sbRaw === 'object') {
+        const castKey = castingAbility(abilities, casting);
+        const castMod = abilityMod(abilities[castKey]);
+        const spellAttack = spellAtkOverride ?? pb + castMod;
+        const dc = spellDcOverride ?? 8 + pb + castMod;
+        for (const [sName, sv] of Object.entries(sbRaw as Record<string, unknown>)) {
+          const prepared = !!sv && typeof sv === 'object' && (sv as Record<string, unknown>)['准备中'] === true;
+          // F1：结构化自设优先——条目自带 命中/伤害公式/豁免 等字段时，不再被同名内置模板劫持
+          //（玩家自设「火球术 12d6」这类改数值法术按自设结算；纯描述性同名条目仍走内置库）
+          const structured = sv && typeof sv === 'object' && hasStructuredActionFields(sv as Record<string, unknown>);
+          let customAbility: Omit<AiAbility, 'id'> | undefined;
+          if (structured) {
+            const parsed = parseAttack(sv as Record<string, unknown>, 0, [], { spellAttack, spellDc: dc });
+            if (parsed) {
+              const { id: _id, ...rest } = parsed;
+              // 法术名在变量键上（条目本身不带 名称 字段）
+              customAbility = { ...rest, name: rest.name && !/^动作\d+$/.test(rest.name) ? rest.name : sName };
+            }
+          }
+          const tpl = (structured && customAbility) ? undefined : matchSpell(sName);
+          spells.push({
+            name: sName,
+            level: customAbility?.spellLevel ?? tpl?.level ?? getNum(sv, '环阶', '等级') ?? 1,
+            prepared,
+            matched: !!tpl,
+            custom: !tpl && !!customAbility,
+            descriptive: !tpl && !customAbility,
+            ability: tpl ? tpl.build(castMod, dc, pb) : customAbility,
+          });
+        }
+        spells.sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
+      }
+    }
+
+    // 特性动作：/特性.{种族,职业,专长}.{名} 下带结构化动作字段的条目 → 自设招式
+    // （非攻击动作仍按登记规则放 描述；仅当条目携带 伤害/命中/豁免/治疗 等字段时才解析为可结算动作）
+    const traitActions: Omit<AiAbility, 'id'>[] = [];
+    const traitsRaw = c['特性'];
+    if (traitsRaw && typeof traitsRaw === 'object') {
+      // 特性动作同样支持 命中:"施法"/豁免DC:"施法" 占位（自设武术/魔法特性共用一套契约）
+      const castKeyT = casting && typeof casting === 'object' ? castingAbility(abilities, casting) : undefined;
+      const castCtx = castKeyT
+        ? {
+          spellAttack: spellAtkOverride ?? pb + abilityMod(abilities[castKeyT]),
+          spellDc: spellDcOverride ?? 8 + pb + abilityMod(abilities[castKeyT]),
+        }
+        : undefined;
+      const cats = ['职业', '种族', '专长', 'class', 'race', 'feat'];
+      for (const cat of cats) {
+        const catRaw = (traitsRaw as Record<string, unknown>)[cat];
+        if (!catRaw || typeof catRaw !== 'object') continue;
+        for (const [tName, tv] of Object.entries(catRaw as Record<string, unknown>)) {
+          if (!tv || typeof tv !== 'object' || Array.isArray(tv)) continue;
+          const to = tv as Record<string, unknown>;
+          if (!hasStructuredActionFields(to)) continue;
+          const parsed = parseAttack(to, traitActions.length, [], castCtx);
+          if (parsed) {
+            const { id: _id, ...rest } = parsed;
+            // 特性名同样在键上；条目自带 名称 时以条目为准
+            traitActions.push({ ...rest, name: rest.name && !/^动作\d+$/.test(rest.name) ? rest.name : tName });
+          }
+        }
+      }
+    }
+
+    // 状态
+    // 「是否存在」判定必须与写入方对齐：世界书条目 11 教 AI 写 `/状态/力竭/等级`（不写 存在），
+    // 状态栏读回（状态栏.html parseLegacyStatusEntry）也是「存在 缺省即视为存在」。
+    // 因此只有显式 存在:false 才排除；对象形态一律视为在场。
+    const statuses: string[] = [];
+    const stRaw = c['状态'];
+    if (stRaw && typeof stRaw === 'object') {
+      for (const [sName, sv] of Object.entries(stRaw as Record<string, unknown>)) {
+        if (sv === false || sv === undefined || sv === null) continue;
+        const exists = sv && typeof sv === 'object'
+          ? (sv as Record<string, unknown>)['存在'] !== false
+          : true;
+        if (!exists) continue;
+        const key = STATUS_CN[sName];
+        if (key) statuses.push(key);
+        else if (sName === '力竭') {
+          const lv = getNum(sv, '等级') ?? 1;
+          statuses.push(`exhaustion:${lv}`);
+        }
+      }
+    }
+
+    // 隐匿加值 / 豁免熟练（熟练配置.豁免.属性 = true/false；熟练配置.技能.名 = "5p"/"8e"/"p"/"e"/"j"）
+    // 注意：不能用 includes('p'/'e') 猜等级——突变值 false 的字符串 "false" 含字母 e，
+    // 会把「未熟练」误判成「专精」。旧实现让每个存过档的角色六项豁免全熟练、隐匿按专精算。
+    let stealthBonus: number | undefined;
+    const saveProficiencies = new Set<AbilityKey>();
+    const profRaw = c['熟练配置'];
+    if (profRaw && typeof profRaw === 'object') {
+      const skillRaw = (profRaw as Record<string, unknown>)['技能'];
+      if (skillRaw && typeof skillRaw === 'object') {
+        const hide = (skillRaw as Record<string, unknown>)['隐匿'];
+        if (hide !== undefined) {
+          const base = abilityMod(abilities.dex);
+          // 状态栏写「总值+等级码」（如 "5p"），开头的数字就是已算好的总值，直接采用
+          const explicit = String(hide).match(/^([+-]?\d+)/);
+          if (explicit) stealthBonus = parseInt(explicit[1], 10);
+          else {
+            const rank = proficiencyRank(hide);
+            stealthBonus = rank >= 2 ? base + pb * 2 : rank >= 1 ? base + pb : rank > 0 ? base + Math.floor(pb / 2) : base;
+          }
+        }
+      }
+      const saveRaw = (profRaw as Record<string, unknown>)['豁免'] ?? (profRaw as Record<string, unknown>)['豁免熟练'];
+      if (saveRaw && typeof saveRaw === 'object') {
+        for (const [k, v] of Object.entries(saveRaw as Record<string, unknown>)) {
+          const key = ABILITY_CN_KEY[k] ?? ABILITY_CN_KEY[k.toLowerCase()] ?? (['str', 'dex', 'con', 'int', 'wis', 'cha'] as AbilityKey[]).find(a => a === k.toLowerCase());
+          if (!key) continue;
+          // 豁免只认 p/e/true（半熟练 j 属「所有属性检定」类特性，不适用于豁免）
+          if (proficiencyRank(v) >= 1) saveProficiencies.add(key);
+        }
+      }
+    }
+
+    // 抗性/免疫/易伤（角色级字段，数组或顿号分隔字符串；野蛮人狂暴/种族抗性等）
+    const resistances = parseDamageTypes(c['抗性']);
+    const immunities = parseDamageTypes(c['免疫']);
+    const vulnerabilities = parseDamageTypes(c['易伤']);
+    // 2024 英雄激励（E10）
+    const inspiration = c['英雄激励'] === true || c['英雄激励'] === 'true';
+
+    out.push({
+      name,
+      level,
+      pb,
+      extraAttacks,
+      hp, maxHp, tempHp,
+      ac, initMod, speed, speeds,
+      abilities,
+      spellSlots,
+      weapons,
+      spells,
+      traitActions,
+      statuses,
+      inspiration,
+      stealthBonus,
+      saveProficiencies: saveProficiencies.size > 0 ? saveProficiencies : undefined,
+      resistances,
+      immunities,
+      vulnerabilities,
+      syncedAt: Date.now(),
+    });
+  }
+  return out;
+}
+
+// ============ 角色卡 → 战斗单位 ============
+
+export interface SheetToUnitOptions {
+  isPlayer?: boolean;
+  pos?: { x: number; y: number };
+  init?: number;
+}
+
+/** 角色卡 → 战斗单位（含武器与法术动作表） */
+export function unitFromCharSheet(sheet: CharSheet, opts: SheetToUnitOptions = {}): BattleUnit {
+  // 熟练加值：变量显式声明优先（房规/怪物化角色），缺省按等级推导
+  const pb = sheet.pb ?? proficiencyBonus(sheet.level);
+  const abilities: Abilities = { ...sheet.abilities };
+
+  // 豁免加值：熟练属性 = 属性调整值 + 熟练加值（2024：豁免检定计入熟练）
+  const saveBonuses: Partial<Record<AbilityKey, number>> = {};
+  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as AbilityKey[]) {
+    saveBonuses[key] = abilityMod(abilities[key]) + (sheet.saveProficiencies?.has(key) ? pb : 0);
+  }
+
+  // 武器动作（已装备优先）；额外攻击：2024 职业表/显式变量（角色级，作用于每件武器）
+  const multiAttacks = Math.max(1, sheet.extraAttacks ?? 1);
+  const sorted = [...sheet.weapons].sort((a, b) => Number(b.equipped) - Number(a.equipped));
+  const weaponAbilities: AiAbility[] = sorted.map((w, i) => {
+    const abMod = abilityMod(abilities[w.ability] ?? 10);
+    // 攻击加值覆盖（状态栏「攻击加值覆盖」）：显式值优先，否则 属性+熟练+魔法
+    const derivedAtk = abMod + (w.proficient ? pb : 0) + w.magicBonus;
+    const attackBonus = Number.isFinite(w.attackOverride) ? w.attackOverride! : derivedAtk;
+    // 两用（Versatile）：默认按单手伤害，versatileDice 交由 UI 切换双手持用
+    return {
+      id: `w${i}-${w.name}`,
+      name: w.name,
+      kind: w.ranged ? 'ranged' : 'melee',
+      attackBonus,
+      dice: `${w.formula}${formatMod(abMod + w.magicBonus)}`,
+      damageType: w.damageType,
+      range: w.range,
+      ranged: w.ranged,
+      versatileDice: w.versatileDice,
+      multiAttack: multiAttacks,
+      mastery: w.mastery,
+      // 2024：精通词条的豁免 DC 与 Graze 擦伤只用属性调整值，不含武器魔法加值
+      masteryMod: abMod,
+      note: [
+        w.versatile ? `两用：${w.versatile}` : '',
+        w.attackOverride !== undefined ? `命中加值覆盖 ${formatMod(w.attackOverride)}` : '',
+        w.equipped ? '已装备' : '',
+        w.mastery ? `精通：${w.mastery}${['Graze', 'Topple', 'Push'].includes(w.mastery) ? '（命中/失手自动结算）' : '（按词条手动/叙事结算）'}` : '',
+      ].filter(Boolean).join(' · ') || undefined,
+    };
+  });
+
+  // 法术动作：内置库命中（matched）+ 自定义结构化法术（custom）都进动作栏
+  const spellAbilities: AiAbility[] = sheet.spells
+    .filter(s => s.ability && (s.matched || s.custom))
+    .map((s, i) => {
+      const ab: AiAbility = { ...s.ability!, id: `s${i}-${s.name}`, spellPrepared: s.prepared, note: [s.custom ? '自设法术（结构化）' : '', !s.prepared ? '⚠ 未准备' : '', s.ability!.note].filter(Boolean).join(' · ') || undefined };
+      // 2024 戏法成长：1/5/11/17 级 → 1/2/3/4 骰（E9/T4，调整值部分不动）
+      if (s.level === 0 && ab.dice) ab.dice = scaleCantripDice(ab.dice, sheet.level);
+      return ab;
+    });
+  // 通用施法占位（E6/T2）：未结构化的已准备法术 → 弹窗填参施放；dice 0/kind save 仅作占位形态
+  sheet.spells
+    .filter(s => s.descriptive && s.prepared)
+    .forEach((s, i) => {
+      spellAbilities.push({
+        id: `gx${i}-${s.name}`, name: s.name, kind: 'save', dice: '0', range: 30,
+        spellLevel: s.level, genericCast: true, spellPrepared: s.prepared,
+        note: '未结构化法术：点击后在弹窗填参施放',
+      });
+    });
+
+  // 特性动作（自设招式，结构化解析）
+  const traitAbilities: AiAbility[] = sheet.traitActions.map((a, i) => ({ ...a, id: `t${i}-${a.name}`, note: [a.note, '特性动作'].filter(Boolean).join(' · ') || undefined }));
+
+  const unit: BattleUnit = {
+    id: sheet.name,
+    name: sheet.name,
+    dataSource: 'roster',
+    size: 'medium',
+    init: opts.init ?? 10 + sheet.initMod,
+    initMod: sheet.initMod,
+    hp: sheet.hp,
+    maxHp: sheet.maxHp,
+    tempHp: sheet.tempHp,
+    ac: sheet.ac,
+    speed: sheet.speed,
+    speeds: sheet.speeds ? { ...sheet.speeds } : undefined,
+    pos: opts.pos ?? { x: 0, y: 0 },
+    attitude: 0,
+    statuses: [...sheet.statuses],
+    inspiration: sheet.inspiration === true,
+    isPlayer: opts.isPlayer ?? false,
+    playerControlled: true,
+    level: sheet.level,
+    abilities,
+    saveBonuses,
+    // 抗性/免疫/易伤：从角色变量透传（野蛮人狂暴、种族抗性、石肤术等）
+    resistances: [...sheet.resistances],
+    immunities: [...sheet.immunities],
+    vulnerabilities: [...sheet.vulnerabilities],
+    spellSlots: sheet.spellSlots ? JSON.parse(JSON.stringify(sheet.spellSlots)) : undefined,
+    concentration: undefined,
+    actionEconomy: { action: false, bonus: false, reaction: false, movementUsed: 0 },
+    hasActed: false,
+    aiProfile: 'tactical',
+    aiAbilities: [...weaponAbilities, ...spellAbilities, ...traitAbilities],
+    stealthBonus: sheet.stealthBonus,
+    notes: `Lv.${sheet.level} 角色（名单同步）${sheet.spells.length > 0 ? ` · 法术书 ${sheet.spells.length} 条（${sheet.spells.filter(s => s.matched || s.custom).length} 条可自动结算）` : ''}${sheet.traitActions.length > 0 ? ` · 特性动作 ${sheet.traitActions.length}` : ''}`,
+  };
+  return unit;
+}
+
+/** 已有战斗单位 ← 角色卡补全（保留战场状态：HP 若差太多以卡为准） */
+export function applySheetToUnit(unit: BattleUnit, sheet: CharSheet): BattleUnit {
+  const fresh = unitFromCharSheet(sheet, { isPlayer: unit.isPlayer, pos: unit.pos, init: unit.init });
+  const hpDrift = Math.abs(fresh.hp - unit.hp);
+  return {
+    ...fresh,
+    // id 与战场位置/先攻保持
+    id: unit.id,
+    pos: unit.pos,
+    init: unit.init,
+    hasActed: unit.hasActed,
+    actionEconomy: unit.actionEconomy,
+    // 生命值：战斗中大幅偏移时以卡为准（刚同步过），小偏移保留战场值
+    hp: hpDrift > 2 ? fresh.hp : unit.hp,
+    maxHp: fresh.maxHp,
+    statuses: unit.statuses.length > 0 ? unit.statuses : fresh.statuses,
+    concentration: unit.concentration,
+    deathSaves: unit.deathSaves,
+    // 操控权尊重当前选择
+    playerControlled: unit.playerControlled,
+  };
+}
+
+/** 名字匹配角色卡（去实例后缀，与敌卡匹配同策略） */
+export function matchSheetForName(name: string, sheets: CharSheet[]): CharSheet | null {
+  if (sheets.length === 0) return null;
+  const n = name.trim();
+  let exact = sheets.find(s => s.name === n);
+  if (exact) return exact;
+  const stripped = stripInstanceSuffix(n);
+  if (stripped !== n) exact = sheets.find(s => s.name === stripped);
+  if (exact) return exact;
+  // 前缀匹配（最长角色名优先）
+  let best: CharSheet | null = null;
+  let bestLen = 0;
+  for (const s of sheets) {
+    if (n.startsWith(s.name) && s.name.length > bestLen) { best = s; bestLen = s.name.length; }
+  }
+  return best;
+}
+
+// ============ 名单持久化 ============
+
+const ROSTER_KEY = 'dnd-roster-v1';
+
+export interface RosterState {
+  tree: VarTree;
+  sheets: CharSheet[];
+}
+
+export function loadRoster(): RosterState {
+  try {
+    const raw = localStorage.getItem(ROSTER_KEY);
+    if (!raw) return { tree: {}, sheets: [] };
+    const data = JSON.parse(raw);
+    return {
+      tree: data.tree && typeof data.tree === 'object' ? data.tree : {},
+      sheets: Array.isArray(data.sheets) ? data.sheets : [],
+    };
+  } catch {
+    return { tree: {}, sheets: [] };
+  }
+}
+
+export function saveRoster(state: RosterState): void {
+  try {
+    localStorage.setItem(ROSTER_KEY, JSON.stringify({ tree: state.tree, sheets: state.sheets }));
+  } catch { /* 静默 */ }
+}
