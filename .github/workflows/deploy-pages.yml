@@ -13,19 +13,21 @@ name: Deploy DND Card Site to GitHub Pages
 on:
   push:
     branches: [main]
-    # 只有地图文件或前端源码变动才重建；纯文档改动不触发
+    # 只有站点内容变动才重建；纯文档改动不触发
     paths:
       - 'battle-forge/**'
       - '*.html'
       - '*.js'
-      - '_dataF.js'
-      - 'faerun_zh.js'
-      - 'name_zh.js'
+      - '*.jpg'
+      - '*.png'
+      - '*.json'
+      - '星球贴图/**'
       - '费伦地图/**'
       - '无冬城地图/**'
       - '深水城地图/**'
-      - '*.jpg'
-      - '*.png'
+      - '变种扩展_20261025/**'
+      - '天然卫星贴图_20261025_v1/**'
+      - 'dist/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -80,17 +82,19 @@ jobs:
           # 2a. 前端静态导出产物 → /battle-forge/
           cp -r battle-forge/out "$SITE/battle-forge"
 
-          # 2b. 根级地图终端与数据文件（只拷存在的，避免路径写错时静默失败）
+          # 2b. 根级地图终端与数据文件
+          #     *.js 已覆盖 _dataF.js / faerun_zh.js / name_zh.js；
+          #     *.html 已覆盖 faerun_map_terminal.html 与「剑湾双城交互地图.html」
           shopt -s nullglob
-          for item in \
-            *.html *.js *.jpg *.png *.json \
-            费伦地图 无冬城地图 深水城地图 \
-            _dataF.js faerun_zh.js name_zh.js ; do
+          for item in *.html *.js *.jpg *.png *.json ; do
             [ -e "$item" ] && cp -r "$item" "$SITE/" || true
           done
 
-          # 2c. 星球贴图目录（地图终端按需加载）
-          for dir in *_2048x1024 SolarSystemScope TexturesForPlanets-* ; do
+          # 2c. 贴图与地图资源目录（原样整目录拷贝，保持相对路径不变）
+          #     星球贴图 在 9274e77 已把各 *_2048x1024 收进子目录；这里按顶层目录整拷，
+          #     不再枚举子目录名，避免以后重组贴图时 CI 静默漏拷。
+          for dir in 星球贴图 费伦地图 无冬城地图 深水城地图 \
+                     变种扩展_20261025 天然卫星贴图_20261025_v1 dist ; do
             [ -d "$dir" ] && cp -r "$dir" "$SITE/" || true
           done
 
