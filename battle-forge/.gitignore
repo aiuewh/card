@@ -57,12 +57,10 @@ server.log
 /.engtest/
 /.engtest_run/
 
-# 本目录在 card 仓库里只是子目录：上面 test / prompt / local-* 等无前导斜杠的规则
-# 会被 git 当作「任意层级匹配」，可能误伤 card 根目录下的同名路径。
-# 这里显式放行本目录自身的所有内容，作用域交回给根级 .gitignore。
-!*
-
 # 本地静态导出构建产物
 /.next-export/
 # 本地测试页（仅本地验证，不部署）
 /public/action-flow-harness.html
+
+# 本地视觉验证脚本（非产品代码）
+/.viz/
